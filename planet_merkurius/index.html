@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Bumi</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="./../css/style.css">
+	</head>
+	<body>
+
+		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Bumi</button>
+
+		<div class="info-blur"></div>
+		<div class="info">
+			<button class="info-close">X</button>
+			<div class="info-list">
+				<h1>Bumi</h1>
+				<p>Planet Bumi adalah planet ketiga dari Matahari dalam tata surya dan satu-satunya planet yang diketahui mendukung kehidupan. Bumi memiliki atmosfer yang kaya oksigen, air dalam bentuk cair, dan iklim yang mendukung berbagai ekosistem. Planet ini terbentuk sekitar 4,5 miliar tahun yang lalu dan terus berevolusi menjadi tempat yang kaya akan biodiversitas, termasuk manusia sebagai salah satu penghuninya.</p>
+				<p>Bumi memiliki bentuk yang hampir bulat dengan sedikit pipih di kutub akibat rotasi. Permukaannya terdiri dari daratan, lautan, dan atmosfer. Atmosfer Bumi berlapis-lapis, mulai dari troposfer hingga termosfer, yang melindungi planet ini dari radiasi berbahaya dan menjaga suhu tetap stabil. Bumi juga memiliki medan magnet yang dihasilkan oleh inti logam cair, yang membantu melindungi planet dari partikel berbahaya dari angkasa.</p>
+				<p>Bumi memiliki diameter sekitar 12.742 km dan luas permukaan sekitar 510 juta km², di mana sekitar 71% adalah lautan. Jarak rata-rata Bumi dari Matahari adalah sekitar 149,6 juta km (1 AU). Planet ini menyelesaikan satu rotasi dalam waktu 24 jam dan satu revolusi mengelilingi Matahari dalam 365,25 hari. Inti Bumi sebagian besar tersusun dari besi dan nikel, sedangkan keraknya terdiri dari berbagai jenis batuan seperti granit dan basalt.</p>
+				<p>Bumi terbentuk dari debu dan gas yang tersisa setelah pembentukan Matahari. Pada awal sejarahnya, Bumi mengalami tabrakan besar dengan objek sebesar planet yang diperkirakan membentuk Bulan. Salah satu fakta unik adalah bahwa Bumi memiliki siklus air yang dinamis, yang memungkinkan adanya kehidupan di semua lingkungannya. Selain itu, meskipun Bumi berputar pada porosnya, rotasi ini melambat secara bertahap akibat pengaruh gravitasi Bulan. Fenomena seperti aurora, gempa bumi, dan perubahan iklim adalah bukti dari aktivitas yang terus berlangsung di planet ini.</p>
+			</div>
+		</div>
+
+		<script src="./../css/style.js"></script>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../js/three.webgpu.js",
+					"three/webgpu": "../js/three.webgpu.js",
+					"three/tsl": "../js/three.tsl.js",
+					"three/addons/": "../jsm/"
+				}
+			}
+		</script>
+
+		<script type="module">
+
+			import * as THREE from 'three';
+			import { step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max } from 'three/tsl';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+			let camera, scene, renderer, controls, globe, sphereSkybox, clock;
+
+			init();
+
+			function init() {
+
+				clock = new THREE.Clock();
+
+				camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 0.1, 100 );
+				camera.position.set( 4.5, 2, 3 );
+
+				scene = new THREE.Scene();
+
+				// sun
+
+				const sun = new THREE.DirectionalLight( '#ffffff', 2 );
+				sun.position.set( 0, 0, 3 );
+				scene.add( sun );
+
+				// uniforms
+
+				const atmosphereDayColor = uniform( color( '#eeeeee' ) );
+				const atmosphereTwilightColor = uniform( color( '#eeeeee' ) );
+				const roughnessLow = uniform( 0.25 );
+				const roughnessHigh = uniform( 0.35 );
+
+				// textures
+
+				const textureLoader = new THREE.TextureLoader();
+
+				const dayTexture = textureLoader.load( './textures/mercury_day_2048.jpg' );
+				dayTexture.colorSpace = THREE.SRGBColorSpace;
+				dayTexture.anisotropy = 8;
+
+				const nightTexture = textureLoader.load( './textures/mercury_night_2048.jpg' );
+				nightTexture.colorSpace = THREE.SRGBColorSpace;
+				nightTexture.anisotropy = 8;
+
+				const spaceTexture = textureLoader.load( './../hdri_space.jpg');
+				spaceTexture.colorSpace = THREE.SRGBColorSpace;
+				spaceTexture.anisotropy = 8;
+
+
+				// fresnel
+				const viewDirection = positionWorld.sub( cameraPosition ).normalize();
+				const fresnel = viewDirection.dot( normalWorld ).abs().oneMinus().toVar();
+				// sun orientation
+				const sunOrientation = normalWorld.dot( normalize( sun.position ) ).toVar();
+				// atmosphere color
+				const atmosphereColor = mix( atmosphereTwilightColor, atmosphereDayColor, sunOrientation.smoothstep( - 0.25, 0.75 ) );
+
+
+				// globe
+
+				const globeMaterial = new THREE.MeshStandardNodeMaterial();
+
+				globeMaterial.colorNode = mix( texture( dayTexture ), vec3( 1 ), 0.0);
+
+				const night = texture( nightTexture );
+				const dayStrength = sunOrientation.smoothstep( - 0.25, 0.5 );
+
+				const atmosphereDayStrength = sunOrientation.smoothstep( - 0.5, 1 );
+				const atmosphereMix = atmosphereDayStrength.mul( fresnel.pow( 2 ) ).clamp( 0, 0.05 );
+
+				let finalOutput = mix( night.rgb, output.rgb, dayStrength );
+				finalOutput = mix( finalOutput, atmosphereColor, atmosphereMix );
+
+				globeMaterial.outputNode = vec4( finalOutput, output.a );
+
+				const sphereGeometry = new THREE.SphereGeometry( 1, 64, 64 );
+				globe = new THREE.Mesh( sphereGeometry, globeMaterial );
+				scene.add( globe );
+
+
+				// atmosphere
+
+				const atmosphereMaterial = new THREE.MeshBasicNodeMaterial( { side: THREE.BackSide, transparent: true } );
+				let alpha = fresnel.remap( 0.53, 1, 1, 0 );
+				alpha = alpha.mul( sunOrientation.smoothstep( - 0.5, 1 ) );
+				atmosphereMaterial.outputNode = vec4( atmosphereColor, alpha );
+
+				const atmosphere = new THREE.Mesh( sphereGeometry, atmosphereMaterial );
+				atmosphere.scale.setScalar( 1.01 );
+				scene.add( atmosphere );
+
+
+				// skybox
+
+				const sphereSkyboxGeometry = new THREE.SphereGeometry(10, 32, 16);
+				const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
+
+				let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
+				sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
+
+				sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
+				scene.add(sphereSkybox)
+				console.log("sphere")
+
+
+				// renderer
+
+				renderer = new THREE.WebGPURenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
+				document.body.appendChild( renderer.domElement );
+
+
+				// controls
+
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.enableDamping = true;
+				controls.minDistance = 0.1;
+				controls.maxDistance = 50;
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			async function animate() {
+
+				const delta = clock.getDelta();
+				globe.rotation.y += delta * 0.025;
+				sphereSkybox.rotation.y += delta * 0.025;
+			
+				controls.update();
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,120 @@
+
+@font-face {
+    font-family: "TurretRoad-Regular";
+    src: url("./TurretRoad-Regular.ttf");
+}
+
+@font-face {
+    font-family: "TurretRoad-Bold";
+    src: url("./TurretRoad-ExtraBold.ttf");
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    color: white;
+    overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "TurretRoad-Bold" !important;
+}
+
+p {
+    line-height: 1.5;
+    text-align: justify;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #000f; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #222f; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+
+.info-button {
+    
+    position: fixed;
+    bottom: 0;
+    left: 0%;
+    transform: translate(24px, -24px);
+    transform-origin: 50% -0%;
+    scale: 100% 100%;
+
+    font-family: "TurretRoad-Bold";
+    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid black;
+    border-radius: 10px;
+    color: white;
+    padding: 1rem 2rem;
+    transition: all 0.25s;
+
+}
+
+.info, .info-blur {
+    
+    position: fixed;
+    top: 50%;
+    left: 0%;
+    transform: translate(24px, -50%);
+    transform-origin: 50% -0%;
+    scale: 100% 0%;
+    width: calc(100% - 48px);
+    height: 500px;
+    max-width: 400px;
+    
+    font-family: "TurretRoad-Regular";
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid black;
+    border-radius: 10px;
+    overflow-y: auto;
+    transition: all 0.25s;
+
+}
+
+.info-blur {
+    background: none;
+    backdrop-filter: blur(4px);
+}
+
+.info-close {
+
+    position: fixed;
+    top: 0%;
+    right: 0%;
+    transform: translate(-50%, 50%);
+    width: 32px;
+    height: 32px;
+
+    font-family: "TurretRoad-Bold";
+    background: rgba(255, 0, 0, 0.5);
+    color: white;
+    border: 1px red solid;
+    border-radius: 999px;
+    aspect-ratio: 1 / 1;
+
+}
+
+.info-list {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
