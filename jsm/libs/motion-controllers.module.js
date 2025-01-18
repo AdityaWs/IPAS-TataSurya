@@ -7,20 +7,20 @@ const Constants = {
     NONE: 'none',
     LEFT: 'left',
     RIGHT: 'right'
-  }),
+ }),
 
   ComponentState: Object.freeze({
     DEFAULT: 'default',
     TOUCHED: 'touched',
     PRESSED: 'pressed'
-  }),
+ }),
 
   ComponentProperty: Object.freeze({
     BUTTON: 'button',
     X_AXIS: 'xAxis',
     Y_AXIS: 'yAxis',
     STATE: 'state'
-  }),
+ }),
 
   ComponentType: Object.freeze({
     TRIGGER: 'trigger',
@@ -28,7 +28,7 @@ const Constants = {
     TOUCHPAD: 'touchpad',
     THUMBSTICK: 'thumbstick',
     BUTTON: 'button'
-  }),
+ }),
 
   ButtonTouchThreshold: 0.05,
 
@@ -37,7 +37,7 @@ const Constants = {
   VisualResponseProperty: Object.freeze({
     TRANSFORM: 'transform',
     VISIBILITY: 'visibility'
-  })
+ })
 };
 
 /**
@@ -48,15 +48,15 @@ async function fetchJsonFile(path) {
   const response = await fetch(path);
   if (!response.ok) {
     throw new Error(response.statusText);
-  } else {
+ } else {
     return response.json();
-  }
+ }
 }
 
 async function fetchProfilesList(basePath) {
   if (!basePath) {
     throw new Error('No basePath supplied');
-  }
+ }
 
   const profileListFileName = 'profilesList.json';
   const profilesList = await fetchJsonFile(`${basePath}/${profileListFileName}`);
@@ -66,11 +66,11 @@ async function fetchProfilesList(basePath) {
 async function fetchProfile(xrInputSource, basePath, defaultProfile = null, getAssetPath = true) {
   if (!xrInputSource) {
     throw new Error('No xrInputSource supplied');
-  }
+ }
 
   if (!basePath) {
     throw new Error('No basePath supplied');
-  }
+ }
 
   // Get the list of profiles
   const supportedProfilesList = await fetchProfilesList(basePath);
@@ -84,27 +84,27 @@ async function fetchProfile(xrInputSource, basePath, defaultProfile = null, getA
         profileId,
         profilePath: `${basePath}/${supportedProfile.path}`,
         deprecated: !!supportedProfile.deprecated
-      };
-    }
+     };
+   }
     return !!match;
-  });
+ });
 
   if (!match) {
     if (!defaultProfile) {
       throw new Error('No matching profile name found');
-    }
+   }
 
     const supportedProfile = supportedProfilesList[defaultProfile];
     if (!supportedProfile) {
       throw new Error(`No matching profile name found and default profile "${defaultProfile}" missing.`);
-    }
+   }
 
     match = {
       profileId: defaultProfile,
       profilePath: `${basePath}/${supportedProfile.path}`,
       deprecated: !!supportedProfile.deprecated
-    };
-  }
+   };
+ }
 
   const profile = await fetchJsonFile(match.profilePath);
 
@@ -113,21 +113,21 @@ async function fetchProfile(xrInputSource, basePath, defaultProfile = null, getA
     let layout;
     if (xrInputSource.handedness === 'any') {
       layout = profile.layouts[Object.keys(profile.layouts)[0]];
-    } else {
+   } else {
       layout = profile.layouts[xrInputSource.handedness];
-    }
+   }
     if (!layout) {
       throw new Error(
         `No matching handedness, ${xrInputSource.handedness}, in profile ${match.profileId}`
-      );
-    }
+     );
+   }
 
     if (layout.assetPath) {
       assetPath = match.profilePath.replace('profile.json', layout.assetPath);
-    }
-  }
+   }
+ }
 
-  return { profile, assetPath };
+  return {profile, assetPath};
 }
 
 /** @constant {Object} */
@@ -157,14 +157,14 @@ function normalizeAxes(x = 0, y = 0) {
     const theta = Math.atan2(y, x);
     xAxis = Math.cos(theta);
     yAxis = Math.sin(theta);
-  }
+ }
 
   // Scale and move the circle so values are in the interpolation range.  The circle's origin moves
   // from (0, 0) to (0.5, 0.5). The circle's radius scales from 1 to be 0.5.
   const result = {
     normalizedXAxis: (xAxis * 0.5) + 0.5,
     normalizedYAxis: (yAxis * 0.5) + 0.5
-  };
+ };
   return result;
 }
 
@@ -186,12 +186,12 @@ class VisualResponse {
     if (this.valueNodeProperty === Constants.VisualResponseProperty.TRANSFORM) {
       this.minNodeName = visualResponseDescription.minNodeName;
       this.maxNodeName = visualResponseDescription.maxNodeName;
-    }
+   }
 
     // Initializes the response's current value based on default data
     this.value = 0;
     this.updateFromComponent(defaultComponentValues);
-  }
+ }
 
   /**
    * Computes the visual response's interpolation weight based on component state
@@ -203,8 +203,8 @@ class VisualResponse {
    */
   updateFromComponent({
     xAxis, yAxis, button, state
-  }) {
-    const { normalizedXAxis, normalizedYAxis } = normalizeAxes(xAxis, yAxis);
+ }) {
+    const {normalizedXAxis, normalizedYAxis} = normalizeAxes(xAxis, yAxis);
     switch (this.componentProperty) {
       case Constants.ComponentProperty.X_AXIS:
         this.value = (this.states.includes(state)) ? normalizedXAxis : 0.5;
@@ -218,14 +218,14 @@ class VisualResponse {
       case Constants.ComponentProperty.STATE:
         if (this.valueNodeProperty === Constants.VisualResponseProperty.VISIBILITY) {
           this.value = (this.states.includes(state));
-        } else {
+       } else {
           this.value = this.states.includes(state) ? 1.0 : 0.0;
-        }
+       }
         break;
       default:
         throw new Error(`Unexpected visualResponse componentProperty ${this.componentProperty}`);
-    }
-  }
+   }
+ }
 }
 
 class Component {
@@ -240,7 +240,7 @@ class Component {
      || !componentDescription.gamepadIndices
      || Object.keys(componentDescription.gamepadIndices).length === 0) {
       throw new Error('Invalid arguments supplied');
-    }
+   }
 
     this.id = componentId;
     this.type = componentDescription.type;
@@ -252,7 +252,7 @@ class Component {
     Object.keys(componentDescription.visualResponses).forEach((responseName) => {
       const visualResponse = new VisualResponse(componentDescription.visualResponses[responseName]);
       this.visualResponses[responseName] = visualResponse;
-    });
+   });
 
     // Set default values
     this.gamepadIndices = Object.assign({}, componentDescription.gamepadIndices);
@@ -262,13 +262,13 @@ class Component {
       button: (this.gamepadIndices.button !== undefined) ? 0 : undefined,
       xAxis: (this.gamepadIndices.xAxis !== undefined) ? 0 : undefined,
       yAxis: (this.gamepadIndices.yAxis !== undefined) ? 0 : undefined
-    };
-  }
+   };
+ }
 
   get data() {
-    const data = { id: this.id, ...this.values };
+    const data = {id: this.id, ...this.values};
     return data;
-  }
+ }
 
   /**
    * @description Poll for updated data based on current gamepad state
@@ -289,10 +289,10 @@ class Component {
       // Set the state based on the button
       if (gamepadButton.pressed || this.values.button === 1) {
         this.values.state = Constants.ComponentState.PRESSED;
-      } else if (gamepadButton.touched || this.values.button > Constants.ButtonTouchThreshold) {
+     } else if (gamepadButton.touched || this.values.button > Constants.ButtonTouchThreshold) {
         this.values.state = Constants.ComponentState.TOUCHED;
-      }
-    }
+     }
+   }
 
     // Get and normalize x axis value
     if (this.gamepadIndices.xAxis !== undefined
@@ -305,8 +305,8 @@ class Component {
       if (this.values.state === Constants.ComponentState.DEFAULT
         && Math.abs(this.values.xAxis) > Constants.AxisTouchThreshold) {
         this.values.state = Constants.ComponentState.TOUCHED;
-      }
-    }
+     }
+   }
 
     // Get and normalize Y axis value
     if (this.gamepadIndices.yAxis !== undefined
@@ -319,14 +319,14 @@ class Component {
       if (this.values.state === Constants.ComponentState.DEFAULT
         && Math.abs(this.values.yAxis) > Constants.AxisTouchThreshold) {
         this.values.state = Constants.ComponentState.TOUCHED;
-      }
-    }
+     }
+   }
 
     // Update the visual response weights based on the current component data
     Object.values(this.visualResponses).forEach((visualResponse) => {
       visualResponse.updateFromComponent(this.values);
-    });
-  }
+   });
+ }
 }
 
 /**
@@ -343,11 +343,11 @@ class MotionController {
   constructor(xrInputSource, profile, assetUrl) {
     if (!xrInputSource) {
       throw new Error('No xrInputSource supplied');
-    }
+   }
 
     if (!profile) {
       throw new Error('No profile supplied');
-    }
+   }
 
     this.xrInputSource = xrInputSource;
     this.assetUrl = assetUrl;
@@ -359,19 +359,19 @@ class MotionController {
     Object.keys(this.layoutDescription.components).forEach((componentId) => {
       const componentDescription = this.layoutDescription.components[componentId];
       this.components[componentId] = new Component(componentId, componentDescription);
-    });
+   });
 
     // Initialize components based on current gamepad state
     this.updateFromGamepad();
-  }
+ }
 
   get gripSpace() {
     return this.xrInputSource.gripSpace;
-  }
+ }
 
   get targetRaySpace() {
     return this.xrInputSource.targetRaySpace;
-  }
+ }
 
   /**
    * @description Returns a subset of component data for simplified debugging
@@ -380,9 +380,9 @@ class MotionController {
     const data = [];
     Object.values(this.components).forEach((component) => {
       data.push(component.data);
-    });
+   });
     return data;
-  }
+ }
 
   /**
    * @description Poll for updated data based on current gamepad state
@@ -390,8 +390,8 @@ class MotionController {
   updateFromGamepad() {
     Object.values(this.components).forEach((component) => {
       component.updateFromGamepad(this.xrInputSource.gamepad);
-    });
-  }
+   });
+ }
 }
 
-export { Constants, MotionController, fetchProfile, fetchProfilesList };
+export {Constants, MotionController, fetchProfile, fetchProfilesList};

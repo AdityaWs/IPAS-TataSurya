@@ -1,210 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>Neptunus</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link rel="stylesheet" href="./../css/style.css">
-	</head>
-	<body>
+<html lang="id">
+    <head>
+        <title>Neptunus</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="./../css/style.css">
+    </head>
+    <body>
 
-		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Neptunus</button>
+        <button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Neptunus</button>
 
-		<div class="info-blur"></div>
-		<div class="info">
-			<button class="info-close">X</button>
-			<div class="info-list">
-				<h1>Neptunus</h1>
+        <div class="info-blur"></div>
+        <div class="info">
+            <button class="info-close">X</button>
+            <div class="info-list">
+                <h1>Neptunus</h1>
                 <p>Neptunus adalah planet kedelapan dan terjauh dari Matahari di tata surya. Planet ini termasuk dalam kategori planet es raksasa bersama Uranus. Dengan jarak rata-rata sekitar 4,5 miliar kilometer dari Matahari, Neptunus membutuhkan waktu 165 tahun Bumi untuk menyelesaikan satu orbit. Namun, rotasi Neptunus cukup cepat, hanya sekitar 16 jam untuk satu hari penuh. Neptunus dikenal karena warna birunya yang indah, yang disebabkan oleh metana di atmosfernya yang menyerap cahaya merah dan memantulkan cahaya biru.</p>
                 <p>Ciri-ciri Neptunus yang paling mencolok adalah angin superkencang di atmosfernya, yang bisa mencapai kecepatan lebih dari 2.000 km/jam, tercepat di tata surya. Neptunus juga memiliki sistem cincin yang tipis, redup, dan gelap, berbeda dengan cincin Saturnus yang terang dan mencolok. Sistem cincin ini terdiri dari partikel-partikel kecil yang diduga terbuat dari debu dan es yang dilapisi oleh material gelap, seperti senyawa organik yang terbakar akibat radiasi dari Matahari. Atmosfer Neptunus terdiri dari hidrogen, helium, dan metana, yang membentuk lapisan awan yang kompleks. Neptunus juga memiliki sistem cincin tipis dan gelap serta 14 bulan, dengan Triton sebagai bulan terbesar. Triton sangat unik karena orbitnya berlawanan arah dengan rotasi Neptunus, menunjukkan bahwa bulan ini mungkin dulunya adalah objek yang tertangkap gravitasi planet.</p>
                 <p>Secara data, Neptunus memiliki diameter sekitar 49.244 kilometer, sekitar 3,9 kali diameter Bumi, dan massanya 17 kali lebih besar dari Bumi. Jarak orbitnya dari Matahari adalah sekitar 30,1 AU (Astronomical Unit). Komposisi Neptunus didominasi oleh air, amonia, dan metana yang membentuk lapisan es di bawah atmosfernya, dengan inti berbatu kecil di pusat. Suhu di atmosfernya sangat rendah, mencapai sekitar -218°C, namun suhu di inti planet diperkirakan mencapai ribuan derajat Celsius.</p>
                 <p>Dalam sejarah, Neptunus adalah planet pertama yang ditemukan melalui perhitungan matematis, bukan observasi langsung. Planet ini ditemukan pada tahun 1846 oleh Johann Galle, berdasarkan prediksi astronom Urbain Le Verrier. Namanya diambil dari dewa laut Romawi, Neptunus, sesuai dengan warna birunya yang menyerupai samudra. Fakta unik lainnya adalah bahwa badai besar, seperti "Bintik Gelap Besar," sering muncul di Neptunus, meskipun mereka cenderung hilang dan muncul kembali di lokasi yang berbeda. Selain itu, Triton, bulan terbesar Neptunus, memiliki geyser aktif yang menyemburkan material dari bawah permukaannya, menjadikannya salah satu objek paling menarik untuk penelitian lebih lanjut.</p>
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<script src="./../css/style.js"></script>
+        <script src="./../css/style.js"></script>
 
-		<script type="importmap">
-			{
-				"imports": {
-					"three": "../js/three.webgpu.js",
-					"three/webgpu": "../js/three.webgpu.js",
-					"three/tsl": "../js/three.tsl.js",
-					"three/addons/": "../jsm/"
-				}
-			}
-		</script>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "../js/three.webgpu.js",
+                    "three/webgpu": "../js/three.webgpu.js",
+                    "three/tsl": "../js/three.tsl.js",
+                    "three/addons/": "../jsm/"
+                }
+            }
+        </script>
 
-		<script type="module">
+        <script type="module">
 
-			import * as THREE from 'three';
-			import { step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max } from 'three/tsl';
-			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+            import * as THREE from "three";
+            import {step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max} from "three/tsl";
+            import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+            import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+            import {GUI} from "three/addons/libs/lil-gui.module.min.js";
 
-			let camera, scene, renderer, controls, globe, ring, sphereSkybox, clock;
+            let camera, scene, renderer, controls, globe, ring, sphereSkybox, clock;
 
-			init();
+            init();
 
-			function init() {
+            function init() {
 
-				clock = new THREE.Clock();
+                clock = new THREE.Clock();
 
-				camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 0.1, 100 );
-				camera.position.set( 4.5, 2, 3 );
+                camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera.position.set(4.5, 2, 3);
 
-				scene = new THREE.Scene();
+                scene = new THREE.Scene();
 
-				// sun
+                // sun
 
-				const sun = new THREE.DirectionalLight( '#ffffff', 2 );
-				sun.position.set( 0, 0, 3 );
+                const sun = new THREE.DirectionalLight("#ffffff", 2);
+                sun.position.set(0, 0, 3);
                 sun.castShadow = true;
                 sun.shadow.mapSize.width = 512;
                 sun.shadow.mapSize.height = 512;
                 sun.shadow.camera.near = 0.5;
                 sun.shadow.camera.far = 500;
-				scene.add( sun );
+                scene.add(sun);
 
-				// uniforms
+                // uniforms
 
-				const atmosphereDayColor = uniform( color( '#002f8c' ) );
-				const atmosphereTwilightColor = uniform( color( '#440078' ) );
-				const roughnessLow = uniform( 0.25 );
-				const roughnessHigh = uniform( 0.35 );
+                const atmosphereDayColor = uniform(color("#002f8c"));
+                const atmosphereTwilightColor = uniform(color("#440078"));
+                const roughnessLow = uniform(0.25);
+                const roughnessHigh = uniform(0.35);
 
-				// textures
+                // textures
 
-				const textureLoader = new THREE.TextureLoader();
+                const textureLoader = new THREE.TextureLoader();
 
-				const dayTexture = textureLoader.load( './textures/neptune_day_2048.jpg' );
-				dayTexture.colorSpace = THREE.SRGBColorSpace;
-				dayTexture.anisotropy = 8;
+                const dayTexture = textureLoader.load("./textures/neptune_day_2048.jpg");
+                dayTexture.colorSpace = THREE.SRGBColorSpace;
+                dayTexture.anisotropy = 8;
 
-				const nightTexture = textureLoader.load( './textures/neptune_night_2048.jpg' );
-				nightTexture.colorSpace = THREE.SRGBColorSpace;
-				nightTexture.anisotropy = 8;
+                const nightTexture = textureLoader.load("./textures/neptune_night_2048.jpg");
+                nightTexture.colorSpace = THREE.SRGBColorSpace;
+                nightTexture.anisotropy = 8;
 
-				const spaceTexture = textureLoader.load( './../hdri_space.jpg');
-				spaceTexture.colorSpace = THREE.SRGBColorSpace;
-				spaceTexture.anisotropy = 8;
-
-
-				// fresnel
-				const viewDirection = positionWorld.sub( cameraPosition ).normalize();
-				const fresnel = viewDirection.dot( normalWorld ).abs().oneMinus().toVar();
-				// sun orientation
-				const sunOrientation = normalWorld.dot( normalize( sun.position ) ).toVar();
-				// atmosphere color
-				const atmosphereColor = mix( atmosphereTwilightColor, atmosphereDayColor, sunOrientation.smoothstep( - 0.25, 0.75 ) );
+                const spaceTexture = textureLoader.load("./../hdri_space.jpg");
+                spaceTexture.colorSpace = THREE.SRGBColorSpace;
+                spaceTexture.anisotropy = 8;
 
 
-				// globe
+                // fresnel
+                const viewDirection = positionWorld.sub(cameraPosition).normalize();
+                const fresnel = viewDirection.dot(normalWorld).abs().oneMinus().toVar();
+                // sun orientation
+                const sunOrientation = normalWorld.dot(normalize(sun.position)).toVar();
+                // atmosphere color
+                const atmosphereColor = mix(atmosphereTwilightColor, atmosphereDayColor, sunOrientation.smoothstep(- 0.25, 0.75));
 
-				const globeMaterial = new THREE.MeshStandardNodeMaterial();
 
-				globeMaterial.colorNode = mix( texture( dayTexture ), vec3( 1 ), 0.0);
+                // globe
 
-				const night = texture( nightTexture );
-				const dayStrength = sunOrientation.smoothstep( - 0.25, 0.5 );
+                const globeMaterial = new THREE.MeshStandardNodeMaterial();
 
-				const atmosphereDayStrength = sunOrientation.smoothstep( - 0.5, 1 );
-				const atmosphereMix = atmosphereDayStrength.mul( fresnel.pow( 2 ) ).clamp( 0, 0.05 );
+                globeMaterial.colorNode = mix(texture(dayTexture), vec3(1), 0.0);
 
-				let finalOutput = mix( night.rgb, output.rgb, dayStrength );
-				finalOutput = mix( finalOutput, atmosphereColor, atmosphereMix );
+                const night = texture(nightTexture);
+                const dayStrength = sunOrientation.smoothstep(- 0.25, 0.5);
 
-				globeMaterial.outputNode = vec4( finalOutput, output.a );
+                const atmosphereDayStrength = sunOrientation.smoothstep(- 0.5, 1);
+                const atmosphereMix = atmosphereDayStrength.mul(fresnel.pow(2)).clamp(0, 0.05);
 
-				const sphereGeometry = new THREE.SphereGeometry( 1, 64, 64 );
-				globe = new THREE.Mesh( sphereGeometry, globeMaterial );
-				scene.add( globe );
+                let finalOutput = mix(night.rgb, output.rgb, dayStrength);
+                finalOutput = mix(finalOutput, atmosphereColor, atmosphereMix);
+
+                globeMaterial.outputNode = vec4(finalOutput, output.a);
+
+                const sphereGeometry = new THREE.SphereGeometry(1, 64, 64);
+                globe = new THREE.Mesh(sphereGeometry, globeMaterial);
+                scene.add(globe);
 
 
                 // ring
 
                 const loader = new GLTFLoader().setPath("./model/");
 
-                loader.load( './neptune_ring.glb', function ( gltf ) {
-                    scene.add( gltf.scene );
-                }, undefined, function ( error ) {
-                    console.error( error );
-                } );
+                loader.load("./neptune_ring.glb", function (gltf) {
+                    scene.add(gltf.scene);
+                }, undefined, function (error) {
+                    console.error(error);
+                });
 
                 let light = new THREE.AmbientLight(0xffffff);
                 scene.add(light);
 
 
-				// atmosphere
+                // atmosphere
 
-				const atmosphereMaterial = new THREE.MeshBasicNodeMaterial( { side: THREE.BackSide, transparent: true } );
-				let alpha = fresnel.remap( 0.53, 1, 1, 0 );
-				alpha = alpha.mul( sunOrientation.smoothstep( - 0.5, 1 ) );
-				atmosphereMaterial.outputNode = vec4( atmosphereColor, alpha );
+                const atmosphereMaterial = new THREE.MeshBasicNodeMaterial({side: THREE.BackSide, transparent: true});
+                let alpha = fresnel.remap(0.53, 1, 1, 0);
+                alpha = alpha.mul(sunOrientation.smoothstep(- 0.5, 1));
+                atmosphereMaterial.outputNode = vec4(atmosphereColor, alpha);
 
-				const atmosphere = new THREE.Mesh( sphereGeometry, atmosphereMaterial );
-				atmosphere.scale.setScalar( 1.02 );
-				scene.add( atmosphere );
-
-
-				// skybox
-
-				const sphereSkyboxGeometry = new THREE.SphereGeometry(10, 32, 16);
-				const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
-
-				let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
-				sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
-
-				sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
-				scene.add(sphereSkybox)
-				console.log("sphere")
+                const atmosphere = new THREE.Mesh(sphereGeometry, atmosphereMaterial);
+                atmosphere.scale.setScalar(1.02);
+                scene.add(atmosphere);
 
 
-				// renderer
+                // skybox
 
-				renderer = new THREE.WebGPURenderer();
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.setAnimationLoop( animate );
+                const sphereSkyboxGeometry = new THREE.SphereGeometry(50, 32, 16);
+                const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
+
+                let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
+                sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
+
+                sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
+                scene.add(sphereSkybox)
+
+
+                // renderer
+
+                renderer = new THREE.WebGPURenderer();
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setAnimationLoop(animate);
                 renderer.shadowMap.enabled = true;
                 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-				document.body.appendChild( renderer.domElement );
+                document.body.appendChild(renderer.domElement);
 
 
-				// controls
+                // controls
 
-				controls = new OrbitControls( camera, renderer.domElement );
-				controls.enableDamping = true;
-				controls.minDistance = 0.1;
-				controls.maxDistance = 50;
+                controls = new OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.minDistance = 0.1;
+                controls.maxDistance = 50;
 
-				window.addEventListener( 'resize', onWindowResize );
+                window.addEventListener("resize", onWindowResize);
 
-			}
+            }
 
-			function onWindowResize() {
+            function onWindowResize() {
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer.setSize(window.innerWidth, window.innerHeight);
 
-			}
+            }
 
-			async function animate() {
+            async function animate() {
 
-				const delta = clock.getDelta();
-				globe.rotation.y += delta * 0.025;
-				sphereSkybox.rotation.y += delta * 0.025;
-			
-				controls.update();
+                const delta = clock.getDelta();
+                globe.rotation.y += delta * 0.025;
+                sphereSkybox.rotation.y += delta * 0.025;
+            
+                controls.update();
 
-				renderer.render( scene, camera );
+                renderer.render(scene, camera);
 
-			}
+            }
 
-		</script>
+        </script>
 
-	</body>
+    </body>
 </html>

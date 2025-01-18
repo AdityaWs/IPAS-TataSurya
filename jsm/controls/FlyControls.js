@@ -4,16 +4,16 @@ import {
 	Vector3
 } from 'three';
 
-const _changeEvent = { type: 'change' };
+const _changeEvent = {type: 'change'};
 
 const _EPS = 0.000001;
 const _tmpQuaternion = new Quaternion();
 
 class FlyControls extends Controls {
 
-	constructor( object, domElement = null ) {
+	constructor(object, domElement = null) {
 
-		super( object, domElement );
+		super(object, domElement);
 
 		this.movementSpeed = 1.0;
 		this.rollSpeed = 0.005;
@@ -23,26 +23,26 @@ class FlyControls extends Controls {
 
 		// internals
 
-		this._moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
-		this._moveVector = new Vector3( 0, 0, 0 );
-		this._rotationVector = new Vector3( 0, 0, 0 );
+		this._moveState = {up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0};
+		this._moveVector = new Vector3(0, 0, 0);
+		this._rotationVector = new Vector3(0, 0, 0);
 		this._lastQuaternion = new Quaternion();
 		this._lastPosition = new Vector3();
 		this._status = 0;
 
 		// event listeners
 
-		this._onKeyDown = onKeyDown.bind( this );
-		this._onKeyUp = onKeyUp.bind( this );
-		this._onPointerMove = onPointerMove.bind( this );
-		this._onPointerDown = onPointerDown.bind( this );
-		this._onPointerUp = onPointerUp.bind( this );
-		this._onPointerCancel = onPointerCancel.bind( this );
-		this._onContextMenu = onContextMenu.bind( this );
+		this._onKeyDown = onKeyDown.bind(this);
+		this._onKeyUp = onKeyUp.bind(this);
+		this._onPointerMove = onPointerMove.bind(this);
+		this._onPointerDown = onPointerDown.bind(this);
+		this._onPointerUp = onPointerUp.bind(this);
+		this._onPointerCancel = onPointerCancel.bind(this);
+		this._onContextMenu = onContextMenu.bind(this);
 
 		//
 
-		if ( domElement !== null ) {
+		if (domElement !== null) {
 
 			this.connect();
 
@@ -52,27 +52,27 @@ class FlyControls extends Controls {
 
 	connect() {
 
-		window.addEventListener( 'keydown', this._onKeyDown );
-		window.addEventListener( 'keyup', this._onKeyUp );
+		window.addEventListener('keydown', this._onKeyDown);
+		window.addEventListener('keyup', this._onKeyUp);
 
-		this.domElement.addEventListener( 'pointermove', this._onPointerMove );
-		this.domElement.addEventListener( 'pointerdown', this._onPointerDown );
-		this.domElement.addEventListener( 'pointerup', this._onPointerUp );
-		this.domElement.addEventListener( 'pointercancel', this._onPointerCancel );
-		this.domElement.addEventListener( 'contextmenu', this._onContextMenu );
+		this.domElement.addEventListener('pointermove', this._onPointerMove);
+		this.domElement.addEventListener('pointerdown', this._onPointerDown);
+		this.domElement.addEventListener('pointerup', this._onPointerUp);
+		this.domElement.addEventListener('pointercancel', this._onPointerCancel);
+		this.domElement.addEventListener('contextmenu', this._onContextMenu);
 
 	}
 
 	disconnect() {
 
-		window.removeEventListener( 'keydown', this._onKeyDown );
-		window.removeEventListener( 'keyup', this._onKeyUp );
+		window.removeEventListener('keydown', this._onKeyDown);
+		window.removeEventListener('keyup', this._onKeyUp);
 
-		this.domElement.removeEventListener( 'pointermove', this._onPointerMove );
-		this.domElement.removeEventListener( 'pointerdown', this._onPointerDown );
-		this.domElement.removeEventListener( 'pointerup', this._onPointerUp );
-		this.domElement.removeEventListener( 'pointercancel', this._onPointerCancel );
-		this.domElement.removeEventListener( 'contextmenu', this._onContextMenu );
+		this.domElement.removeEventListener('pointermove', this._onPointerMove);
+		this.domElement.removeEventListener('pointerdown', this._onPointerDown);
+		this.domElement.removeEventListener('pointerup', this._onPointerUp);
+		this.domElement.removeEventListener('pointercancel', this._onPointerCancel);
+		this.domElement.removeEventListener('contextmenu', this._onContextMenu);
 
 	}
 
@@ -82,30 +82,30 @@ class FlyControls extends Controls {
 
 	}
 
-	update( delta ) {
+	update(delta) {
 
-		if ( this.enabled === false ) return;
+		if (this.enabled === false) return;
 
 		const object = this.object;
 
 		const moveMult = delta * this.movementSpeed;
 		const rotMult = delta * this.rollSpeed;
 
-		object.translateX( this._moveVector.x * moveMult );
-		object.translateY( this._moveVector.y * moveMult );
-		object.translateZ( this._moveVector.z * moveMult );
+		object.translateX(this._moveVector.x * moveMult);
+		object.translateY(this._moveVector.y * moveMult);
+		object.translateZ(this._moveVector.z * moveMult);
 
-		_tmpQuaternion.set( this._rotationVector.x * rotMult, this._rotationVector.y * rotMult, this._rotationVector.z * rotMult, 1 ).normalize();
-		object.quaternion.multiply( _tmpQuaternion );
+		_tmpQuaternion.set(this._rotationVector.x * rotMult, this._rotationVector.y * rotMult, this._rotationVector.z * rotMult, 1).normalize();
+		object.quaternion.multiply(_tmpQuaternion);
 
 		if (
-			this._lastPosition.distanceToSquared( object.position ) > _EPS ||
-			8 * ( 1 - this._lastQuaternion.dot( object.quaternion ) ) > _EPS
+			this._lastPosition.distanceToSquared(object.position) > _EPS ||
+			8 * (1 - this._lastQuaternion.dot(object.quaternion)) > _EPS
 		) {
 
-			this.dispatchEvent( _changeEvent );
-			this._lastQuaternion.copy( object.quaternion );
-			this._lastPosition.copy( object.position );
+			this.dispatchEvent(_changeEvent);
+			this._lastQuaternion.copy(object.quaternion);
+			this._lastPosition.copy(object.position);
 
 		}
 
@@ -115,29 +115,29 @@ class FlyControls extends Controls {
 
 	_updateMovementVector() {
 
-		const forward = ( this._moveState.forward || ( this.autoForward && ! this._moveState.back ) ) ? 1 : 0;
+		const forward = (this._moveState.forward || (this.autoForward && ! this._moveState.back)) ? 1 : 0;
 
-		this._moveVector.x = ( - this._moveState.left + this._moveState.right );
-		this._moveVector.y = ( - this._moveState.down + this._moveState.up );
-		this._moveVector.z = ( - forward + this._moveState.back );
+		this._moveVector.x = (- this._moveState.left + this._moveState.right);
+		this._moveVector.y = (- this._moveState.down + this._moveState.up);
+		this._moveVector.z = (- forward + this._moveState.back);
 
-		//console.log( 'move:', [ this._moveVector.x, this._moveVector.y, this._moveVector.z ] );
+		//console.log('move:', [ this._moveVector.x, this._moveVector.y, this._moveVector.z ]);
 
 	}
 
 	_updateRotationVector() {
 
-		this._rotationVector.x = ( - this._moveState.pitchDown + this._moveState.pitchUp );
-		this._rotationVector.y = ( - this._moveState.yawRight + this._moveState.yawLeft );
-		this._rotationVector.z = ( - this._moveState.rollRight + this._moveState.rollLeft );
+		this._rotationVector.x = (- this._moveState.pitchDown + this._moveState.pitchUp);
+		this._rotationVector.y = (- this._moveState.yawRight + this._moveState.yawLeft);
+		this._rotationVector.z = (- this._moveState.rollRight + this._moveState.rollLeft);
 
-		//console.log( 'rotate:', [ this._rotationVector.x, this._rotationVector.y, this._rotationVector.z ] );
+		//console.log('rotate:', [ this._rotationVector.x, this._rotationVector.y, this._rotationVector.z ]);
 
 	}
 
 	_getContainerDimensions() {
 
-		if ( this.domElement != document ) {
+		if (this.domElement != document) {
 
 			return {
 				size: [ this.domElement.offsetWidth, this.domElement.offsetHeight ],
@@ -157,15 +157,15 @@ class FlyControls extends Controls {
 
 }
 
-function onKeyDown( event ) {
+function onKeyDown(event) {
 
-	if ( event.altKey || this.enabled === false ) {
+	if (event.altKey || this.enabled === false) {
 
 		return;
 
 	}
 
-	switch ( event.code ) {
+	switch (event.code) {
 
 		case 'ShiftLeft':
 		case 'ShiftRight': this.movementSpeedMultiplier = .1; break;
@@ -195,11 +195,11 @@ function onKeyDown( event ) {
 
 }
 
-function onKeyUp( event ) {
+function onKeyUp(event) {
 
-	if ( this.enabled === false ) return;
+	if (this.enabled === false) return;
 
-	switch ( event.code ) {
+	switch (event.code) {
 
 		case 'ShiftLeft':
 		case 'ShiftRight': this.movementSpeedMultiplier = 1; break;
@@ -229,17 +229,17 @@ function onKeyUp( event ) {
 
 }
 
-function onPointerDown( event ) {
+function onPointerDown(event) {
 
-	if ( this.enabled === false ) return;
+	if (this.enabled === false) return;
 
-	if ( this.dragToLook ) {
+	if (this.dragToLook) {
 
 		this._status ++;
 
 	} else {
 
-		switch ( event.button ) {
+		switch (event.button) {
 
 			case 0: this._moveState.forward = 1; break;
 			case 2: this._moveState.back = 1; break;
@@ -252,18 +252,18 @@ function onPointerDown( event ) {
 
 }
 
-function onPointerMove( event ) {
+function onPointerMove(event) {
 
-	if ( this.enabled === false ) return;
+	if (this.enabled === false) return;
 
-	if ( ! this.dragToLook || this._status > 0 ) {
+	if (! this.dragToLook || this._status > 0) {
 
 		const container = this._getContainerDimensions();
 		const halfWidth = container.size[ 0 ] / 2;
 		const halfHeight = container.size[ 1 ] / 2;
 
-		this._moveState.yawLeft = - ( ( event.pageX - container.offset[ 0 ] ) - halfWidth ) / halfWidth;
-		this._moveState.pitchDown = ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
+		this._moveState.yawLeft = - ((event.pageX - container.offset[ 0 ]) - halfWidth) / halfWidth;
+		this._moveState.pitchDown = ((event.pageY - container.offset[ 1 ]) - halfHeight) / halfHeight;
 
 		this._updateRotationVector();
 
@@ -271,11 +271,11 @@ function onPointerMove( event ) {
 
 }
 
-function onPointerUp( event ) {
+function onPointerUp(event) {
 
-	if ( this.enabled === false ) return;
+	if (this.enabled === false) return;
 
-	if ( this.dragToLook ) {
+	if (this.dragToLook) {
 
 		this._status --;
 
@@ -283,7 +283,7 @@ function onPointerUp( event ) {
 
 	} else {
 
-		switch ( event.button ) {
+		switch (event.button) {
 
 			case 0: this._moveState.forward = 0; break;
 			case 2: this._moveState.back = 0; break;
@@ -300,9 +300,9 @@ function onPointerUp( event ) {
 
 function onPointerCancel() {
 
-	if ( this.enabled === false ) return;
+	if (this.enabled === false) return;
 
-	if ( this.dragToLook ) {
+	if (this.dragToLook) {
 
 		this._status = 0;
 
@@ -321,12 +321,12 @@ function onPointerCancel() {
 
 }
 
-function onContextMenu( event ) {
+function onContextMenu(event) {
 
-	if ( this.enabled === false ) return;
+	if (this.enabled === false) return;
 
 	event.preventDefault();
 
 }
 
-export { FlyControls };
+export {FlyControls};

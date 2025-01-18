@@ -816,7 +816,7 @@ Object.defineProperty(Z.prototype,"m_hitPointLocal",{get:Z.prototype.oA,set:Z.pr
 if (typeof exports === 'object' && typeof module === 'object')
       module.exports = Ammo;
     else if (typeof define === 'function' && define['amd'])
-      define([], function() { return Ammo; });
+      define([], function() {return Ammo;});
     else if (typeof exports === 'object')
       exports["Ammo"] = Ammo;
     

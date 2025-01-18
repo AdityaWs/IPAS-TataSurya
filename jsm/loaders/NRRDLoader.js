@@ -5,48 +5,48 @@ import {
 	Vector3
 } from 'three';
 import * as fflate from '../libs/fflate.module.js';
-import { Volume } from '../misc/Volume.js';
+import {Volume} from '../misc/Volume.js';
 
 class NRRDLoader extends Loader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 	}
 
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
 
 		const scope = this;
 
-		const loader = new FileLoader( scope.manager );
-		loader.setPath( scope.path );
-		loader.setResponseType( 'arraybuffer' );
-		loader.setRequestHeader( scope.requestHeader );
-		loader.setWithCredentials( scope.withCredentials );
-		loader.load( url, function ( data ) {
+		const loader = new FileLoader(scope.manager);
+		loader.setPath(scope.path);
+		loader.setResponseType('arraybuffer');
+		loader.setRequestHeader(scope.requestHeader);
+		loader.setWithCredentials(scope.withCredentials);
+		loader.load(url, function (data) {
 
 			try {
 
-				onLoad( scope.parse( data ) );
+				onLoad(scope.parse(data));
 
-			} catch ( e ) {
+			} catch (e) {
 
-				if ( onError ) {
+				if (onError) {
 
-					onError( e );
+					onError(e);
 
 				} else {
 
-					console.error( e );
+					console.error(e);
 
 				}
 
-				scope.manager.itemError( url );
+				scope.manager.itemError(url);
 
 			}
 
-		}, onProgress, onError );
+		}, onProgress, onError);
 
 	}
 
@@ -54,13 +54,13 @@ class NRRDLoader extends Loader {
 	 *
 	 * @param {boolean} segmentation is a option for user to choose
    	 */
-	setSegmentation( segmentation ) {
+	setSegmentation(segmentation) {
 
 	    this.segmentation = segmentation;
 
 	}
 
-	parse( data ) {
+	parse(data) {
 
 		// this parser is largely inspired from the XTK NRRD parser : https://github.com/xtk/X
 
@@ -68,18 +68,18 @@ class NRRDLoader extends Loader {
 
 		let _dataPointer = 0;
 
-		const _nativeLittleEndian = new Int8Array( new Int16Array( [ 1 ] ).buffer )[ 0 ] > 0;
+		const _nativeLittleEndian = new Int8Array(new Int16Array([ 1 ]).buffer)[ 0 ] > 0;
 
 		const _littleEndian = true;
 
 		const headerObject = {};
 
-		function scan( type, chunks ) {
+		function scan(type, chunks) {
 
 			let _chunkSize = 1;
 			let _array_type = Uint8Array;
 
-			switch ( type ) {
+			switch (type) {
 
 				// 1 byte data types
 				case 'uchar':
@@ -121,14 +121,14 @@ class NRRDLoader extends Loader {
 			}
 
 			// increase the data pointer in-place
-			let _bytes = new _array_type( _data.slice( _dataPointer,
-				_dataPointer += chunks * _chunkSize ) );
+			let _bytes = new _array_type(_data.slice(_dataPointer,
+				_dataPointer += chunks * _chunkSize));
 
 			// if required, flip the endianness of the bytes
-			if ( _nativeLittleEndian != _littleEndian ) {
+			if (_nativeLittleEndian != _littleEndian) {
 
 				// we need to flip here since the format doesn't match the native endianness
-				_bytes = flipEndianness( _bytes, _chunkSize );
+				_bytes = flipEndianness(_bytes, _chunkSize);
 
 			}
 
@@ -139,12 +139,12 @@ class NRRDLoader extends Loader {
 
 		//Flips typed array endianness in-place. Based on https://github.com/kig/DataStream.js/blob/master/DataStream.js.
 
-		function flipEndianness( array, chunkSize ) {
+		function flipEndianness(array, chunkSize) {
 
-			const u8 = new Uint8Array( array.buffer, array.byteOffset, array.byteLength );
-			for ( let i = 0; i < array.byteLength; i += chunkSize ) {
+			const u8 = new Uint8Array(array.buffer, array.byteOffset, array.byteLength);
+			for (let i = 0; i < array.byteLength; i += chunkSize) {
 
-				for ( let j = i + chunkSize - 1, k = i; j > k; j --, k ++ ) {
+				for (let j = i + chunkSize - 1, k = i; j > k; j --, k ++) {
 
 					const tmp = u8[ k ];
 					u8[ k ] = u8[ j ];
@@ -159,25 +159,25 @@ class NRRDLoader extends Loader {
 		}
 
 		//parse the header
-		function parseHeader( header ) {
+		function parseHeader(header) {
 
 			let data, field, fn, i, l, m, _i, _len;
-			const lines = header.split( /\r?\n/ );
-			for ( _i = 0, _len = lines.length; _i < _len; _i ++ ) {
+			const lines = header.split(/\r?\n/);
+			for (_i = 0, _len = lines.length; _i < _len; _i ++) {
 
 				l = lines[ _i ];
-				if ( l.match( /NRRD\d+/ ) ) {
+				if (l.match(/NRRD\d+/)) {
 
 					headerObject.isNrrd = true;
 
-				} else if ( ! l.match( /^#/ ) && ( m = l.match( /(.*):(.*)/ ) ) ) {
+				} else if (! l.match(/^#/) && (m = l.match(/(.*):(.*)/))) {
 
 					field = m[ 1 ].trim();
 					data = m[ 2 ].trim();
 					fn = _fieldFunctions[ field ];
-					if ( fn ) {
+					if (fn) {
 
-						fn.call( headerObject, data );
+						fn.call(headerObject, data);
 
 					} else {
 
@@ -189,34 +189,34 @@ class NRRDLoader extends Loader {
 
 			}
 
-			if ( ! headerObject.isNrrd ) {
+			if (! headerObject.isNrrd) {
 
-				throw new Error( 'Not an NRRD file' );
-
-			}
-
-			if ( headerObject.encoding === 'bz2' || headerObject.encoding === 'bzip2' ) {
-
-				throw new Error( 'Bzip is not supported' );
+				throw new Error('Not an NRRD file');
 
 			}
 
-			if ( ! headerObject.vectors ) {
+			if (headerObject.encoding === 'bz2' || headerObject.encoding === 'bzip2') {
+
+				throw new Error('Bzip is not supported');
+
+			}
+
+			if (! headerObject.vectors) {
 
 				//if no space direction is set, let's use the identity
 				headerObject.vectors = [ ];
-				headerObject.vectors.push( [ 1, 0, 0 ] );
-				headerObject.vectors.push( [ 0, 1, 0 ] );
-				headerObject.vectors.push( [ 0, 0, 1 ] );
+				headerObject.vectors.push([ 1, 0, 0 ]);
+				headerObject.vectors.push([ 0, 1, 0 ]);
+				headerObject.vectors.push([ 0, 0, 1 ]);
 
 				//apply spacing if defined
-				if ( headerObject.spacings ) {
+				if (headerObject.spacings) {
 
-					for ( i = 0; i <= 2; i ++ ) {
+					for (i = 0; i <= 2; i ++) {
 
-						if ( ! isNaN( headerObject.spacings[ i ] ) ) {
+						if (! isNaN(headerObject.spacings[ i ])) {
 
-							for ( let j = 0; j <= 2; j ++ ) {
+							for (let j = 0; j <= 2; j ++) {
 
 								headerObject.vectors[ i ][ j ] *= headerObject.spacings[ i ];
 
@@ -233,48 +233,48 @@ class NRRDLoader extends Loader {
 		}
 
 		//parse the data when registered as one of this type : 'text', 'ascii', 'txt'
-		function parseDataAsText( data, start, end ) {
+		function parseDataAsText(data, start, end) {
 
 			let number = '';
 			start = start || 0;
 			end = end || data.length;
 			let value;
 			//length of the result is the product of the sizes
-			const lengthOfTheResult = headerObject.sizes.reduce( function ( previous, current ) {
+			const lengthOfTheResult = headerObject.sizes.reduce(function (previous, current) {
 
 				return previous * current;
 
-			}, 1 );
+			}, 1);
 
 			let base = 10;
-			if ( headerObject.encoding === 'hex' ) {
+			if (headerObject.encoding === 'hex') {
 
 				base = 16;
 
 			}
 
-			const result = new headerObject.__array( lengthOfTheResult );
+			const result = new headerObject.__array(lengthOfTheResult);
 			let resultIndex = 0;
 			let parsingFunction = parseInt;
-			if ( headerObject.__array === Float32Array || headerObject.__array === Float64Array ) {
+			if (headerObject.__array === Float32Array || headerObject.__array === Float64Array) {
 
 				parsingFunction = parseFloat;
 
 			}
 
-			for ( let i = start; i < end; i ++ ) {
+			for (let i = start; i < end; i ++) {
 
 				value = data[ i ];
 				//if value is not a space
-				if ( ( value < 9 || value > 13 ) && value !== 32 ) {
+				if ((value < 9 || value > 13) && value !== 32) {
 
-					number += String.fromCharCode( value );
+					number += String.fromCharCode(value);
 
 				} else {
 
-					if ( number !== '' ) {
+					if (number !== '') {
 
-						result[ resultIndex ] = parsingFunction( number, base );
+						result[ resultIndex ] = parsingFunction(number, base);
 						resultIndex ++;
 
 					}
@@ -285,9 +285,9 @@ class NRRDLoader extends Loader {
 
 			}
 
-			if ( number !== '' ) {
+			if (number !== '') {
 
-				result[ resultIndex ] = parsingFunction( number, base );
+				result[ resultIndex ] = parsingFunction(number, base);
 				resultIndex ++;
 
 			}
@@ -296,18 +296,18 @@ class NRRDLoader extends Loader {
 
 		}
 
-		const _bytes = scan( 'uchar', data.byteLength );
+		const _bytes = scan('uchar', data.byteLength);
 		const _length = _bytes.length;
 		let _header = null;
 		let _data_start = 0;
 		let i;
-		for ( i = 1; i < _length; i ++ ) {
+		for (i = 1; i < _length; i ++) {
 
-			if ( _bytes[ i - 1 ] == 10 && _bytes[ i ] == 10 ) {
+			if (_bytes[ i - 1 ] == 10 && _bytes[ i ] == 10) {
 
 				// we found two line breaks in a row
 				// now we know what the header is
-				_header = this.parseChars( _bytes, 0, i - 2 );
+				_header = this.parseChars(_bytes, 0, i - 2);
 				// this is were the data starts
 				_data_start = i + 1;
 				break;
@@ -317,25 +317,25 @@ class NRRDLoader extends Loader {
 		}
 
 		// parse the header
-		parseHeader( _header );
+		parseHeader(_header);
 
-		_data = _bytes.subarray( _data_start ); // the data without header
-		if ( headerObject.encoding.substring( 0, 2 ) === 'gz' ) {
+		_data = _bytes.subarray(_data_start); // the data without header
+		if (headerObject.encoding.substring(0, 2) === 'gz') {
 
 			// we need to decompress the datastream
 			// here we start the unzipping and get a typed Uint8Array back
-			_data = fflate.gunzipSync( new Uint8Array( _data ) );
+			_data = fflate.gunzipSync(new Uint8Array(_data));
 
-		} else if ( headerObject.encoding === 'ascii' || headerObject.encoding === 'text' || headerObject.encoding === 'txt' || headerObject.encoding === 'hex' ) {
+		} else if (headerObject.encoding === 'ascii' || headerObject.encoding === 'text' || headerObject.encoding === 'txt' || headerObject.encoding === 'hex') {
 
-			_data = parseDataAsText( _data );
+			_data = parseDataAsText(_data);
 
-		} else if ( headerObject.encoding === 'raw' ) {
+		} else if (headerObject.encoding === 'raw') {
 
 			//we need to copy the array to create a new array buffer, else we retrieve the original arraybuffer with the header
-			const _copy = new Uint8Array( _data.length );
+			const _copy = new Uint8Array(_data.length);
 
-			for ( let i = 0; i < _data.length; i ++ ) {
+			for (let i = 0; i < _data.length; i ++) {
 
 				_copy[ i ] = _data[ i ];
 
@@ -354,7 +354,7 @@ class NRRDLoader extends Loader {
 		//
 		// parse the (unzipped) data to a datastream of the correct type
 		//
-		volume.data = new headerObject.__array( _data );
+		volume.data = new headerObject.__array(_data);
 		// get the min and max intensities
 		const min_max = volume.computeMinMax();
 		const min = min_max[ 0 ];
@@ -370,15 +370,15 @@ class NRRDLoader extends Loader {
 		volume.zLength = volume.dimensions[ 2 ];
 
 		// Identify axis order in the space-directions matrix from the header if possible.
-		if ( headerObject.vectors ) {
+		if (headerObject.vectors) {
 
-			const xIndex = headerObject.vectors.findIndex( vector => vector[ 0 ] !== 0 );
-			const yIndex = headerObject.vectors.findIndex( vector => vector[ 1 ] !== 0 );
-			const zIndex = headerObject.vectors.findIndex( vector => vector[ 2 ] !== 0 );
+			const xIndex = headerObject.vectors.findIndex(vector => vector[ 0 ] !== 0);
+			const yIndex = headerObject.vectors.findIndex(vector => vector[ 1 ] !== 0);
+			const zIndex = headerObject.vectors.findIndex(vector => vector[ 2 ] !== 0);
 
 			const axisOrder = [];
 
-			if ( xIndex !== yIndex && xIndex !== zIndex && yIndex !== zIndex ) {
+			if (xIndex !== yIndex && xIndex !== zIndex && yIndex !== zIndex) {
 
 				axisOrder[ xIndex ] = 'x';
 				axisOrder[ yIndex ] = 'y';
@@ -401,9 +401,9 @@ class NRRDLoader extends Loader {
 		}
 
 		// spacing
-		const spacingX = new Vector3().fromArray( headerObject.vectors[ 0 ] ).length();
-		const spacingY = new Vector3().fromArray( headerObject.vectors[ 1 ] ).length();
-		const spacingZ = new Vector3().fromArray( headerObject.vectors[ 2 ] ).length();
+		const spacingX = new Vector3().fromArray(headerObject.vectors[ 0 ]).length();
+		const spacingY = new Vector3().fromArray(headerObject.vectors[ 1 ]).length();
+		const spacingZ = new Vector3().fromArray(headerObject.vectors[ 2 ]).length();
 		volume.spacing = [ spacingX, spacingY, spacingZ ];
 
 
@@ -412,7 +412,7 @@ class NRRDLoader extends Loader {
 
 		const transitionMatrix = new Matrix4();
 
-		if ( headerObject.space === 'left-posterior-superior' ) {
+		if (headerObject.space === 'left-posterior-superior') {
 
 			transitionMatrix.set(
 				- 1, 0, 0, 0,
@@ -421,7 +421,7 @@ class NRRDLoader extends Loader {
 				0, 0, 0, 1
 			);
 
-		} else if ( headerObject.space === 'left-anterior-superior' ) {
+		} else if (headerObject.space === 'left-anterior-superior') {
 
 			transitionMatrix.set(
 				1, 0, 0, 0,
@@ -433,13 +433,13 @@ class NRRDLoader extends Loader {
 		}
 
 
-		if ( ! headerObject.vectors ) {
+		if (! headerObject.vectors) {
 
 			volume.matrix.set(
 				1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
-				0, 0, 0, 1 );
+				0, 0, 0, 1);
 
 		} else {
 
@@ -452,30 +452,30 @@ class NRRDLoader extends Loader {
 				0, 0, 0, 1
 			);
 
-			const transition_to_ras = new Matrix4().multiplyMatrices( ijk_to_transition, transitionMatrix );
+			const transition_to_ras = new Matrix4().multiplyMatrices(ijk_to_transition, transitionMatrix);
 
 			volume.matrix = transition_to_ras;
 
 		}
 
 		volume.inverseMatrix = new Matrix4();
-		volume.inverseMatrix.copy( volume.matrix ).invert();
+		volume.inverseMatrix.copy(volume.matrix).invert();
 
 		volume.RASDimensions = [
-			Math.floor( volume.xLength * spacingX ),
-			Math.floor( volume.yLength * spacingY ),
-			Math.floor( volume.zLength * spacingZ )
+			Math.floor(volume.xLength * spacingX),
+			Math.floor(volume.yLength * spacingY),
+			Math.floor(volume.zLength * spacingZ)
 		];
 
 		// .. and set the default threshold
 		// only if the threshold was not already set
-		if ( volume.lowerThreshold === - Infinity ) {
+		if (volume.lowerThreshold === - Infinity) {
 
 			volume.lowerThreshold = min;
 
 		}
 
-		if ( volume.upperThreshold === Infinity ) {
+		if (volume.upperThreshold === Infinity) {
 
 			volume.upperThreshold = max;
 
@@ -485,16 +485,16 @@ class NRRDLoader extends Loader {
 
 	}
 
-	parseChars( array, start, end ) {
+	parseChars(array, start, end) {
 
 		// without borders, use the whole array
-		if ( start === undefined ) {
+		if (start === undefined) {
 
 			start = 0;
 
 		}
 
-		if ( end === undefined ) {
+		if (end === undefined) {
 
 			end = array.length;
 
@@ -503,9 +503,9 @@ class NRRDLoader extends Loader {
 		let output = '';
 		// create and append the chars
 		let i = 0;
-		for ( i = start; i < end; ++ i ) {
+		for (i = start; i < end; ++ i) {
 
-			output += String.fromCharCode( array[ i ] );
+			output += String.fromCharCode(array[ i ]);
 
 		}
 
@@ -517,9 +517,9 @@ class NRRDLoader extends Loader {
 
 const _fieldFunctions = {
 
-	type: function ( data ) {
+	type: function (data) {
 
-		switch ( data ) {
+		switch (data) {
 
 			case 'uchar':
 			case 'unsigned char':
@@ -566,7 +566,7 @@ const _fieldFunctions = {
 				this.__array = Float64Array;
 				break;
 			default:
-				throw new Error( 'Unsupported NRRD data type: ' + data );
+				throw new Error('Unsupported NRRD data type: ' + data);
 
 		}
 
@@ -574,113 +574,113 @@ const _fieldFunctions = {
 
 	},
 
-	endian: function ( data ) {
+	endian: function (data) {
 
 		return this.endian = data;
 
 	},
 
-	encoding: function ( data ) {
+	encoding: function (data) {
 
 		return this.encoding = data;
 
 	},
 
-	dimension: function ( data ) {
+	dimension: function (data) {
 
-		return this.dim = parseInt( data, 10 );
+		return this.dim = parseInt(data, 10);
 
 	},
 
-	sizes: function ( data ) {
+	sizes: function (data) {
 
 		let i;
-		return this.sizes = ( function () {
+		return this.sizes = (function () {
 
-			const _ref = data.split( /\s+/ );
+			const _ref = data.split(/\s+/);
 			const _results = [];
 
-			for ( let _i = 0, _len = _ref.length; _i < _len; _i ++ ) {
+			for (let _i = 0, _len = _ref.length; _i < _len; _i ++) {
 
 				i = _ref[ _i ];
-				_results.push( parseInt( i, 10 ) );
+				_results.push(parseInt(i, 10));
 
 			}
 
 			return _results;
 
-		} )();
+		})();
 
 	},
 
-	space: function ( data ) {
+	space: function (data) {
 
 		return this.space = data;
 
 	},
 
-	'space origin': function ( data ) {
+	'space origin': function (data) {
 
-		return this.space_origin = data.split( '(' )[ 1 ].split( ')' )[ 0 ].split( ',' );
+		return this.space_origin = data.split('(')[ 1 ].split(')')[ 0 ].split(',');
 
 	},
 
-	'space directions': function ( data ) {
+	'space directions': function (data) {
 
 		let f, v;
-		const parts = data.match( /\(.*?\)/g );
-		return this.vectors = ( function () {
+		const parts = data.match(/\(.*?\)/g);
+		return this.vectors = (function () {
 
 			const _results = [];
 
-			for ( let _i = 0, _len = parts.length; _i < _len; _i ++ ) {
+			for (let _i = 0, _len = parts.length; _i < _len; _i ++) {
 
 				v = parts[ _i ];
-				_results.push( ( function () {
+				_results.push((function () {
 
-					const _ref = v.slice( 1, - 1 ).split( /,/ );
+					const _ref = v.slice(1, - 1).split(/,/);
 					const _results2 = [];
 
-					for ( let _j = 0, _len2 = _ref.length; _j < _len2; _j ++ ) {
+					for (let _j = 0, _len2 = _ref.length; _j < _len2; _j ++) {
 
 						f = _ref[ _j ];
-						_results2.push( parseFloat( f ) );
+						_results2.push(parseFloat(f));
 
 					}
 
 					return _results2;
 
-				} )() );
+				})());
 
 			}
 
 			return _results;
 
-		} )();
+		})();
 
 	},
 
-	spacings: function ( data ) {
+	spacings: function (data) {
 
 		let f;
-		const parts = data.split( /\s+/ );
-		return this.spacings = ( function () {
+		const parts = data.split(/\s+/);
+		return this.spacings = (function () {
 
 			const _results = [];
 
-			for ( let _i = 0, _len = parts.length; _i < _len; _i ++ ) {
+			for (let _i = 0, _len = parts.length; _i < _len; _i ++) {
 
 				f = parts[ _i ];
-				_results.push( parseFloat( f ) );
+				_results.push(parseFloat(f));
 
 			}
 
 			return _results;
 
-		} )();
+		})();
 
 	}
 
 };
 
-export { NRRDLoader };
+export {NRRDLoader};

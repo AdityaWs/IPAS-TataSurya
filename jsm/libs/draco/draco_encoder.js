@@ -28,6 +28,6 @@ var Qa=[er,Dq,Eq,Eq,Dq,gb,gr,gr,gr,ak,Vf,Eq,dp,gr,gr,Eq,gr,Eq,Eq,rl,_n,ll,Eq,ao,
 if (typeof exports === 'object' && typeof module === 'object')
   module.exports = DracoEncoderModule;
 else if (typeof define === 'function' && define['amd'])
-  define([], function() { return DracoEncoderModule; });
+  define([], function() {return DracoEncoderModule;});
 else if (typeof exports === 'object')
   exports["DracoEncoderModule"] = DracoEncoderModule;

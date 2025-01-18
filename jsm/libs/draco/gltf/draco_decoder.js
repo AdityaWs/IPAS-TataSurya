@@ -28,6 +28,6 @@ e=G;p(q);var $=c([null,Cc,Pa,Ha,Xd,ii,jh,ag,zc,xe,uc,jg,Wd,Qh,Pa,Pg,Hg,ua,yh,mh,
 if (typeof exports === 'object' && typeof module === 'object')
   module.exports = DracoDecoderModule;
 else if (typeof define === 'function' && define['amd'])
-  define([], function() { return DracoDecoderModule; });
+  define([], function() {return DracoDecoderModule;});
 else if (typeof exports === 'object')
   exports["DracoDecoderModule"] = DracoDecoderModule;

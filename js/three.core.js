@@ -5,8 +5,8 @@
  */
 const REVISION = '172';
 
-const MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2 };
-const TOUCH = { ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3 };
+const MOUSE = {LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2};
+const TOUCH = {ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3};
 const CullFaceNone = 0;
 const CullFaceBack = 1;
 const CullFaceFront = 2;
@@ -1651,8 +1651,8 @@ function createColorManagement() {
 		 *	- luminanceCoefficients: RGB luminance coefficients
 		 *
 		 * Optional:
-		 *  - outputColorSpaceConfig: { drawingBufferColorSpace: ColorSpace }
-		 *  - workingColorSpaceConfig: { unpackColorSpace: ColorSpace }
+		 *  - outputColorSpaceConfig: {drawingBufferColorSpace: ColorSpace}
+		 *  - workingColorSpaceConfig: {unpackColorSpace: ColorSpace}
 		 *
 		 * Reference:
 		 * - https://www.russellcottrell.com/photo/matrixCalculator.htm
@@ -1773,8 +1773,8 @@ function createColorManagement() {
 			toXYZ: LINEAR_REC709_TO_XYZ,
 			fromXYZ: XYZ_TO_LINEAR_REC709,
 			luminanceCoefficients: REC709_LUMINANCE_COEFFICIENTS,
-			workingColorSpaceConfig: { unpackColorSpace: SRGBColorSpace },
-			outputColorSpaceConfig: { drawingBufferColorSpace: SRGBColorSpace }
+			workingColorSpaceConfig: {unpackColorSpace: SRGBColorSpace},
+			outputColorSpaceConfig: {drawingBufferColorSpace: SRGBColorSpace}
 		},
 
 		[ SRGBColorSpace ]: {
@@ -1784,7 +1784,7 @@ function createColorManagement() {
 			toXYZ: LINEAR_REC709_TO_XYZ,
 			fromXYZ: XYZ_TO_LINEAR_REC709,
 			luminanceCoefficients: REC709_LUMINANCE_COEFFICIENTS,
-			outputColorSpaceConfig: { drawingBufferColorSpace: SRGBColorSpace }
+			outputColorSpaceConfig: {drawingBufferColorSpace: SRGBColorSpace}
 		},
 
 	} );
@@ -1940,7 +1940,7 @@ class Source {
 
 		this.isSource = true;
 
-		Object.defineProperty( this, 'id', { value: _sourceId ++ } );
+		Object.defineProperty( this, 'id', {value: _sourceId ++} );
 
 		this.uuid = generateUUID();
 
@@ -2066,7 +2066,7 @@ class Texture extends EventDispatcher {
 
 		this.isTexture = true;
 
-		Object.defineProperty( this, 'id', { value: _textureId ++ } );
+		Object.defineProperty( this, 'id', {value: _textureId ++} );
 
 		this.uuid = generateUUID();
 
@@ -2251,7 +2251,7 @@ class Texture extends EventDispatcher {
 
 	dispose() {
 
-		this.dispatchEvent( { type: 'dispose' } );
+		this.dispatchEvent( {type: 'dispose'} );
 
 	}
 
@@ -3051,7 +3051,7 @@ class RenderTarget extends EventDispatcher {
 
 		this.viewport = new Vector4( 0, 0, width, height );
 
-		const image = { width: width, height: height, depth: 1 };
+		const image = {width: width, height: height, depth: 1};
 
 		options = Object.assign( {
 			generateMipmaps: false,
@@ -3196,7 +3196,7 @@ class RenderTarget extends EventDispatcher {
 
 	dispose() {
 
-		this.dispatchEvent( { type: 'dispose' } );
+		this.dispatchEvent( {type: 'dispose'} );
 
 	}
 
@@ -3222,7 +3222,7 @@ class DataArrayTexture extends Texture {
 
 		this.isDataArrayTexture = true;
 
-		this.image = { data, width, height, depth };
+		this.image = {data, width, height, depth};
 
 		this.magFilter = NearestFilter;
 		this.minFilter = NearestFilter;
@@ -3285,7 +3285,7 @@ class Data3DTexture extends Texture {
 
 		this.isData3DTexture = true;
 
-		this.image = { data, width, height, depth };
+		this.image = {data, width, height, depth};
 
 		this.magFilter = NearestFilter;
 		this.minFilter = NearestFilter;
@@ -7277,11 +7277,11 @@ const _xAxis = /*@__PURE__*/ new Vector3( 1, 0, 0 );
 const _yAxis = /*@__PURE__*/ new Vector3( 0, 1, 0 );
 const _zAxis = /*@__PURE__*/ new Vector3( 0, 0, 1 );
 
-const _addedEvent = { type: 'added' };
-const _removedEvent = { type: 'removed' };
+const _addedEvent = {type: 'added'};
+const _removedEvent = {type: 'removed'};
 
-const _childaddedEvent = { type: 'childadded', child: null };
-const _childremovedEvent = { type: 'childremoved', child: null };
+const _childaddedEvent = {type: 'childadded', child: null};
+const _childremovedEvent = {type: 'childremoved', child: null};
 
 class Object3D extends EventDispatcher {
 
@@ -7291,7 +7291,7 @@ class Object3D extends EventDispatcher {
 
 		this.isObject3D = true;
 
-		Object.defineProperty( this, 'id', { value: _object3DId ++ } );
+		Object.defineProperty( this, 'id', {value: _object3DId ++} );
 
 		this.uuid = generateUUID();
 
@@ -8607,7 +8607,7 @@ class Triangle {
 
 }
 
-const _colorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
+const _colorKeywords = {'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 	'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
 	'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
 	'cornflowerblue': 0x6495ED, 'cornsilk': 0xFFF8DC, 'crimson': 0xDC143C, 'cyan': 0x00FFFF, 'darkblue': 0x00008B, 'darkcyan': 0x008B8B,
@@ -8630,10 +8630,10 @@ const _colorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua'
 	'royalblue': 0x4169E1, 'saddlebrown': 0x8B4513, 'salmon': 0xFA8072, 'sandybrown': 0xF4A460, 'seagreen': 0x2E8B57, 'seashell': 0xFFF5EE,
 	'sienna': 0xA0522D, 'silver': 0xC0C0C0, 'skyblue': 0x87CEEB, 'slateblue': 0x6A5ACD, 'slategray': 0x708090, 'slategrey': 0x708090, 'snow': 0xFFFAFA,
 	'springgreen': 0x00FF7F, 'steelblue': 0x4682B4, 'tan': 0xD2B48C, 'teal': 0x008080, 'thistle': 0xD8BFD8, 'tomato': 0xFF6347, 'turquoise': 0x40E0D0,
-	'violet': 0xEE82EE, 'wheat': 0xF5DEB3, 'white': 0xFFFFFF, 'whitesmoke': 0xF5F5F5, 'yellow': 0xFFFF00, 'yellowgreen': 0x9ACD32 };
+	'violet': 0xEE82EE, 'wheat': 0xF5DEB3, 'white': 0xFFFFFF, 'whitesmoke': 0xF5F5F5, 'yellow': 0xFFFF00, 'yellowgreen': 0x9ACD32};
 
-const _hslA = { h: 0, s: 0, l: 0 };
-const _hslB = { h: 0, s: 0, l: 0 };
+const _hslA = {h: 0, s: 0, l: 0};
+const _hslB = {h: 0, s: 0, l: 0};
 
 function hue2rgb( p, q, t ) {
 
@@ -9035,11 +9035,11 @@ class Color {
 		if ( colorSpace !== SRGBColorSpace ) {
 
 			// Requires CSS Color Module Level 4 (https://www.w3.org/TR/css-color-4/).
-			return `color(${ colorSpace } ${ r.toFixed( 3 ) } ${ g.toFixed( 3 ) } ${ b.toFixed( 3 ) })`;
+			return `color(${colorSpace} ${r.toFixed( 3 )} ${g.toFixed( 3 )} ${b.toFixed( 3 )})`;
 
 		}
 
-		return `rgb(${ Math.round( r * 255 ) },${ Math.round( g * 255 ) },${ Math.round( b * 255 ) })`;
+		return `rgb(${Math.round( r * 255 )},${Math.round( g * 255 )},${Math.round( b * 255 )})`;
 
 	}
 
@@ -9235,7 +9235,7 @@ class Material extends EventDispatcher {
 
 		this.isMaterial = true;
 
-		Object.defineProperty( this, 'id', { value: _materialId ++ } );
+		Object.defineProperty( this, 'id', {value: _materialId ++} );
 
 		this.uuid = generateUUID();
 
@@ -9344,7 +9344,7 @@ class Material extends EventDispatcher {
 
 			if ( newValue === undefined ) {
 
-				console.warn( `THREE.Material: parameter '${ key }' has value of undefined.` );
+				console.warn( `THREE.Material: parameter '${key}' has value of undefined.` );
 				continue;
 
 			}
@@ -9353,7 +9353,7 @@ class Material extends EventDispatcher {
 
 			if ( currentValue === undefined ) {
 
-				console.warn( `THREE.Material: '${ key }' is not a property of THREE.${ this.type }.` );
+				console.warn( `THREE.Material: '${key}' is not a property of THREE.${this.type}.` );
 				continue;
 
 			}
@@ -9732,7 +9732,7 @@ class Material extends EventDispatcher {
 
 	dispose() {
 
-		this.dispatchEvent( { type: 'dispose' } );
+		this.dispatchEvent( {type: 'dispose'} );
 
 	}
 
@@ -10045,7 +10045,7 @@ class BufferAttribute {
 
 	addUpdateRange( start, count ) {
 
-		this.updateRanges.push( { start, count } );
+		this.updateRanges.push( {start, count} );
 
 	}
 
@@ -10624,7 +10624,7 @@ class BufferGeometry extends EventDispatcher {
 
 		this.isBufferGeometry = true;
 
-		Object.defineProperty( this, 'id', { value: _id$1 ++ } );
+		Object.defineProperty( this, 'id', {value: _id$1 ++} );
 
 		this.uuid = generateUUID();
 
@@ -10643,7 +10643,7 @@ class BufferGeometry extends EventDispatcher {
 		this.boundingBox = null;
 		this.boundingSphere = null;
 
-		this.drawRange = { start: 0, count: Infinity };
+		this.drawRange = {start: 0, count: Infinity};
 
 		this.userData = {};
 
@@ -11508,7 +11508,7 @@ class BufferGeometry extends EventDispatcher {
 
 		// for simplicity the code assumes attributes are not shared across geometries, see #15811
 
-		data.data = { attributes: {} };
+		data.data = {attributes: {}};
 
 		const index = this.index;
 
@@ -11701,7 +11701,7 @@ class BufferGeometry extends EventDispatcher {
 
 	dispose() {
 
-		this.dispatchEvent( { type: 'dispose' } );
+		this.dispatchEvent( {type: 'dispose'} );
 
 	}
 
@@ -12390,7 +12390,7 @@ function getUnlitUniformColorSpace( renderer ) {
 
 // Legacy
 
-const UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
+const UniformsUtils = {clone: cloneUniforms, merge: mergeUniforms};
 
 var default_vertex = "void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}";
 
@@ -13027,7 +13027,7 @@ class CubeCamera extends Object3D {
 
 		if ( this.parent === null ) this.updateMatrixWorld();
 
-		const { renderTarget, activeMipmapLevel } = this;
+		const {renderTarget, activeMipmapLevel} = this;
 
 		if ( this.coordinateSystem !== renderer.coordinateSystem ) {
 
@@ -13121,7 +13121,7 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
 
 		this.isWebGLCubeRenderTarget = true;
 
-		const image = { width: size, height: size, depth: 1 };
+		const image = {width: size, height: size, depth: 1};
 		const images = [ image, image, image, image, image, image ];
 
 		this.texture = new CubeTexture( images, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.colorSpace );
@@ -13153,7 +13153,7 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
 		const shader = {
 
 			uniforms: {
-				tEquirect: { value: null },
+				tEquirect: {value: null},
 			},
 
 			vertexShader: /* glsl */`
@@ -13341,7 +13341,7 @@ class Scene extends Object3D {
 
 		if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 
-			__THREE_DEVTOOLS__.dispatchEvent( new CustomEvent( 'observe', { detail: this } ) );
+			__THREE_DEVTOOLS__.dispatchEvent( new CustomEvent( 'observe', {detail: this} ) );
 
 		}
 
@@ -13426,7 +13426,7 @@ class InterleavedBuffer {
 
 	addUpdateRange( start, count ) {
 
-		this.updateRanges.push( { start, count } );
+		this.updateRanges.push( {start, count} );
 
 	}
 
@@ -14172,7 +14172,7 @@ class LOD extends Object3D {
 
 		}
 
-		levels.splice( l, 0, { distance: distance, hysteresis: hysteresis, object: object } );
+		levels.splice( l, 0, {distance: distance, hysteresis: hysteresis, object: object} );
 
 		this.add( object );
 
@@ -14606,7 +14606,7 @@ class DataTexture extends Texture {
 
 		this.isDataTexture = true;
 
-		this.image = { data: data, width: width, height: height };
+		this.image = {data: data, width: width, height: height};
 
 		this.generateMipmaps = false;
 		this.flipY = false;
@@ -15172,7 +15172,7 @@ class InstancedMesh extends Mesh {
 
 	dispose() {
 
-		this.dispatchEvent( { type: 'dispose' } );
+		this.dispatchEvent( {type: 'dispose'} );
 
 		if ( this.morphTexture !== null ) {
 
@@ -15828,7 +15828,7 @@ class BatchedMesh extends Mesh {
 			for ( const attributeName in reference.attributes ) {
 
 				const srcAttribute = reference.getAttribute( attributeName );
-				const { array, itemSize, normalized } = srcAttribute;
+				const {array, itemSize, normalized} = srcAttribute;
 
 				const dstArray = new array.constructor( maxVertexCount * itemSize );
 				const dstAttribute = new BufferAttribute( dstArray, itemSize, normalized );
@@ -15869,7 +15869,7 @@ class BatchedMesh extends Mesh {
 
 			if ( ! geometry.hasAttribute( attributeName ) ) {
 
-				throw new Error( `THREE.BatchedMesh: Added geometry missing "${ attributeName }". All geometries must have consistent attributes.` );
+				throw new Error( `THREE.BatchedMesh: Added geometry missing "${attributeName}". All geometries must have consistent attributes.` );
 
 			}
 
@@ -16274,7 +16274,7 @@ class BatchedMesh extends Mesh {
 
 				if ( geometryInfo.indexStart !== nextIndexStart ) {
 
-					const { indexStart, vertexStart, reservedIndexCount } = geometryInfo;
+					const {indexStart, vertexStart, reservedIndexCount} = geometryInfo;
 					const index = geometry.index;
 					const array = index.array;
 
@@ -16301,12 +16301,12 @@ class BatchedMesh extends Mesh {
 			// if a geometry needs to be moved then copy attribute data to overwrite unused space
 			if ( geometryInfo.vertexStart !== nextVertexStart ) {
 
-				const { vertexStart, reservedVertexCount } = geometryInfo;
+				const {vertexStart, reservedVertexCount} = geometryInfo;
 				const attributes = geometry.attributes;
 				for ( const key in attributes ) {
 
 					const attribute = attributes[ key ];
-					const { array, itemSize } = attribute;
+					const {array, itemSize} = attribute;
 					array.copyWithin( nextVertexStart * itemSize, vertexStart * itemSize, ( vertexStart + reservedVertexCount ) * itemSize );
 					attribute.addUpdateRange( nextVertexStart * itemSize, reservedVertexCount * itemSize );
 
@@ -16538,7 +16538,7 @@ class BatchedMesh extends Mesh {
 		// throw an error if it can't be shrunk to the desired size
 		if ( maxInstanceCount < instanceInfo.length ) {
 
-			throw new Error( `BatchedMesh: Instance ids outside the range ${ maxInstanceCount } are being used. Cannot shrink instance count.` );
+			throw new Error( `BatchedMesh: Instance ids outside the range ${maxInstanceCount} are being used. Cannot shrink instance count.` );
 
 		}
 
@@ -16582,7 +16582,7 @@ class BatchedMesh extends Mesh {
 		const requiredVertexLength = Math.max( ...validRanges.map( range => range.vertexStart + range.reservedVertexCount ) );
 		if ( requiredVertexLength > maxVertexCount ) {
 
-			throw new Error( `BatchedMesh: Geometry vertex values are being used outside the range ${ maxIndexCount }. Cannot shrink further.` );
+			throw new Error( `BatchedMesh: Geometry vertex values are being used outside the range ${maxIndexCount}. Cannot shrink further.` );
 
 		}
 
@@ -16592,7 +16592,7 @@ class BatchedMesh extends Mesh {
 			const requiredIndexLength = Math.max( ...validRanges.map( range => range.indexStart + range.reservedIndexCount ) );
 			if ( requiredIndexLength > maxIndexCount ) {
 
-				throw new Error( `BatchedMesh: Geometry index values are being used outside the range ${ maxIndexCount }. Cannot shrink further.` );
+				throw new Error( `BatchedMesh: Geometry index values are being used outside the range ${maxIndexCount}. Cannot shrink further.` );
 
 			}
 
@@ -16710,7 +16710,7 @@ class BatchedMesh extends Mesh {
 			boundingBox: info.boundingBox !== null ? info.boundingBox.clone() : null,
 			boundingSphere: info.boundingSphere !== null ? info.boundingSphere.clone() : null,
 		} ) );
-		this._instanceInfo = source._instanceInfo.map( info => ( { ...info } ) );
+		this._instanceInfo = source._instanceInfo.map( info => ( {...info} ) );
 
 		this._maxInstanceCount = source._maxInstanceCount;
 		this._maxVertexCount = source._maxVertexCount;
@@ -17525,7 +17525,7 @@ class FramebufferTexture extends Texture {
 
 	constructor( width, height ) {
 
-		super( { width, height } );
+		super( {width, height} );
 
 		this.isFramebufferTexture = true;
 
@@ -17548,7 +17548,7 @@ class CompressedTexture extends Texture {
 
 		this.isCompressedTexture = true;
 
-		this.image = { width: width, height: height };
+		this.image = {width: width, height: height};
 		this.mipmaps = mipmaps;
 
 		// no flipping for cube textures
@@ -17639,7 +17639,7 @@ class DepthTexture extends Texture {
 
 		this.isDepthTexture = true;
 
-		this.image = { width: width, height: height };
+		this.image = {width: width, height: height};
 
 		this.magFilter = magFilter !== undefined ? magFilter : NearestFilter;
 		this.minFilter = minFilter !== undefined ? minFilter : NearestFilter;
@@ -17806,7 +17806,7 @@ class Curve {
 
 		this.cacheArcLengths = cache;
 
-		return cache; // { sums: cache, sum: sum }; Sum is in the last element.
+		return cache; // {sums: cache, sum: sum}; Sum is in the last element.
 
 	}
 
@@ -20625,16 +20625,16 @@ class EdgesGeometry extends BufferGeometry {
 
 				}
 
-				const { a, b, c } = _triangle;
+				const {a, b, c} = _triangle;
 				a.fromBufferAttribute( positionAttr, indexArr[ 0 ] );
 				b.fromBufferAttribute( positionAttr, indexArr[ 1 ] );
 				c.fromBufferAttribute( positionAttr, indexArr[ 2 ] );
 				_triangle.getNormal( _normal );
 
 				// create hashes for the edge from the vertices
-				hashes[ 0 ] = `${ Math.round( a.x * precision ) },${ Math.round( a.y * precision ) },${ Math.round( a.z * precision ) }`;
-				hashes[ 1 ] = `${ Math.round( b.x * precision ) },${ Math.round( b.y * precision ) },${ Math.round( b.z * precision ) }`;
-				hashes[ 2 ] = `${ Math.round( c.x * precision ) },${ Math.round( c.y * precision ) },${ Math.round( c.z * precision ) }`;
+				hashes[ 0 ] = `${Math.round( a.x * precision )},${Math.round( a.y * precision )},${Math.round( a.z * precision )}`;
+				hashes[ 1 ] = `${Math.round( b.x * precision )},${Math.round( b.y * precision )},${Math.round( b.z * precision )}`;
+				hashes[ 2 ] = `${Math.round( c.x * precision )},${Math.round( c.y * precision )},${Math.round( c.z * precision )}`;
 
 				// skip degenerate triangles
 				if ( hashes[ 0 ] === hashes[ 1 ] || hashes[ 1 ] === hashes[ 2 ] || hashes[ 2 ] === hashes[ 0 ] ) {
@@ -20653,8 +20653,8 @@ class EdgesGeometry extends BufferGeometry {
 					const v0 = _triangle[ vertKeys[ j ] ];
 					const v1 = _triangle[ vertKeys[ jNext ] ];
 
-					const hash = `${ vecHash0 }_${ vecHash1 }`;
-					const reverseHash = `${ vecHash1 }_${ vecHash0 }`;
+					const hash = `${vecHash0}_${vecHash1}`;
+					const reverseHash = `${vecHash1}_${vecHash0}`;
 
 					if ( reverseHash in edgeData && edgeData[ reverseHash ] ) {
 
@@ -20691,7 +20691,7 @@ class EdgesGeometry extends BufferGeometry {
 
 				if ( edgeData[ key ] ) {
 
-					const { index0, index1 } = edgeData[ key ];
+					const {index0, index1} = edgeData[ key ];
 					_v0.fromBufferAttribute( positionAttr, index0 );
 					_v1$1.fromBufferAttribute( positionAttr, index1 );
 
@@ -21713,7 +21713,7 @@ function addContour( vertices, contour ) {
  *
  *  UVGenerator: <Object> // object that provides UV generator functions
  *
- * }
+ *}
  */
 
 
@@ -23643,7 +23643,7 @@ class WireframeGeometry extends BufferGeometry {
 
 				if ( groups.length === 0 ) {
 
-					groups = [ { start: 0, count: indices.count, materialIndex: 0 } ];
+					groups = [ {start: 0, count: indices.count, materialIndex: 0} ];
 
 				}
 
@@ -23832,7 +23832,7 @@ class MeshStandardMaterial extends Material {
 
 		this.type = 'MeshStandardMaterial';
 
-		this.defines = { 'STANDARD': '' };
+		this.defines = {'STANDARD': ''};
 
 		this.color = new Color( 0xffffff ); // diffuse
 		this.roughness = 1.0;
@@ -23888,7 +23888,7 @@ class MeshStandardMaterial extends Material {
 
 		super.copy( source );
 
-		this.defines = { 'STANDARD': '' };
+		this.defines = {'STANDARD': ''};
 
 		this.color.copy( source.color );
 		this.roughness = source.roughness;
@@ -24305,7 +24305,7 @@ class MeshToonMaterial extends Material {
 
 		this.isMeshToonMaterial = true;
 
-		this.defines = { 'TOON': '' };
+		this.defines = {'TOON': ''};
 
 		this.type = 'MeshToonMaterial';
 
@@ -24659,7 +24659,7 @@ class MeshMatcapMaterial extends Material {
 
 		this.isMeshMatcapMaterial = true;
 
-		this.defines = { 'MATCAP': '' };
+		this.defines = {'MATCAP': ''};
 
 		this.type = 'MeshMatcapMaterial';
 
@@ -24695,7 +24695,7 @@ class MeshMatcapMaterial extends Material {
 
 		super.copy( source );
 
-		this.defines = { 'MATCAP': '' };
+		this.defines = {'MATCAP': ''};
 
 		this.color.copy( source.color );
 
@@ -26941,7 +26941,7 @@ class FileLoader extends Loader {
 
 							function readData() {
 
-								reader.read().then( ( { done, value } ) => {
+								reader.read().then( ( {done, value} ) => {
 
 									if ( done ) {
 
@@ -26951,7 +26951,7 @@ class FileLoader extends Loader {
 
 										loaded += value.byteLength;
 
-										const event = new ProgressEvent( 'progress', { lengthComputable, loaded, total } );
+										const event = new ProgressEvent( 'progress', {lengthComputable, loaded, total} );
 										for ( let i = 0, il = callbacks.length; i < il; i ++ ) {
 
 											const callback = callbacks[ i ];
@@ -27243,7 +27243,7 @@ class CompressedTextureLoader extends Loader {
 
 					for ( let f = 0; f < faces; f ++ ) {
 
-						images[ f ] = { mipmaps: [] };
+						images[ f ] = {mipmaps: []};
 
 						for ( let i = 0; i < texDatas.mipmapCount; i ++ ) {
 
@@ -28948,7 +28948,7 @@ class MaterialLoader extends Loader {
 
 class LoaderUtils {
 
-	static decodeText( array ) { // @deprecated, r165
+	static decodeText( array ) {// @deprecated, r165
 
 		console.warn( 'THREE.LoaderUtils: decodeText() has been deprecated with r165 and will be removed with r175. Use TextDecoder instead.' );
 
@@ -28976,7 +28976,7 @@ class LoaderUtils {
 
 			return decodeURIComponent( escape( s ) );
 
-		} catch ( e ) { // see #16358
+		} catch ( e ) {// see #16358
 
 			return s;
 
@@ -29492,7 +29492,7 @@ class ObjectLoader extends Loader {
 
 						} else {
 
-							console.warn( `THREE.ObjectLoader: Unsupported geometry type "${ data.type }"` );
+							console.warn( `THREE.ObjectLoader: Unsupported geometry type "${data.type}"` );
 
 						}
 
@@ -30400,7 +30400,7 @@ class ImageBitmapLoader extends Loader {
 
 		}
 
-		this.options = { premultiplyAlpha: 'none' };
+		this.options = {premultiplyAlpha: 'none'};
 
 	}
 
@@ -30469,7 +30469,7 @@ class ImageBitmapLoader extends Loader {
 
 		} ).then( function ( blob ) {
 
-			return createImageBitmap( blob, Object.assign( scope.options, { colorSpaceConversion: 'none' } ) );
+			return createImageBitmap( blob, Object.assign( scope.options, {colorSpaceConversion: 'none'} ) );
 
 		} ).then( function ( imageBitmap ) {
 
@@ -32594,7 +32594,7 @@ class AnimationObjectGroup {
 		}
 
 		this._paths = []; // inside: string
-		this._parsedPaths = []; // inside: { we don't care, here }
+		this._parsedPaths = []; // inside: {we don't care, here}
 		this._bindings = []; // inside: Array< PropertyBinding >
 		this._bindingsIndicesByPath = {}; // inside: indices in these arrays
 
@@ -33458,7 +33458,7 @@ class AnimationAction {
 
 			}
 
-		} else { // repetitive Repeat or PingPong
+		} else {// repetitive Repeat or PingPong
 
 			if ( loopCount === - 1 ) {
 
@@ -33786,7 +33786,7 @@ class AnimationMixer extends EventDispatcher {
 		// {
 		// 	knownActions: Array< AnimationAction > - used as prototypes
 		// 	actionByRoot: AnimationAction - lookup
-		// }
+		//}
 
 
 		this._bindings = []; // 'nActiveBindings' followed by inactive ones
@@ -34441,7 +34441,7 @@ class UniformsGroup extends EventDispatcher {
 
 		this.isUniformsGroup = true;
 
-		Object.defineProperty( this, 'id', { value: _id ++ } );
+		Object.defineProperty( this, 'id', {value: _id ++} );
 
 		this.name = '';
 
@@ -34486,7 +34486,7 @@ class UniformsGroup extends EventDispatcher {
 
 	dispose() {
 
-		this.dispatchEvent( { type: 'dispose' } );
+		this.dispatchEvent( {type: 'dispose'} );
 
 		return this;
 
@@ -34645,9 +34645,9 @@ class Raycaster {
 
 		this.params = {
 			Mesh: {},
-			Line: { threshold: 1 },
+			Line: {threshold: 1},
 			LOD: {},
-			Points: { threshold: 1 },
+			Points: {threshold: 1},
 			Sprite: {}
 		};
 
@@ -35301,7 +35301,7 @@ class SpotLightHelper extends Object3D {
 
 		geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
 
-		const material = new LineBasicMaterial( { fog: false, toneMapped: false } );
+		const material = new LineBasicMaterial( {fog: false, toneMapped: false} );
 
 		this.cone = new LineSegments( geometry, material );
 		this.add( this.cone );
@@ -35400,7 +35400,7 @@ class SkeletonHelper extends LineSegments {
 		geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 		geometry.setAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
 
-		const material = new LineBasicMaterial( { vertexColors: true, depthTest: false, depthWrite: false, toneMapped: false, transparent: true } );
+		const material = new LineBasicMaterial( {vertexColors: true, depthTest: false, depthWrite: false, toneMapped: false, transparent: true} );
 
 		super( geometry, material );
 
@@ -35486,7 +35486,7 @@ class PointLightHelper extends Mesh {
 	constructor( light, sphereSize, color ) {
 
 		const geometry = new SphereGeometry( sphereSize, 4, 2 );
-		const material = new MeshBasicMaterial( { wireframe: true, fog: false, toneMapped: false } );
+		const material = new MeshBasicMaterial( {wireframe: true, fog: false, toneMapped: false} );
 
 		super( geometry, material );
 
@@ -35505,7 +35505,7 @@ class PointLightHelper extends Mesh {
 		/*
 	// TODO: delete this comment?
 	const distanceGeometry = new THREE.IcosahedronGeometry( 1, 2 );
-	const distanceMaterial = new THREE.MeshBasicMaterial( { color: hexColor, fog: false, wireframe: true, opacity: 0.1, transparent: true } );
+	const distanceMaterial = new THREE.MeshBasicMaterial( {color: hexColor, fog: false, wireframe: true, opacity: 0.1, transparent: true} );
 
 	this.lightSphere = new THREE.Mesh( bulbGeometry, bulbMaterial );
 	this.lightDistance = new THREE.Mesh( distanceGeometry, distanceMaterial );
@@ -35589,7 +35589,7 @@ class HemisphereLightHelper extends Object3D {
 		const geometry = new OctahedronGeometry( size );
 		geometry.rotateY( Math.PI * 0.5 );
 
-		this.material = new MeshBasicMaterial( { wireframe: true, fog: false, toneMapped: false } );
+		this.material = new MeshBasicMaterial( {wireframe: true, fog: false, toneMapped: false} );
 		if ( this.color === undefined ) this.material.vertexColors = true;
 
 		const position = geometry.getAttribute( 'position' );
@@ -35676,7 +35676,7 @@ class GridHelper extends LineSegments {
 		geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 		geometry.setAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
 
-		const material = new LineBasicMaterial( { vertexColors: true, toneMapped: false } );
+		const material = new LineBasicMaterial( {vertexColors: true, toneMapped: false} );
 
 		super( geometry, material );
 
@@ -35764,7 +35764,7 @@ class PolarGridHelper extends LineSegments {
 		geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 		geometry.setAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
 
-		const material = new LineBasicMaterial( { vertexColors: true, toneMapped: false } );
+		const material = new LineBasicMaterial( {vertexColors: true, toneMapped: false} );
 
 		super( geometry, material );
 
@@ -35811,7 +35811,7 @@ class DirectionalLightHelper extends Object3D {
 			- size, size, 0
 		], 3 ) );
 
-		const material = new LineBasicMaterial( { fog: false, toneMapped: false } );
+		const material = new LineBasicMaterial( {fog: false, toneMapped: false} );
 
 		this.lightPlane = new Line( geometry, material );
 		this.add( this.lightPlane );
@@ -35880,7 +35880,7 @@ class CameraHelper extends LineSegments {
 	constructor( camera ) {
 
 		const geometry = new BufferGeometry();
-		const material = new LineBasicMaterial( { color: 0xffffff, vertexColors: true, toneMapped: false } );
+		const material = new LineBasicMaterial( {color: 0xffffff, vertexColors: true, toneMapped: false} );
 
 		const vertices = [];
 		const colors = [];
@@ -36140,7 +36140,7 @@ class BoxHelper extends LineSegments {
 		geometry.setIndex( new BufferAttribute( indices, 1 ) );
 		geometry.setAttribute( 'position', new BufferAttribute( positions, 3 ) );
 
-		super( geometry, new LineBasicMaterial( { color: color, toneMapped: false } ) );
+		super( geometry, new LineBasicMaterial( {color: color, toneMapped: false} ) );
 
 		this.object = object;
 		this.type = 'BoxHelper';
@@ -36246,7 +36246,7 @@ class Box3Helper extends LineSegments {
 
 		geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
 
-		super( geometry, new LineBasicMaterial( { color: color, toneMapped: false } ) );
+		super( geometry, new LineBasicMaterial( {color: color, toneMapped: false} ) );
 
 		this.box = box;
 
@@ -36293,7 +36293,7 @@ class PlaneHelper extends Line {
 		geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
 		geometry.computeBoundingSphere();
 
-		super( geometry, new LineBasicMaterial( { color: color, toneMapped: false } ) );
+		super( geometry, new LineBasicMaterial( {color: color, toneMapped: false} ) );
 
 		this.type = 'PlaneHelper';
 
@@ -36307,7 +36307,7 @@ class PlaneHelper extends Line {
 		geometry2.setAttribute( 'position', new Float32BufferAttribute( positions2, 3 ) );
 		geometry2.computeBoundingSphere();
 
-		this.add( new Mesh( geometry2, new MeshBasicMaterial( { color: color, opacity: 0.2, transparent: true, depthWrite: false, toneMapped: false } ) ) );
+		this.add( new Mesh( geometry2, new MeshBasicMaterial( {color: color, opacity: 0.2, transparent: true, depthWrite: false, toneMapped: false} ) ) );
 
 	}
 
@@ -36361,11 +36361,11 @@ class ArrowHelper extends Object3D {
 
 		this.position.copy( origin );
 
-		this.line = new Line( _lineGeometry, new LineBasicMaterial( { color: color, toneMapped: false } ) );
+		this.line = new Line( _lineGeometry, new LineBasicMaterial( {color: color, toneMapped: false} ) );
 		this.line.matrixAutoUpdate = false;
 		this.add( this.line );
 
-		this.cone = new Mesh( _coneGeometry, new MeshBasicMaterial( { color: color, toneMapped: false } ) );
+		this.cone = new Mesh( _coneGeometry, new MeshBasicMaterial( {color: color, toneMapped: false} ) );
 		this.cone.matrixAutoUpdate = false;
 		this.add( this.cone );
 
@@ -36458,7 +36458,7 @@ class AxesHelper extends LineSegments {
 		geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 		geometry.setAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
 
-		const material = new LineBasicMaterial( { vertexColors: true, toneMapped: false } );
+		const material = new LineBasicMaterial( {vertexColors: true, toneMapped: false} );
 
 		super( geometry, material );
 
@@ -36677,7 +36677,7 @@ class ShapePath {
 
 				if ( ( ! holesFirst ) && ( newShapes[ mainIdx ] ) )	mainIdx ++;
 
-				newShapes[ mainIdx ] = { s: new Shape(), p: tmpPoints };
+				newShapes[ mainIdx ] = {s: new Shape(), p: tmpPoints};
 				newShapes[ mainIdx ].s.curves = tmpPath.curves;
 
 				if ( holesFirst )	mainIdx ++;
@@ -36687,7 +36687,7 @@ class ShapePath {
 
 			} else {
 
-				newShapeHoles[ mainIdx ].push( { h: tmpPath, p: tmpPoints[ 0 ] } );
+				newShapeHoles[ mainIdx ].push( {h: tmpPath, p: tmpPoints[ 0 ]} );
 
 				//console.log('ccw', i);
 
@@ -36796,8 +36796,8 @@ class Controls extends EventDispatcher {
 		this.state = - 1;
 
 		this.keys = {};
-		this.mouseButtons = { LEFT: null, MIDDLE: null, RIGHT: null };
-		this.touches = { ONE: null, TWO: null };
+		this.mouseButtons = {LEFT: null, MIDDLE: null, RIGHT: null};
+		this.touches = {ONE: null, TWO: null};
 
 	}
 
@@ -36996,20 +36996,20 @@ function getTextureTypeByteLength( type ) {
 
 		case UnsignedByteType:
 		case ByteType:
-			return { byteLength: 1, components: 1 };
+			return {byteLength: 1, components: 1};
 		case UnsignedShortType:
 		case ShortType:
 		case HalfFloatType:
-			return { byteLength: 2, components: 1 };
+			return {byteLength: 2, components: 1};
 		case UnsignedShort4444Type:
 		case UnsignedShort5551Type:
-			return { byteLength: 2, components: 4 };
+			return {byteLength: 2, components: 4};
 		case UnsignedIntType:
 		case IntType:
 		case FloatType:
-			return { byteLength: 4, components: 1 };
+			return {byteLength: 4, components: 1};
 		case UnsignedInt5999Type:
-			return { byteLength: 4, components: 3 };
+			return {byteLength: 4, components: 3};
 
 	}
 
@@ -37026,9 +37026,9 @@ const TextureUtils = {
 
 if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 
-	__THREE_DEVTOOLS__.dispatchEvent( new CustomEvent( 'register', { detail: {
+	__THREE_DEVTOOLS__.dispatchEvent( new CustomEvent( 'register', {detail: {
 		revision: REVISION,
-	} } ) );
+	}} ) );
 
 }
 
@@ -37046,4 +37046,4 @@ if ( typeof window !== 'undefined' ) {
 
 }
 
-export { ACESFilmicToneMapping, AddEquation, AddOperation, AdditiveAnimationBlendMode, AdditiveBlending, AgXToneMapping, AlphaFormat, AlwaysCompare, AlwaysDepth, AlwaysStencilFunc, AmbientLight, AnimationAction, AnimationClip, AnimationLoader, AnimationMixer, AnimationObjectGroup, AnimationUtils, ArcCurve, ArrayCamera, ArrowHelper, AttachedBindMode, Audio, AudioAnalyser, AudioContext, AudioListener, AudioLoader, AxesHelper, BackSide, BasicDepthPacking, BasicShadowMap, BatchedMesh, Bone, BooleanKeyframeTrack, Box2, Box3, Box3Helper, BoxGeometry, BoxHelper, BufferAttribute, BufferGeometry, BufferGeometryLoader, ByteType, Cache, Camera, CameraHelper, CanvasTexture, CapsuleGeometry, CatmullRomCurve3, CineonToneMapping, CircleGeometry, ClampToEdgeWrapping, Clock, Color, ColorKeyframeTrack, ColorManagement, CompressedArrayTexture, CompressedCubeTexture, CompressedTexture, CompressedTextureLoader, ConeGeometry, ConstantAlphaFactor, ConstantColorFactor, Controls, CubeCamera, CubeReflectionMapping, CubeRefractionMapping, CubeTexture, CubeTextureLoader, CubeUVReflectionMapping, CubicBezierCurve, CubicBezierCurve3, CubicInterpolant, CullFaceBack, CullFaceFront, CullFaceFrontBack, CullFaceNone, Curve, CurvePath, CustomBlending, CustomToneMapping, CylinderGeometry, Cylindrical, Data3DTexture, DataArrayTexture, DataTexture, DataTextureLoader, DataUtils, DecrementStencilOp, DecrementWrapStencilOp, DefaultLoadingManager, DepthFormat, DepthStencilFormat, DepthTexture, DetachedBindMode, DirectionalLight, DirectionalLightHelper, DiscreteInterpolant, DodecahedronGeometry, DoubleSide, DstAlphaFactor, DstColorFactor, DynamicCopyUsage, DynamicDrawUsage, DynamicReadUsage, EdgesGeometry, EllipseCurve, EqualCompare, EqualDepth, EqualStencilFunc, EquirectangularReflectionMapping, EquirectangularRefractionMapping, Euler, EventDispatcher, ExtrudeGeometry, FileLoader, Float16BufferAttribute, Float32BufferAttribute, FloatType, Fog, FogExp2, FramebufferTexture, FrontSide, Frustum, GLBufferAttribute, GLSL1, GLSL3, GreaterCompare, GreaterDepth, GreaterEqualCompare, GreaterEqualDepth, GreaterEqualStencilFunc, GreaterStencilFunc, GridHelper, Group, HalfFloatType, HemisphereLight, HemisphereLightHelper, IcosahedronGeometry, ImageBitmapLoader, ImageLoader, ImageUtils, IncrementStencilOp, IncrementWrapStencilOp, InstancedBufferAttribute, InstancedBufferGeometry, InstancedInterleavedBuffer, InstancedMesh, Int16BufferAttribute, Int32BufferAttribute, Int8BufferAttribute, IntType, InterleavedBuffer, InterleavedBufferAttribute, Interpolant, InterpolateDiscrete, InterpolateLinear, InterpolateSmooth, InvertStencilOp, KeepStencilOp, KeyframeTrack, LOD, LatheGeometry, Layers, LessCompare, LessDepth, LessEqualCompare, LessEqualDepth, LessEqualStencilFunc, LessStencilFunc, Light, LightProbe, Line, Line3, LineBasicMaterial, LineCurve, LineCurve3, LineDashedMaterial, LineLoop, LineSegments, LinearFilter, LinearInterpolant, LinearMipMapLinearFilter, LinearMipMapNearestFilter, LinearMipmapLinearFilter, LinearMipmapNearestFilter, LinearSRGBColorSpace, LinearToneMapping, LinearTransfer, Loader, LoaderUtils, LoadingManager, LoopOnce, LoopPingPong, LoopRepeat, LuminanceAlphaFormat, LuminanceFormat, MOUSE, Material, MaterialLoader, MathUtils, Matrix2, Matrix3, Matrix4, MaxEquation, Mesh, MeshBasicMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshLambertMaterial, MeshMatcapMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, MeshStandardMaterial, MeshToonMaterial, MinEquation, MirroredRepeatWrapping, MixOperation, MultiplyBlending, MultiplyOperation, NearestFilter, NearestMipMapLinearFilter, NearestMipMapNearestFilter, NearestMipmapLinearFilter, NearestMipmapNearestFilter, NeutralToneMapping, NeverCompare, NeverDepth, NeverStencilFunc, NoBlending, NoColorSpace, NoToneMapping, NormalAnimationBlendMode, NormalBlending, NotEqualCompare, NotEqualDepth, NotEqualStencilFunc, NumberKeyframeTrack, Object3D, ObjectLoader, ObjectSpaceNormalMap, OctahedronGeometry, OneFactor, OneMinusConstantAlphaFactor, OneMinusConstantColorFactor, OneMinusDstAlphaFactor, OneMinusDstColorFactor, OneMinusSrcAlphaFactor, OneMinusSrcColorFactor, OrthographicCamera, PCFShadowMap, PCFSoftShadowMap, Path, PerspectiveCamera, Plane, PlaneGeometry, PlaneHelper, PointLight, PointLightHelper, Points, PointsMaterial, PolarGridHelper, PolyhedronGeometry, PositionalAudio, PropertyBinding, PropertyMixer, QuadraticBezierCurve, QuadraticBezierCurve3, Quaternion, QuaternionKeyframeTrack, QuaternionLinearInterpolant, RAD2DEG, RED_GREEN_RGTC2_Format, RED_RGTC1_Format, REVISION, RGBADepthPacking, RGBAFormat, RGBAIntegerFormat, RGBA_ASTC_10x10_Format, RGBA_ASTC_10x5_Format, RGBA_ASTC_10x6_Format, RGBA_ASTC_10x8_Format, RGBA_ASTC_12x10_Format, RGBA_ASTC_12x12_Format, RGBA_ASTC_4x4_Format, RGBA_ASTC_5x4_Format, RGBA_ASTC_5x5_Format, RGBA_ASTC_6x5_Format, RGBA_ASTC_6x6_Format, RGBA_ASTC_8x5_Format, RGBA_ASTC_8x6_Format, RGBA_ASTC_8x8_Format, RGBA_BPTC_Format, RGBA_ETC2_EAC_Format, RGBA_PVRTC_2BPPV1_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT3_Format, RGBA_S3TC_DXT5_Format, RGBDepthPacking, RGBFormat, RGBIntegerFormat, RGB_BPTC_SIGNED_Format, RGB_BPTC_UNSIGNED_Format, RGB_ETC1_Format, RGB_ETC2_Format, RGB_PVRTC_2BPPV1_Format, RGB_PVRTC_4BPPV1_Format, RGB_S3TC_DXT1_Format, RGDepthPacking, RGFormat, RGIntegerFormat, RawShaderMaterial, Ray, Raycaster, RectAreaLight, RedFormat, RedIntegerFormat, ReinhardToneMapping, RenderTarget, RenderTarget3D, RenderTargetArray, RepeatWrapping, ReplaceStencilOp, ReverseSubtractEquation, RingGeometry, SIGNED_RED_GREEN_RGTC2_Format, SIGNED_RED_RGTC1_Format, SRGBColorSpace, SRGBTransfer, Scene, ShaderMaterial, ShadowMaterial, Shape, ShapeGeometry, ShapePath, ShapeUtils, ShortType, Skeleton, SkeletonHelper, SkinnedMesh, Source, Sphere, SphereGeometry, Spherical, SphericalHarmonics3, SplineCurve, SpotLight, SpotLightHelper, Sprite, SpriteMaterial, SrcAlphaFactor, SrcAlphaSaturateFactor, SrcColorFactor, StaticCopyUsage, StaticDrawUsage, StaticReadUsage, StereoCamera, StreamCopyUsage, StreamDrawUsage, StreamReadUsage, StringKeyframeTrack, SubtractEquation, SubtractiveBlending, TOUCH, TangentSpaceNormalMap, TetrahedronGeometry, Texture, TextureLoader, TextureUtils, TorusGeometry, TorusKnotGeometry, Triangle, TriangleFanDrawMode, TriangleStripDrawMode, TrianglesDrawMode, TubeGeometry, UVMapping, Uint16BufferAttribute, Uint32BufferAttribute, Uint8BufferAttribute, Uint8ClampedBufferAttribute, Uniform, UniformsGroup, UniformsUtils, UnsignedByteType, UnsignedInt248Type, UnsignedInt5999Type, UnsignedIntType, UnsignedShort4444Type, UnsignedShort5551Type, UnsignedShortType, VSMShadowMap, Vector2, Vector3, Vector4, VectorKeyframeTrack, VideoTexture, WebGL3DRenderTarget, WebGLArrayRenderTarget, WebGLCoordinateSystem, WebGLCubeRenderTarget, WebGLRenderTarget, WebGPUCoordinateSystem, WireframeGeometry, WrapAroundEnding, ZeroCurvatureEnding, ZeroFactor, ZeroSlopeEnding, ZeroStencilOp, arrayNeedsUint32, cloneUniforms, createCanvasElement, createElementNS, getByteLength, getUnlitUniformColorSpace, mergeUniforms, probeAsync, toNormalizedProjectionMatrix, toReversedProjectionMatrix, warnOnce };
+export {ACESFilmicToneMapping, AddEquation, AddOperation, AdditiveAnimationBlendMode, AdditiveBlending, AgXToneMapping, AlphaFormat, AlwaysCompare, AlwaysDepth, AlwaysStencilFunc, AmbientLight, AnimationAction, AnimationClip, AnimationLoader, AnimationMixer, AnimationObjectGroup, AnimationUtils, ArcCurve, ArrayCamera, ArrowHelper, AttachedBindMode, Audio, AudioAnalyser, AudioContext, AudioListener, AudioLoader, AxesHelper, BackSide, BasicDepthPacking, BasicShadowMap, BatchedMesh, Bone, BooleanKeyframeTrack, Box2, Box3, Box3Helper, BoxGeometry, BoxHelper, BufferAttribute, BufferGeometry, BufferGeometryLoader, ByteType, Cache, Camera, CameraHelper, CanvasTexture, CapsuleGeometry, CatmullRomCurve3, CineonToneMapping, CircleGeometry, ClampToEdgeWrapping, Clock, Color, ColorKeyframeTrack, ColorManagement, CompressedArrayTexture, CompressedCubeTexture, CompressedTexture, CompressedTextureLoader, ConeGeometry, ConstantAlphaFactor, ConstantColorFactor, Controls, CubeCamera, CubeReflectionMapping, CubeRefractionMapping, CubeTexture, CubeTextureLoader, CubeUVReflectionMapping, CubicBezierCurve, CubicBezierCurve3, CubicInterpolant, CullFaceBack, CullFaceFront, CullFaceFrontBack, CullFaceNone, Curve, CurvePath, CustomBlending, CustomToneMapping, CylinderGeometry, Cylindrical, Data3DTexture, DataArrayTexture, DataTexture, DataTextureLoader, DataUtils, DecrementStencilOp, DecrementWrapStencilOp, DefaultLoadingManager, DepthFormat, DepthStencilFormat, DepthTexture, DetachedBindMode, DirectionalLight, DirectionalLightHelper, DiscreteInterpolant, DodecahedronGeometry, DoubleSide, DstAlphaFactor, DstColorFactor, DynamicCopyUsage, DynamicDrawUsage, DynamicReadUsage, EdgesGeometry, EllipseCurve, EqualCompare, EqualDepth, EqualStencilFunc, EquirectangularReflectionMapping, EquirectangularRefractionMapping, Euler, EventDispatcher, ExtrudeGeometry, FileLoader, Float16BufferAttribute, Float32BufferAttribute, FloatType, Fog, FogExp2, FramebufferTexture, FrontSide, Frustum, GLBufferAttribute, GLSL1, GLSL3, GreaterCompare, GreaterDepth, GreaterEqualCompare, GreaterEqualDepth, GreaterEqualStencilFunc, GreaterStencilFunc, GridHelper, Group, HalfFloatType, HemisphereLight, HemisphereLightHelper, IcosahedronGeometry, ImageBitmapLoader, ImageLoader, ImageUtils, IncrementStencilOp, IncrementWrapStencilOp, InstancedBufferAttribute, InstancedBufferGeometry, InstancedInterleavedBuffer, InstancedMesh, Int16BufferAttribute, Int32BufferAttribute, Int8BufferAttribute, IntType, InterleavedBuffer, InterleavedBufferAttribute, Interpolant, InterpolateDiscrete, InterpolateLinear, InterpolateSmooth, InvertStencilOp, KeepStencilOp, KeyframeTrack, LOD, LatheGeometry, Layers, LessCompare, LessDepth, LessEqualCompare, LessEqualDepth, LessEqualStencilFunc, LessStencilFunc, Light, LightProbe, Line, Line3, LineBasicMaterial, LineCurve, LineCurve3, LineDashedMaterial, LineLoop, LineSegments, LinearFilter, LinearInterpolant, LinearMipMapLinearFilter, LinearMipMapNearestFilter, LinearMipmapLinearFilter, LinearMipmapNearestFilter, LinearSRGBColorSpace, LinearToneMapping, LinearTransfer, Loader, LoaderUtils, LoadingManager, LoopOnce, LoopPingPong, LoopRepeat, LuminanceAlphaFormat, LuminanceFormat, MOUSE, Material, MaterialLoader, MathUtils, Matrix2, Matrix3, Matrix4, MaxEquation, Mesh, MeshBasicMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshLambertMaterial, MeshMatcapMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, MeshStandardMaterial, MeshToonMaterial, MinEquation, MirroredRepeatWrapping, MixOperation, MultiplyBlending, MultiplyOperation, NearestFilter, NearestMipMapLinearFilter, NearestMipMapNearestFilter, NearestMipmapLinearFilter, NearestMipmapNearestFilter, NeutralToneMapping, NeverCompare, NeverDepth, NeverStencilFunc, NoBlending, NoColorSpace, NoToneMapping, NormalAnimationBlendMode, NormalBlending, NotEqualCompare, NotEqualDepth, NotEqualStencilFunc, NumberKeyframeTrack, Object3D, ObjectLoader, ObjectSpaceNormalMap, OctahedronGeometry, OneFactor, OneMinusConstantAlphaFactor, OneMinusConstantColorFactor, OneMinusDstAlphaFactor, OneMinusDstColorFactor, OneMinusSrcAlphaFactor, OneMinusSrcColorFactor, OrthographicCamera, PCFShadowMap, PCFSoftShadowMap, Path, PerspectiveCamera, Plane, PlaneGeometry, PlaneHelper, PointLight, PointLightHelper, Points, PointsMaterial, PolarGridHelper, PolyhedronGeometry, PositionalAudio, PropertyBinding, PropertyMixer, QuadraticBezierCurve, QuadraticBezierCurve3, Quaternion, QuaternionKeyframeTrack, QuaternionLinearInterpolant, RAD2DEG, RED_GREEN_RGTC2_Format, RED_RGTC1_Format, REVISION, RGBADepthPacking, RGBAFormat, RGBAIntegerFormat, RGBA_ASTC_10x10_Format, RGBA_ASTC_10x5_Format, RGBA_ASTC_10x6_Format, RGBA_ASTC_10x8_Format, RGBA_ASTC_12x10_Format, RGBA_ASTC_12x12_Format, RGBA_ASTC_4x4_Format, RGBA_ASTC_5x4_Format, RGBA_ASTC_5x5_Format, RGBA_ASTC_6x5_Format, RGBA_ASTC_6x6_Format, RGBA_ASTC_8x5_Format, RGBA_ASTC_8x6_Format, RGBA_ASTC_8x8_Format, RGBA_BPTC_Format, RGBA_ETC2_EAC_Format, RGBA_PVRTC_2BPPV1_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT3_Format, RGBA_S3TC_DXT5_Format, RGBDepthPacking, RGBFormat, RGBIntegerFormat, RGB_BPTC_SIGNED_Format, RGB_BPTC_UNSIGNED_Format, RGB_ETC1_Format, RGB_ETC2_Format, RGB_PVRTC_2BPPV1_Format, RGB_PVRTC_4BPPV1_Format, RGB_S3TC_DXT1_Format, RGDepthPacking, RGFormat, RGIntegerFormat, RawShaderMaterial, Ray, Raycaster, RectAreaLight, RedFormat, RedIntegerFormat, ReinhardToneMapping, RenderTarget, RenderTarget3D, RenderTargetArray, RepeatWrapping, ReplaceStencilOp, ReverseSubtractEquation, RingGeometry, SIGNED_RED_GREEN_RGTC2_Format, SIGNED_RED_RGTC1_Format, SRGBColorSpace, SRGBTransfer, Scene, ShaderMaterial, ShadowMaterial, Shape, ShapeGeometry, ShapePath, ShapeUtils, ShortType, Skeleton, SkeletonHelper, SkinnedMesh, Source, Sphere, SphereGeometry, Spherical, SphericalHarmonics3, SplineCurve, SpotLight, SpotLightHelper, Sprite, SpriteMaterial, SrcAlphaFactor, SrcAlphaSaturateFactor, SrcColorFactor, StaticCopyUsage, StaticDrawUsage, StaticReadUsage, StereoCamera, StreamCopyUsage, StreamDrawUsage, StreamReadUsage, StringKeyframeTrack, SubtractEquation, SubtractiveBlending, TOUCH, TangentSpaceNormalMap, TetrahedronGeometry, Texture, TextureLoader, TextureUtils, TorusGeometry, TorusKnotGeometry, Triangle, TriangleFanDrawMode, TriangleStripDrawMode, TrianglesDrawMode, TubeGeometry, UVMapping, Uint16BufferAttribute, Uint32BufferAttribute, Uint8BufferAttribute, Uint8ClampedBufferAttribute, Uniform, UniformsGroup, UniformsUtils, UnsignedByteType, UnsignedInt248Type, UnsignedInt5999Type, UnsignedIntType, UnsignedShort4444Type, UnsignedShort5551Type, UnsignedShortType, VSMShadowMap, Vector2, Vector3, Vector4, VectorKeyframeTrack, VideoTexture, WebGL3DRenderTarget, WebGLArrayRenderTarget, WebGLCoordinateSystem, WebGLCubeRenderTarget, WebGLRenderTarget, WebGPUCoordinateSystem, WireframeGeometry, WrapAroundEnding, ZeroCurvatureEnding, ZeroFactor, ZeroSlopeEnding, ZeroStencilOp, arrayNeedsUint32, cloneUniforms, createCanvasElement, createElementNS, getByteLength, getUnlitUniformColorSpace, mergeUniforms, probeAsync, toNormalizedProjectionMatrix, toReversedProjectionMatrix, warnOnce};

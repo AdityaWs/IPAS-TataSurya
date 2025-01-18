@@ -15,57 +15,57 @@ import {
 
 class VOXLoader extends Loader {
 
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
 
 		const scope = this;
 
-		const loader = new FileLoader( scope.manager );
-		loader.setPath( scope.path );
-		loader.setResponseType( 'arraybuffer' );
-		loader.setRequestHeader( scope.requestHeader );
-		loader.load( url, function ( buffer ) {
+		const loader = new FileLoader(scope.manager);
+		loader.setPath(scope.path);
+		loader.setResponseType('arraybuffer');
+		loader.setRequestHeader(scope.requestHeader);
+		loader.load(url, function (buffer) {
 
 			try {
 
-				onLoad( scope.parse( buffer ) );
+				onLoad(scope.parse(buffer));
 
-			} catch ( e ) {
+			} catch (e) {
 
-				if ( onError ) {
+				if (onError) {
 
-					onError( e );
+					onError(e);
 
 				} else {
 
-					console.error( e );
+					console.error(e);
 
 				}
 
-				scope.manager.itemError( url );
+				scope.manager.itemError(url);
 
 			}
 
-		}, onProgress, onError );
+		}, onProgress, onError);
 
 	}
 
-	parse( buffer ) {
+	parse(buffer) {
 
-		const data = new DataView( buffer );
+		const data = new DataView(buffer);
 
-		const id = data.getUint32( 0, true );
-		const version = data.getUint32( 4, true );
+		const id = data.getUint32(0, true);
+		const version = data.getUint32(4, true);
 
-		if ( id !== 542658390 ) {
+		if (id !== 542658390) {
 
-			console.error( 'THREE.VOXLoader: Invalid VOX file.' );
+			console.error('THREE.VOXLoader: Invalid VOX file.');
 			return;
 
 		}
 
-		if ( version !== 150 ) {
+		if (version !== 150) {
 
-			console.error( 'THREE.VOXLoader: Invalid VOX file. Unsupported version:', version );
+			console.error('THREE.VOXLoader: Invalid VOX file. Unsupported version:', version);
 			return;
 
 		}
@@ -110,48 +110,48 @@ class VOXLoader extends Loader {
 		let chunk;
 		const chunks = [];
 
-		while ( i < data.byteLength ) {
+		while (i < data.byteLength) {
 
 			let id = '';
 
-			for ( let j = 0; j < 4; j ++ ) {
+			for (let j = 0; j < 4; j ++) {
 
-				id += String.fromCharCode( data.getUint8( i ++ ) );
+				id += String.fromCharCode(data.getUint8(i ++));
 
 			}
 
-			const chunkSize = data.getUint32( i, true ); i += 4;
+			const chunkSize = data.getUint32(i, true); i += 4;
 			i += 4; // childChunks
 
-			if ( id === 'SIZE' ) {
+			if (id === 'SIZE') {
 
-				const x = data.getUint32( i, true ); i += 4;
-				const y = data.getUint32( i, true ); i += 4;
-				const z = data.getUint32( i, true ); i += 4;
+				const x = data.getUint32(i, true); i += 4;
+				const y = data.getUint32(i, true); i += 4;
+				const z = data.getUint32(i, true); i += 4;
 
 				chunk = {
 					palette: DEFAULT_PALETTE,
-					size: { x: x, y: y, z: z },
+					size: {x: x, y: y, z: z},
 				};
 
-				chunks.push( chunk );
+				chunks.push(chunk);
 
-				i += chunkSize - ( 3 * 4 );
+				i += chunkSize - (3 * 4);
 
-			} else if ( id === 'XYZI' ) {
+			} else if (id === 'XYZI') {
 
-				const numVoxels = data.getUint32( i, true ); i += 4;
-				chunk.data = new Uint8Array( buffer, i, numVoxels * 4 );
+				const numVoxels = data.getUint32(i, true); i += 4;
+				chunk.data = new Uint8Array(buffer, i, numVoxels * 4);
 
 				i += numVoxels * 4;
 
-			} else if ( id === 'RGBA' ) {
+			} else if (id === 'RGBA') {
 
 				const palette = [ 0 ];
 
-				for ( let j = 0; j < 256; j ++ ) {
+				for (let j = 0; j < 256; j ++) {
 
-					palette[ j + 1 ] = data.getUint32( i, true ); i += 4;
+					palette[ j + 1 ] = data.getUint32(i, true); i += 4;
 
 				}
 
@@ -159,7 +159,7 @@ class VOXLoader extends Loader {
 
 			} else {
 
-				// console.log( id, chunkSize, childChunks );
+				// console.log(id, chunkSize, childChunks);
 
 				i += chunkSize;
 
@@ -175,7 +175,7 @@ class VOXLoader extends Loader {
 
 class VOXMesh extends Mesh {
 
-	constructor( chunk ) {
+	constructor(chunk) {
 
 		const data = chunk.data;
 		const size = chunk.size;
@@ -195,18 +195,18 @@ class VOXMesh extends Mesh {
 
 		const _color = new Color();
 
-		function add( tile, x, y, z, r, g, b ) {
+		function add(tile, x, y, z, r, g, b) {
 
 			x -= size.x / 2;
 			y -= size.z / 2;
 			z += size.y / 2;
 
-			for ( let i = 0; i < 18; i += 3 ) {
+			for (let i = 0; i < 18; i += 3) {
 
-				_color.setRGB( r, g, b, SRGBColorSpace );
+				_color.setRGB(r, g, b, SRGBColorSpace);
 
-				vertices.push( tile[ i + 0 ] + x, tile[ i + 1 ] + y, tile[ i + 2 ] + z );
-				colors.push( _color.r, _color.g, _color.b );
+				vertices.push(tile[ i + 0 ] + x, tile[ i + 1 ] + y, tile[ i + 2 ] + z);
+				colors.push(_color.r, _color.g, _color.b);
 
 			}
 
@@ -217,15 +217,15 @@ class VOXMesh extends Mesh {
 		const offsety = size.x;
 		const offsetz = size.x * size.y;
 
-		const array = new Uint8Array( size.x * size.y * size.z );
+		const array = new Uint8Array(size.x * size.y * size.z);
 
-		for ( let j = 0; j < data.length; j += 4 ) {
+		for (let j = 0; j < data.length; j += 4) {
 
 			const x = data[ j + 0 ];
 			const y = data[ j + 1 ];
 			const z = data[ j + 2 ];
 
-			const index = x + ( y * offsety ) + ( z * offsetz );
+			const index = x + (y * offsety) + (z * offsetz);
 
 			array[ index ] = 255;
 
@@ -235,7 +235,7 @@ class VOXMesh extends Mesh {
 
 		let hasColors = false;
 
-		for ( let j = 0; j < data.length; j += 4 ) {
+		for (let j = 0; j < data.length; j += 4) {
 
 			const x = data[ j + 0 ];
 			const y = data[ j + 1 ];
@@ -243,37 +243,37 @@ class VOXMesh extends Mesh {
 			const c = data[ j + 3 ];
 
 			const hex = palette[ c ];
-			const r = ( hex >> 0 & 0xff ) / 0xff;
-			const g = ( hex >> 8 & 0xff ) / 0xff;
-			const b = ( hex >> 16 & 0xff ) / 0xff;
+			const r = (hex >> 0 & 0xff) / 0xff;
+			const g = (hex >> 8 & 0xff) / 0xff;
+			const b = (hex >> 16 & 0xff) / 0xff;
 
-			if ( r > 0 || g > 0 || b > 0 ) hasColors = true;
+			if (r > 0 || g > 0 || b > 0) hasColors = true;
 
-			const index = x + ( y * offsety ) + ( z * offsetz );
+			const index = x + (y * offsety) + (z * offsetz);
 
-			if ( array[ index + 1 ] === 0 || x === size.x - 1 ) add( px, x, z, - y, r, g, b );
-			if ( array[ index - 1 ] === 0 || x === 0 ) add( nx, x, z, - y, r, g, b );
-			if ( array[ index + offsety ] === 0 || y === size.y - 1 ) add( ny, x, z, - y, r, g, b );
-			if ( array[ index - offsety ] === 0 || y === 0 ) add( py, x, z, - y, r, g, b );
-			if ( array[ index + offsetz ] === 0 || z === size.z - 1 ) add( pz, x, z, - y, r, g, b );
-			if ( array[ index - offsetz ] === 0 || z === 0 ) add( nz, x, z, - y, r, g, b );
+			if (array[ index + 1 ] === 0 || x === size.x - 1) add(px, x, z, - y, r, g, b);
+			if (array[ index - 1 ] === 0 || x === 0) add(nx, x, z, - y, r, g, b);
+			if (array[ index + offsety ] === 0 || y === size.y - 1) add(ny, x, z, - y, r, g, b);
+			if (array[ index - offsety ] === 0 || y === 0) add(py, x, z, - y, r, g, b);
+			if (array[ index + offsetz ] === 0 || z === size.z - 1) add(pz, x, z, - y, r, g, b);
+			if (array[ index - offsetz ] === 0 || z === 0) add(nz, x, z, - y, r, g, b);
 
 		}
 
 		const geometry = new BufferGeometry();
-		geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+		geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
 		geometry.computeVertexNormals();
 
 		const material = new MeshStandardMaterial();
 
-		if ( hasColors ) {
+		if (hasColors) {
 
-			geometry.setAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
+			geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
 			material.vertexColors = true;
 
 		}
 
-		super( geometry, material );
+		super(geometry, material);
 
 	}
 
@@ -281,7 +281,7 @@ class VOXMesh extends Mesh {
 
 class VOXData3DTexture extends Data3DTexture {
 
-	constructor( chunk ) {
+	constructor(chunk) {
 
 		const data = chunk.data;
 		const size = chunk.size;
@@ -289,21 +289,21 @@ class VOXData3DTexture extends Data3DTexture {
 		const offsety = size.x;
 		const offsetz = size.x * size.y;
 
-		const array = new Uint8Array( size.x * size.y * size.z );
+		const array = new Uint8Array(size.x * size.y * size.z);
 
-		for ( let j = 0; j < data.length; j += 4 ) {
+		for (let j = 0; j < data.length; j += 4) {
 
 			const x = data[ j + 0 ];
 			const y = data[ j + 1 ];
 			const z = data[ j + 2 ];
 
-			const index = x + ( y * offsety ) + ( z * offsetz );
+			const index = x + (y * offsety) + (z * offsetz);
 
 			array[ index ] = 255;
 
 		}
 
-		super( array, size.x, size.y, size.z );
+		super(array, size.x, size.y, size.z);
 
 		this.format = RedFormat;
 		this.minFilter = NearestFilter;
@@ -315,4 +315,4 @@ class VOXData3DTexture extends Data3DTexture {
 
 }
 
-export { VOXLoader, VOXMesh, VOXData3DTexture };
+export {VOXLoader, VOXMesh, VOXData3DTexture};

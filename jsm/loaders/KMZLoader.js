@@ -4,59 +4,59 @@ import {
 	Loader,
 	LoadingManager
 } from 'three';
-import { ColladaLoader } from '../loaders/ColladaLoader.js';
+import {ColladaLoader} from '../loaders/ColladaLoader.js';
 import * as fflate from '../libs/fflate.module.js';
 
 class KMZLoader extends Loader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 	}
 
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
 
 		const scope = this;
 
-		const loader = new FileLoader( scope.manager );
-		loader.setPath( scope.path );
-		loader.setResponseType( 'arraybuffer' );
-		loader.setRequestHeader( scope.requestHeader );
-		loader.setWithCredentials( scope.withCredentials );
-		loader.load( url, function ( text ) {
+		const loader = new FileLoader(scope.manager);
+		loader.setPath(scope.path);
+		loader.setResponseType('arraybuffer');
+		loader.setRequestHeader(scope.requestHeader);
+		loader.setWithCredentials(scope.withCredentials);
+		loader.load(url, function (text) {
 
 			try {
 
-				onLoad( scope.parse( text ) );
+				onLoad(scope.parse(text));
 
-			} catch ( e ) {
+			} catch (e) {
 
-				if ( onError ) {
+				if (onError) {
 
-					onError( e );
+					onError(e);
 
 				} else {
 
-					console.error( e );
+					console.error(e);
 
 				}
 
-				scope.manager.itemError( url );
+				scope.manager.itemError(url);
 
 			}
 
-		}, onProgress, onError );
+		}, onProgress, onError);
 
 	}
 
-	parse( data ) {
+	parse(data) {
 
-		function findFile( url ) {
+		function findFile(url) {
 
-			for ( const path in zip ) {
+			for (const path in zip) {
 
-				if ( path.slice( - url.length ) === url ) {
+				if (path.slice(- url.length) === url) {
 
 					return zip[ path ];
 
@@ -67,52 +67,52 @@ class KMZLoader extends Loader {
 		}
 
 		const manager = new LoadingManager();
-		manager.setURLModifier( function ( url ) {
+		manager.setURLModifier(function (url) {
 
-			const image = findFile( url );
+			const image = findFile(url);
 
-			if ( image ) {
+			if (image) {
 
-				console.log( 'Loading', url );
+				console.log('Loading', url);
 
-				const blob = new Blob( [ image.buffer ], { type: 'application/octet-stream' } );
-				return URL.createObjectURL( blob );
+				const blob = new Blob([ image.buffer ], {type: 'application/octet-stream'});
+				return URL.createObjectURL(blob);
 
 			}
 
 			return url;
 
-		} );
+		});
 
 		//
 
-		const zip = fflate.unzipSync( new Uint8Array( data ) );
+		const zip = fflate.unzipSync(new Uint8Array(data));
 
-		if ( zip[ 'doc.kml' ] ) {
+		if (zip[ 'doc.kml' ]) {
 
-			const xml = new DOMParser().parseFromString( fflate.strFromU8( zip[ 'doc.kml' ] ), 'application/xml' );
+			const xml = new DOMParser().parseFromString(fflate.strFromU8(zip[ 'doc.kml' ]), 'application/xml');
 
-			const model = xml.querySelector( 'Placemark Model Link href' );
+			const model = xml.querySelector('Placemark Model Link href');
 
-			if ( model ) {
+			if (model) {
 
-				const loader = new ColladaLoader( manager );
-				return loader.parse( fflate.strFromU8( zip[ model.textContent ] ) );
+				const loader = new ColladaLoader(manager);
+				return loader.parse(fflate.strFromU8(zip[ model.textContent ]));
 
 			}
 
 		} else {
 
-			console.warn( 'KMZLoader: Missing doc.kml file.' );
+			console.warn('KMZLoader: Missing doc.kml file.');
 
-			for ( const path in zip ) {
+			for (const path in zip) {
 
-				const extension = path.split( '.' ).pop().toLowerCase();
+				const extension = path.split('.').pop().toLowerCase();
 
-				if ( extension === 'dae' ) {
+				if (extension === 'dae') {
 
-					const loader = new ColladaLoader( manager );
-					return loader.parse( fflate.strFromU8( zip[ path ] ) );
+					const loader = new ColladaLoader(manager);
+					return loader.parse(fflate.strFromU8(zip[ path ]));
 
 				}
 
@@ -120,11 +120,11 @@ class KMZLoader extends Loader {
 
 		}
 
-		console.error( 'KMZLoader: Couldn\'t find .dae file.' );
-		return { scene: new Group() };
+		console.error('KMZLoader: Couldn\'t find .dae file.');
+		return {scene: new Group()};
 
 	}
 
 }
 
-export { KMZLoader };
+export {KMZLoader};

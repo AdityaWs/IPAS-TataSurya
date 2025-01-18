@@ -1,188 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>Mars</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link rel="stylesheet" href="./../css/style.css">
-	</head>
-	<body>
+<html lang="id">
+    <head>
+        <title>Mars</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="./../css/style.css">
+    </head>
+    <body>
 
-		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Mars</button>
+        <button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Mars</button>
 
-		<div class="info-blur"></div>
-		<div class="info">
-			<button class="info-close">X</button>
-			<div class="info-list">
-				<h1>Mars</h1>
+        <div class="info-blur"></div>
+        <div class="info">
+            <button class="info-close">X</button>
+            <div class="info-list">
+                <h1>Mars</h1>
                 <p>Planet Mars adalah planet keempat dari Matahari dalam Tata Surya kita, sering disebut sebagai "Planet Merah" karena permukaannya yang memiliki warna kemerahan. Mars adalah salah satu planet yang paling menarik untuk dipelajari karena kemiripannya dengan Bumi dan potensi adanya kehidupan di masa lalu. Mars memiliki dua satelit alami, yaitu Phobos dan Deimos, yang diyakini merupakan asteroid yang tertangkap oleh gravitasi Mars.</p>
                 <p>Ciri-ciri Mars meliputi permukaan yang dipenuhi oleh gurun, gunung berapi, dan lembah yang dalam. Permukaannya juga ditutupi oleh debu yang mengandung oksida besi, yang memberikan warna merah khas tersebut. Mars memiliki atmosfer yang sangat tipis, terutama terdiri dari karbon dioksida, dan suhu rata-rata di planet ini sangat dingin, sekitar -60°C. Mars juga memiliki cuaca yang ekstrem, dengan badai debu yang dapat meliputi seluruh planet.</p>
                 <p>Mars memiliki diameter sekitar 6.779 km, yang kira-kira setengah dari diameter Bumi. Jarak rata-rata Mars dari Matahari adalah sekitar 227 juta kilometer, dan waktu yang dibutuhkan Mars untuk mengorbit Matahari adalah sekitar 687 hari atau hampir dua tahun Bumi. Komposisi Mars terdiri dari batuan silikat dan unsur-unsur seperti besi, magnesium, dan sulfur. Gravitasi di Mars hanya sekitar 38% dari gravitasi Bumi, sehingga berat tubuh seseorang di Mars akan lebih ringan.</p>
                 <p>Sejarah penemuan Mars dimulai sejak zaman kuno, di mana peradaban Mesopotamia dan Yunani sudah mengenali keberadaannya. Pada abad ke-17, astronom Galileo Galilei pertama kali mengamati Mars dengan teleskop. Beberapa fakta menarik tentang Mars adalah bahwa planet ini memiliki gunung tertinggi di Tata Surya, yaitu Olympus Mons, yang setinggi 21.287 meter. Mars juga memiliki lembah terbesar, yaitu Valles Marineris, yang panjangnya mencapai sekitar 4.000 km. Mars telah menjadi fokus eksplorasi luar angkasa, dan misi seperti rovers NASA terus mencari bukti kehidupan mikroba di masa lalu planet ini.</p>
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<script src="./../css/style.js"></script>
+        <script src="./../css/style.js"></script>
 
-		<script type="importmap">
-			{
-				"imports": {
-					"three": "../js/three.webgpu.js",
-					"three/webgpu": "../js/three.webgpu.js",
-					"three/tsl": "../js/three.tsl.js",
-					"three/addons/": "../jsm/"
-				}
-			}
-		</script>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "../js/three.webgpu.js",
+                    "three/webgpu": "../js/three.webgpu.js",
+                    "three/tsl": "../js/three.tsl.js",
+                    "three/addons/": "../jsm/"
+                }
+            }
+        </script>
 
-		<script type="module">
+        <script type="module">
 
-			import * as THREE from 'three';
-			import { step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max } from 'three/tsl';
-			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+            import * as THREE from "three";
+            import {step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max} from "three/tsl";
+            import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+            import {GUI} from "three/addons/libs/lil-gui.module.min.js";
 
-			let camera, scene, renderer, controls, globe, sphereSkybox, clock;
+            let camera, scene, renderer, controls, globe, sphereSkybox, clock;
 
-			init();
+            init();
 
-			function init() {
+            function init() {
 
-				clock = new THREE.Clock();
+                clock = new THREE.Clock();
 
-				camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 0.1, 100 );
-				camera.position.set( 4.5, 2, 3 );
+                camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera.position.set(4.5, 2, 3);
 
-				scene = new THREE.Scene();
+                scene = new THREE.Scene();
 
-				// sun
+                // sun
 
-				const sun = new THREE.DirectionalLight( '#ffffff', 2 );
-				sun.position.set( 0, 0, 3 );
-				scene.add( sun );
+                const sun = new THREE.DirectionalLight("#ffffff", 2);
+                sun.position.set(0, 0, 3);
+                scene.add(sun);
 
-				// uniforms
+                // uniforms
 
-				const atmosphereDayColor = uniform( color( '#7dbdad' ) );
-				const atmosphereTwilightColor = uniform( color( '#bc280b' ) );
-				const roughnessLow = uniform( 0.25 );
-				const roughnessHigh = uniform( 0.35 );
+                const atmosphereDayColor = uniform(color("#7dbdad"));
+                const atmosphereTwilightColor = uniform(color("#bc280b"));
+                const roughnessLow = uniform(0.25);
+                const roughnessHigh = uniform(0.35);
 
-				// textures
+                // textures
 
-				const textureLoader = new THREE.TextureLoader();
+                const textureLoader = new THREE.TextureLoader();
 
-				const dayTexture = textureLoader.load( './textures/mars_day_2048.jpg' );
-				dayTexture.colorSpace = THREE.SRGBColorSpace;
-				dayTexture.anisotropy = 8;
+                const dayTexture = textureLoader.load("./textures/mars_day_2048.jpg");
+                dayTexture.colorSpace = THREE.SRGBColorSpace;
+                dayTexture.anisotropy = 8;
 
-				const nightTexture = textureLoader.load( './textures/mars_night_2048.jpg' );
-				nightTexture.colorSpace = THREE.SRGBColorSpace;
-				nightTexture.anisotropy = 8;
+                const nightTexture = textureLoader.load("./textures/mars_night_2048.jpg");
+                nightTexture.colorSpace = THREE.SRGBColorSpace;
+                nightTexture.anisotropy = 8;
 
-				const spaceTexture = textureLoader.load( './../hdri_space.jpg');
-				spaceTexture.colorSpace = THREE.SRGBColorSpace;
-				spaceTexture.anisotropy = 8;
-
-
-				// fresnel
-				const viewDirection = positionWorld.sub( cameraPosition ).normalize();
-				const fresnel = viewDirection.dot( normalWorld ).abs().oneMinus().toVar();
-				// sun orientation
-				const sunOrientation = normalWorld.dot( normalize( sun.position ) ).toVar();
-				// atmosphere color
-				const atmosphereColor = mix( atmosphereTwilightColor, atmosphereDayColor, sunOrientation.smoothstep( - 0.25, 0.75 ) );
+                const spaceTexture = textureLoader.load("./../hdri_space.jpg");
+                spaceTexture.colorSpace = THREE.SRGBColorSpace;
+                spaceTexture.anisotropy = 8;
 
 
-				// globe
-
-				const globeMaterial = new THREE.MeshStandardNodeMaterial();
-
-				globeMaterial.colorNode = mix( texture( dayTexture ), vec3( 1 ), 0.0);
-
-				const night = texture( nightTexture );
-				const dayStrength = sunOrientation.smoothstep( - 0.25, 0.5 );
-
-				const atmosphereDayStrength = sunOrientation.smoothstep( - 0.5, 1 );
-				const atmosphereMix = atmosphereDayStrength.mul( fresnel.pow( 2 ) ).clamp( 0, 0.05 );
-
-				let finalOutput = mix( night.rgb, output.rgb, dayStrength );
-				finalOutput = mix( finalOutput, atmosphereColor, atmosphereMix );
-
-				globeMaterial.outputNode = vec4( finalOutput, output.a );
-
-				const sphereGeometry = new THREE.SphereGeometry( 1, 64, 64 );
-				globe = new THREE.Mesh( sphereGeometry, globeMaterial );
-				scene.add( globe );
+                // fresnel
+                const viewDirection = positionWorld.sub(cameraPosition).normalize();
+                const fresnel = viewDirection.dot(normalWorld).abs().oneMinus().toVar();
+                // sun orientation
+                const sunOrientation = normalWorld.dot(normalize(sun.position)).toVar();
+                // atmosphere color
+                const atmosphereColor = mix(atmosphereTwilightColor, atmosphereDayColor, sunOrientation.smoothstep(- 0.25, 0.75));
 
 
-				// atmosphere
+                // globe
 
-				const atmosphereMaterial = new THREE.MeshBasicNodeMaterial( { side: THREE.BackSide, transparent: true } );
-				let alpha = fresnel.remap( 0.53, 1, 1, 0 );
-				alpha = alpha.mul( sunOrientation.smoothstep( - 0.5, 1 ) );
-				atmosphereMaterial.outputNode = vec4( atmosphereColor, alpha );
+                const globeMaterial = new THREE.MeshStandardNodeMaterial();
 
-				const atmosphere = new THREE.Mesh( sphereGeometry, atmosphereMaterial );
-				atmosphere.scale.setScalar( 1.02 );
-				scene.add( atmosphere );
+                globeMaterial.colorNode = mix(texture(dayTexture), vec3(1), 0.0);
 
+                const night = texture(nightTexture);
+                const dayStrength = sunOrientation.smoothstep(- 0.25, 0.5);
 
-				// skybox
+                const atmosphereDayStrength = sunOrientation.smoothstep(- 0.5, 1);
+                const atmosphereMix = atmosphereDayStrength.mul(fresnel.pow(2)).clamp(0, 0.05);
 
-				const sphereSkyboxGeometry = new THREE.SphereGeometry(10, 32, 16);
-				const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
+                let finalOutput = mix(night.rgb, output.rgb, dayStrength);
+                finalOutput = mix(finalOutput, atmosphereColor, atmosphereMix);
 
-				let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
-				sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
+                globeMaterial.outputNode = vec4(finalOutput, output.a);
 
-				sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
-				scene.add(sphereSkybox)
-				console.log("sphere")
+                const sphereGeometry = new THREE.SphereGeometry(1, 64, 64);
+                globe = new THREE.Mesh(sphereGeometry, globeMaterial);
+                scene.add(globe);
 
 
-				// renderer
+                // atmosphere
 
-				renderer = new THREE.WebGPURenderer();
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.setAnimationLoop( animate );
-				document.body.appendChild( renderer.domElement );
+                const atmosphereMaterial = new THREE.MeshBasicNodeMaterial({side: THREE.BackSide, transparent: true});
+                let alpha = fresnel.remap(0.53, 1, 1, 0);
+                alpha = alpha.mul(sunOrientation.smoothstep(- 0.5, 1));
+                atmosphereMaterial.outputNode = vec4(atmosphereColor, alpha);
+
+                const atmosphere = new THREE.Mesh(sphereGeometry, atmosphereMaterial);
+                atmosphere.scale.setScalar(1.02);
+                scene.add(atmosphere);
 
 
-				// controls
+                // skybox
 
-				controls = new OrbitControls( camera, renderer.domElement );
-				controls.enableDamping = true;
-				controls.minDistance = 0.1;
-				controls.maxDistance = 50;
+                const sphereSkyboxGeometry = new THREE.SphereGeometry(50, 32, 16);
+                const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
 
-				window.addEventListener( 'resize', onWindowResize );
+                let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
+                sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
 
-			}
+                sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
+                scene.add(sphereSkybox)
 
-			function onWindowResize() {
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+                // renderer
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer = new THREE.WebGPURenderer();
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setAnimationLoop(animate);
+                document.body.appendChild(renderer.domElement);
 
-			}
 
-			async function animate() {
+                // controls
 
-				const delta = clock.getDelta();
-				globe.rotation.y += delta * 0.025;
-				sphereSkybox.rotation.y += delta * 0.025;
-			
-				controls.update();
+                controls = new OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.minDistance = 0.1;
+                controls.maxDistance = 50;
 
-				renderer.render( scene, camera );
+                window.addEventListener("resize", onWindowResize);
 
-			}
+            }
 
-		</script>
+            function onWindowResize() {
 
-	</body>
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(window.innerWidth, window.innerHeight);
+
+            }
+
+            async function animate() {
+
+                const delta = clock.getDelta();
+                globe.rotation.y += delta * 0.025;
+                sphereSkybox.rotation.y += delta * 0.025;
+            
+                controls.update();
+
+                renderer.render(scene, camera);
+
+            }
+
+        </script>
+
+    </body>
 </html>

@@ -10,7 +10,7 @@
  * 
  */
 
-let surfaceNet = ( dims, potential, bounds ) => {
+let surfaceNet = (dims, potential, bounds) => {
 		
 	
 	//Precompute edge table, like Paul Bourke does.
@@ -165,7 +165,7 @@ let surfaceNet = ( dims, potential, bounds ) => {
 			//Now we need to add faces together, to do this we just loop over 3 basis components
 			for(var i=0; i<3; ++i) {
 				//The first three entries of the edge_mask count the crossings along the edge
-				if(!(edge_mask & (1<<i)) ) {
+				if(!(edge_mask & (1<<i))) {
 					continue;
 				}
 				
@@ -195,7 +195,7 @@ let surfaceNet = ( dims, potential, bounds ) => {
 	}
 	
 	//All done!  Return the result
-	return { positions: vertices, cells: faces };
+	return {positions: vertices, cells: faces};
 }
 
-export { surfaceNet }
+export {surfaceNet}

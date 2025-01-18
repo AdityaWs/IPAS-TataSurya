@@ -25,9 +25,9 @@ import {
 
 class TDSLoader extends Loader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 		this.debug = false;
 
@@ -47,41 +47,41 @@ class TDSLoader extends Loader {
 	 * @param {Function} onProgress onProgress callback.
 	 * @param {Function} onError onError callback.
 	 */
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
 
 		const scope = this;
 
-		const path = ( this.path === '' ) ? LoaderUtils.extractUrlBase( url ) : this.path;
+		const path = (this.path === '') ? LoaderUtils.extractUrlBase(url) : this.path;
 
-		const loader = new FileLoader( this.manager );
-		loader.setPath( this.path );
-		loader.setResponseType( 'arraybuffer' );
-		loader.setRequestHeader( this.requestHeader );
-		loader.setWithCredentials( this.withCredentials );
+		const loader = new FileLoader(this.manager);
+		loader.setPath(this.path);
+		loader.setResponseType('arraybuffer');
+		loader.setRequestHeader(this.requestHeader);
+		loader.setWithCredentials(this.withCredentials);
 
-		loader.load( url, function ( data ) {
+		loader.load(url, function (data) {
 
 			try {
 
-				onLoad( scope.parse( data, path ) );
+				onLoad(scope.parse(data, path));
 
-			} catch ( e ) {
+			} catch (e) {
 
-				if ( onError ) {
+				if (onError) {
 
-					onError( e );
+					onError(e);
 
 				} else {
 
-					console.error( e );
+					console.error(e);
 
 				}
 
-				scope.manager.itemError( url );
+				scope.manager.itemError(url);
 
 			}
 
-		}, onProgress, onError );
+		}, onProgress, onError);
 
 	}
 
@@ -93,17 +93,17 @@ class TDSLoader extends Loader {
 	 * @param {String} path Path for external resources.
 	 * @return {Group} Group loaded from 3ds file.
 	 */
-	parse( arraybuffer, path ) {
+	parse(arraybuffer, path) {
 
 		this.group = new Group();
 		this.materials = [];
 		this.meshes = [];
 
-		this.readFile( arraybuffer, path );
+		this.readFile(arraybuffer, path);
 
-		for ( let i = 0; i < this.meshes.length; i ++ ) {
+		for (let i = 0; i < this.meshes.length; i ++) {
 
-			this.group.add( this.meshes[ i ] );
+			this.group.add(this.meshes[ i ]);
 
 		}
 
@@ -118,29 +118,29 @@ class TDSLoader extends Loader {
 	 * @param {ArrayBuffer} arraybuffer Arraybuffer data to be loaded.
 	 * @param {String} path Path for external resources.
 	 */
-	readFile( arraybuffer, path ) {
+	readFile(arraybuffer, path) {
 
-		const data = new DataView( arraybuffer );
-		const chunk = new Chunk( data, 0, this.debugMessage );
+		const data = new DataView(arraybuffer);
+		const chunk = new Chunk(data, 0, this.debugMessage);
 
-		if ( chunk.id === MLIBMAGIC || chunk.id === CMAGIC || chunk.id === M3DMAGIC ) {
+		if (chunk.id === MLIBMAGIC || chunk.id === CMAGIC || chunk.id === M3DMAGIC) {
 
 			let next = chunk.readChunk();
 
-			while ( next ) {
+			while (next) {
 
-				if ( next.id === M3D_VERSION ) {
+				if (next.id === M3D_VERSION) {
 
 					const version = next.readDWord();
-					this.debugMessage( '3DS file version: ' + version );
+					this.debugMessage('3DS file version: ' + version);
 
-				} else if ( next.id === MDATA ) {
+				} else if (next.id === MDATA) {
 
-					this.readMeshData( next, path );
+					this.readMeshData(next, path);
 
 				} else {
 
-					this.debugMessage( 'Unknown main chunk: ' + next.hexId );
+					this.debugMessage('Unknown main chunk: ' + next.hexId);
 
 				}
 
@@ -150,7 +150,7 @@ class TDSLoader extends Loader {
 
 		}
 
-		this.debugMessage( 'Parsed ' + this.meshes.length + ' meshes' );
+		this.debugMessage('Parsed ' + this.meshes.length + ' meshes');
 
 	}
 
@@ -161,36 +161,36 @@ class TDSLoader extends Loader {
 	 * @param {Chunk} chunk to read mesh from
 	 * @param {String} path Path for external resources.
 	 */
-	readMeshData( chunk, path ) {
+	readMeshData(chunk, path) {
 
 		let next = chunk.readChunk();
 
-		while ( next ) {
+		while (next) {
 
-			if ( next.id === MESH_VERSION ) {
+			if (next.id === MESH_VERSION) {
 
 				const version = + next.readDWord();
-				this.debugMessage( 'Mesh Version: ' + version );
+				this.debugMessage('Mesh Version: ' + version);
 
-			} else if ( next.id === MASTER_SCALE ) {
+			} else if (next.id === MASTER_SCALE) {
 
 				const scale = next.readFloat();
-				this.debugMessage( 'Master scale: ' + scale );
-				this.group.scale.set( scale, scale, scale );
+				this.debugMessage('Master scale: ' + scale);
+				this.group.scale.set(scale, scale, scale);
 
-			} else if ( next.id === NAMED_OBJECT ) {
+			} else if (next.id === NAMED_OBJECT) {
 
-				this.debugMessage( 'Named Object' );
-				this.readNamedObject( next );
+				this.debugMessage('Named Object');
+				this.readNamedObject(next);
 
-			} else if ( next.id === MAT_ENTRY ) {
+			} else if (next.id === MAT_ENTRY) {
 
-				this.debugMessage( 'Material' );
-				this.readMaterialEntry( next, path );
+				this.debugMessage('Material');
+				this.readMaterialEntry(next, path);
 
 			} else {
 
-				this.debugMessage( 'Unknown MDATA chunk: ' + next.hexId );
+				this.debugMessage('Unknown MDATA chunk: ' + next.hexId);
 
 			}
 
@@ -206,26 +206,26 @@ class TDSLoader extends Loader {
 	 * @method readNamedObject
 	 * @param {Chunk} chunk Chunk in use.
 	 */
-	readNamedObject( chunk ) {
+	readNamedObject(chunk) {
 
 		const name = chunk.readString();
 
 		let next = chunk.readChunk();
-		while ( next ) {
+		while (next) {
 
-			if ( next.id === N_TRI_OBJECT ) {
+			if (next.id === N_TRI_OBJECT) {
 
-				const mesh = this.readMesh( next );
+				const mesh = this.readMesh(next);
 				mesh.name = name;
-				this.meshes.push( mesh );
+				this.meshes.push(mesh);
 
 			} else {
 
-				this.debugMessage( 'Unknown named object chunk: ' + next.hexId );
+				this.debugMessage('Unknown named object chunk: ' + next.hexId);
 
 			}
 
-			next = chunk.readChunk( );
+			next = chunk.readChunk();
 
 		}
 
@@ -238,90 +238,90 @@ class TDSLoader extends Loader {
 	 * @param {Chunk} chunk Chunk in use.
 	 * @param {String} path Path for external resources.
 	 */
-	readMaterialEntry( chunk, path ) {
+	readMaterialEntry(chunk, path) {
 
 		let next = chunk.readChunk();
 		const material = new MeshPhongMaterial();
 
-		while ( next ) {
+		while (next) {
 
-			if ( next.id === MAT_NAME ) {
+			if (next.id === MAT_NAME) {
 
 				material.name = next.readString();
-				this.debugMessage( '   Name: ' + material.name );
+				this.debugMessage('   Name: ' + material.name);
 
-			} else if ( next.id === MAT_WIRE ) {
+			} else if (next.id === MAT_WIRE) {
 
-				this.debugMessage( '   Wireframe' );
+				this.debugMessage('   Wireframe');
 				material.wireframe = true;
 
-			} else if ( next.id === MAT_WIRE_SIZE ) {
+			} else if (next.id === MAT_WIRE_SIZE) {
 
 				const value = next.readByte();
 				material.wireframeLinewidth = value;
-				this.debugMessage( '   Wireframe Thickness: ' + value );
+				this.debugMessage('   Wireframe Thickness: ' + value);
 
-			} else if ( next.id === MAT_TWO_SIDE ) {
+			} else if (next.id === MAT_TWO_SIDE) {
 
 				material.side = DoubleSide;
-				this.debugMessage( '   DoubleSided' );
+				this.debugMessage('   DoubleSided');
 
-			} else if ( next.id === MAT_ADDITIVE ) {
+			} else if (next.id === MAT_ADDITIVE) {
 
-				this.debugMessage( '   Additive Blending' );
+				this.debugMessage('   Additive Blending');
 				material.blending = AdditiveBlending;
 
-			} else if ( next.id === MAT_DIFFUSE ) {
+			} else if (next.id === MAT_DIFFUSE) {
 
-				this.debugMessage( '   Diffuse Color' );
-				material.color = this.readColor( next );
+				this.debugMessage('   Diffuse Color');
+				material.color = this.readColor(next);
 
-			} else if ( next.id === MAT_SPECULAR ) {
+			} else if (next.id === MAT_SPECULAR) {
 
-				this.debugMessage( '   Specular Color' );
-				material.specular = this.readColor( next );
+				this.debugMessage('   Specular Color');
+				material.specular = this.readColor(next);
 
-			} else if ( next.id === MAT_AMBIENT ) {
+			} else if (next.id === MAT_AMBIENT) {
 
-				this.debugMessage( '   Ambient color' );
-				material.color = this.readColor( next );
+				this.debugMessage('   Ambient color');
+				material.color = this.readColor(next);
 
-			} else if ( next.id === MAT_SHININESS ) {
+			} else if (next.id === MAT_SHININESS) {
 
-				const shininess = this.readPercentage( next );
+				const shininess = this.readPercentage(next);
 				material.shininess = shininess * 100;
-				this.debugMessage( '   Shininess : ' + shininess );
+				this.debugMessage('   Shininess : ' + shininess);
 
-			} else if ( next.id === MAT_TRANSPARENCY ) {
+			} else if (next.id === MAT_TRANSPARENCY) {
 
-				const transparency = this.readPercentage( next );
+				const transparency = this.readPercentage(next);
 				material.opacity = 1 - transparency;
-				this.debugMessage( '  Transparency : ' + transparency );
+				this.debugMessage('  Transparency : ' + transparency);
 				material.transparent = material.opacity < 1 ? true : false;
 
-			} else if ( next.id === MAT_TEXMAP ) {
+			} else if (next.id === MAT_TEXMAP) {
 
-				this.debugMessage( '   ColorMap' );
-				material.map = this.readMap( next, path );
+				this.debugMessage('   ColorMap');
+				material.map = this.readMap(next, path);
 
-			} else if ( next.id === MAT_BUMPMAP ) {
+			} else if (next.id === MAT_BUMPMAP) {
 
-				this.debugMessage( '   BumpMap' );
-				material.bumpMap = this.readMap( next, path );
+				this.debugMessage('   BumpMap');
+				material.bumpMap = this.readMap(next, path);
 
-			} else if ( next.id === MAT_OPACMAP ) {
+			} else if (next.id === MAT_OPACMAP) {
 
-				this.debugMessage( '   OpacityMap' );
-				material.alphaMap = this.readMap( next, path );
+				this.debugMessage('   OpacityMap');
+				material.alphaMap = this.readMap(next, path);
 
-			} else if ( next.id === MAT_SPECMAP ) {
+			} else if (next.id === MAT_SPECMAP) {
 
-				this.debugMessage( '   SpecularMap' );
-				material.specularMap = this.readMap( next, path );
+				this.debugMessage('   SpecularMap');
+				material.specularMap = this.readMap(next, path);
 
 			} else {
 
-				this.debugMessage( '   Unknown material chunk: ' + next.hexId );
+				this.debugMessage('   Unknown material chunk: ' + next.hexId);
 
 			}
 
@@ -340,70 +340,70 @@ class TDSLoader extends Loader {
 	 * @param {Chunk} chunk Chunk in use.
 	 * @return {Mesh} The parsed mesh.
 	 */
-	readMesh( chunk ) {
+	readMesh(chunk) {
 
-		let next = chunk.readChunk( );
+		let next = chunk.readChunk();
 
 		const geometry = new BufferGeometry();
 
 		const material = new MeshPhongMaterial();
-		const mesh = new Mesh( geometry, material );
+		const mesh = new Mesh(geometry, material);
 		mesh.name = 'mesh';
 
-		while ( next ) {
+		while (next) {
 
-			if ( next.id === POINT_ARRAY ) {
+			if (next.id === POINT_ARRAY) {
 
-				const points = next.readWord( );
+				const points = next.readWord();
 
-				this.debugMessage( '   Vertex: ' + points );
+				this.debugMessage('   Vertex: ' + points);
 
 				//BufferGeometry
 
 				const vertices = [];
 
-				for ( let i = 0; i < points; i ++ )		{
+				for (let i = 0; i < points; i ++)		{
 
-					vertices.push( next.readFloat( ) );
-					vertices.push( next.readFloat( ) );
-					vertices.push( next.readFloat( ) );
+					vertices.push(next.readFloat());
+					vertices.push(next.readFloat());
+					vertices.push(next.readFloat());
 
 				}
 
-				geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+				geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
 
-			} else if ( next.id === FACE_ARRAY ) {
+			} else if (next.id === FACE_ARRAY) {
 
-				this.readFaceArray( next, mesh );
+				this.readFaceArray(next, mesh);
 
-			} else if ( next.id === TEX_VERTS ) {
+			} else if (next.id === TEX_VERTS) {
 
-				const texels = next.readWord( );
+				const texels = next.readWord();
 
-				this.debugMessage( '   UV: ' + texels );
+				this.debugMessage('   UV: ' + texels);
 
 				//BufferGeometry
 
 				const uvs = [];
 
-				for ( let i = 0; i < texels; i ++ ) {
+				for (let i = 0; i < texels; i ++) {
 
-					uvs.push( next.readFloat( ) );
-					uvs.push( next.readFloat( ) );
+					uvs.push(next.readFloat());
+					uvs.push(next.readFloat());
 
 				}
 
-				geometry.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+				geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
 
 
-			} else if ( next.id === MESH_MATRIX ) {
+			} else if (next.id === MESH_MATRIX) {
 
-				this.debugMessage( '   Transformation Matrix (TODO)' );
+				this.debugMessage('   Transformation Matrix (TODO)');
 
 				const values = [];
-				for ( let i = 0; i < 12; i ++ ) {
+				for (let i = 0; i < 12; i ++) {
 
-					values[ i ] = next.readFloat( );
+					values[ i ] = next.readFloat();
 
 				}
 
@@ -436,18 +436,18 @@ class TDSLoader extends Loader {
 				matrix.transpose();
 
 				const inverse = new Matrix4();
-				inverse.copy( matrix ).invert();
-				geometry.applyMatrix4( inverse );
+				inverse.copy(matrix).invert();
+				geometry.applyMatrix4(inverse);
 
-				matrix.decompose( mesh.position, mesh.quaternion, mesh.scale );
+				matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
 
 			} else {
 
-				this.debugMessage( '   Unknown mesh chunk: ' + next.hexId );
+				this.debugMessage('   Unknown mesh chunk: ' + next.hexId);
 
 			}
 
-			next = chunk.readChunk( );
+			next = chunk.readChunk();
 
 		}
 
@@ -464,64 +464,64 @@ class TDSLoader extends Loader {
 	 * @param {Chunk} chunk Chunk in use.
 	 * @param {Mesh} mesh Mesh to be filled with the data read.
 	 */
-	readFaceArray( chunk, mesh ) {
+	readFaceArray(chunk, mesh) {
 
-		const faces = chunk.readWord( );
+		const faces = chunk.readWord();
 
-		this.debugMessage( '   Faces: ' + faces );
+		this.debugMessage('   Faces: ' + faces);
 
 		const index = [];
 
-		for ( let i = 0; i < faces; ++ i ) {
+		for (let i = 0; i < faces; ++ i) {
 
-			index.push( chunk.readWord( ), chunk.readWord( ), chunk.readWord( ) );
+			index.push(chunk.readWord(), chunk.readWord(), chunk.readWord());
 
-			chunk.readWord( ); // visibility
+			chunk.readWord(); // visibility
 
 		}
 
-		mesh.geometry.setIndex( index );
+		mesh.geometry.setIndex(index);
 
 		//The rest of the FACE_ARRAY chunk is subchunks
 
 		let materialIndex = 0;
 		let start = 0;
 
-		while ( ! chunk.endOfChunk ) {
+		while (! chunk.endOfChunk) {
 
-			const subchunk = chunk.readChunk( );
+			const subchunk = chunk.readChunk();
 
-			if ( subchunk.id === MSH_MAT_GROUP ) {
+			if (subchunk.id === MSH_MAT_GROUP) {
 
-				this.debugMessage( '      Material Group' );
+				this.debugMessage('      Material Group');
 
-				const group = this.readMaterialGroup( subchunk );
+				const group = this.readMaterialGroup(subchunk);
 				const count = group.index.length * 3; // assuming successive indices
 
-				mesh.geometry.addGroup( start, count, materialIndex );
+				mesh.geometry.addGroup(start, count, materialIndex);
 
 				start += count;
 				materialIndex ++;
 
 				const material = this.materials[ group.name ];
 
-				if ( Array.isArray( mesh.material ) === false ) mesh.material = [];
+				if (Array.isArray(mesh.material) === false) mesh.material = [];
 
-				if ( material !== undefined )	{
+				if (material !== undefined)	{
 
-					mesh.material.push( material );
+					mesh.material.push(material);
 
 				}
 
 			} else {
 
-				this.debugMessage( '      Unknown face array chunk: ' + subchunk.hexId );
+				this.debugMessage('      Unknown face array chunk: ' + subchunk.hexId);
 
 			}
 
 		}
 
-		if ( mesh.material.length === 1 ) mesh.material = mesh.material[ 0 ]; // for backwards compatibility
+		if (mesh.material.length === 1) mesh.material = mesh.material[ 0 ]; // for backwards compatibility
 
 	}
 
@@ -533,50 +533,50 @@ class TDSLoader extends Loader {
 	 * @param {String} path Path for external resources.
 	 * @return {Texture} Texture read from this data chunk.
 	 */
-	readMap( chunk, path ) {
+	readMap(chunk, path) {
 
-		let next = chunk.readChunk( );
+		let next = chunk.readChunk();
 		let texture = {};
 
-		const loader = new TextureLoader( this.manager );
-		loader.setPath( this.resourcePath || path ).setCrossOrigin( this.crossOrigin );
+		const loader = new TextureLoader(this.manager);
+		loader.setPath(this.resourcePath || path).setCrossOrigin(this.crossOrigin);
 
-		while ( next ) {
+		while (next) {
 
-			if ( next.id === MAT_MAPNAME ) {
+			if (next.id === MAT_MAPNAME) {
 
 				const name = next.readString();
-				texture = loader.load( name );
+				texture = loader.load(name);
 
-				this.debugMessage( '      File: ' + path + name );
+				this.debugMessage('      File: ' + path + name);
 
-			} else if ( next.id === MAT_MAP_UOFFSET ) {
+			} else if (next.id === MAT_MAP_UOFFSET) {
 
-				texture.offset.x = next.readFloat( );
-				this.debugMessage( '      OffsetX: ' + texture.offset.x );
+				texture.offset.x = next.readFloat();
+				this.debugMessage('      OffsetX: ' + texture.offset.x);
 
-			} else if ( next.id === MAT_MAP_VOFFSET ) {
+			} else if (next.id === MAT_MAP_VOFFSET) {
 
-				texture.offset.y = next.readFloat( );
-				this.debugMessage( '      OffsetY: ' + texture.offset.y );
+				texture.offset.y = next.readFloat();
+				this.debugMessage('      OffsetY: ' + texture.offset.y);
 
-			} else if ( next.id === MAT_MAP_USCALE ) {
+			} else if (next.id === MAT_MAP_USCALE) {
 
-				texture.repeat.x = next.readFloat( );
-				this.debugMessage( '      RepeatX: ' + texture.repeat.x );
+				texture.repeat.x = next.readFloat();
+				this.debugMessage('      RepeatX: ' + texture.repeat.x);
 
-			} else if ( next.id === MAT_MAP_VSCALE ) {
+			} else if (next.id === MAT_MAP_VSCALE) {
 
-				texture.repeat.y = next.readFloat( );
-				this.debugMessage( '      RepeatY: ' + texture.repeat.y );
+				texture.repeat.y = next.readFloat();
+				this.debugMessage('      RepeatY: ' + texture.repeat.y);
 
 			} else {
 
-				this.debugMessage( '      Unknown map chunk: ' + next.hexId );
+				this.debugMessage('      Unknown map chunk: ' + next.hexId);
 
 			}
 
-			next = chunk.readChunk( );
+			next = chunk.readChunk();
 
 		}
 
@@ -591,22 +591,22 @@ class TDSLoader extends Loader {
 	 * @param {Chunk} chunk Chunk in use.
 	 * @return {Object} Object with name and index of the object.
 	 */
-	readMaterialGroup( chunk ) {
+	readMaterialGroup(chunk) {
 
 		const name = chunk.readString();
 		const numFaces = chunk.readWord();
 
-		this.debugMessage( '         Name: ' + name );
-		this.debugMessage( '         Faces: ' + numFaces );
+		this.debugMessage('         Name: ' + name);
+		this.debugMessage('         Faces: ' + numFaces);
 
 		const index = [];
-		for ( let i = 0; i < numFaces; ++ i ) {
+		for (let i = 0; i < numFaces; ++ i) {
 
-			index.push( chunk.readWord( ) );
+			index.push(chunk.readWord());
 
 		}
 
-		return { name: name, index: index };
+		return {name: name, index: index};
 
 	}
 
@@ -617,34 +617,34 @@ class TDSLoader extends Loader {
 	 * @param {Chunk} chunk Chunk.
 	 * @return {Color} Color value read..
 	 */
-	readColor( chunk ) {
+	readColor(chunk) {
 
-		const subChunk = chunk.readChunk( );
+		const subChunk = chunk.readChunk();
 		const color = new Color();
 
-		if ( subChunk.id === COLOR_24 || subChunk.id === LIN_COLOR_24 ) {
+		if (subChunk.id === COLOR_24 || subChunk.id === LIN_COLOR_24) {
 
-			const r = subChunk.readByte( );
-			const g = subChunk.readByte( );
-			const b = subChunk.readByte( );
+			const r = subChunk.readByte();
+			const g = subChunk.readByte();
+			const b = subChunk.readByte();
 
-			color.setRGB( r / 255, g / 255, b / 255 );
+			color.setRGB(r / 255, g / 255, b / 255);
 
-			this.debugMessage( '      Color: ' + color.r + ', ' + color.g + ', ' + color.b );
+			this.debugMessage('      Color: ' + color.r + ', ' + color.g + ', ' + color.b);
 
-		}	else if ( subChunk.id === COLOR_F || subChunk.id === LIN_COLOR_F ) {
+		}	else if (subChunk.id === COLOR_F || subChunk.id === LIN_COLOR_F) {
 
-			const r = subChunk.readFloat( );
-			const g = subChunk.readFloat( );
-			const b = subChunk.readFloat( );
+			const r = subChunk.readFloat();
+			const g = subChunk.readFloat();
+			const b = subChunk.readFloat();
 
-			color.setRGB( r, g, b );
+			color.setRGB(r, g, b);
 
-			this.debugMessage( '      Color: ' + color.r + ', ' + color.g + ', ' + color.b );
+			this.debugMessage('      Color: ' + color.r + ', ' + color.g + ', ' + color.b);
 
 		}	else {
 
-			this.debugMessage( '      Unknown color chunk: ' + subChunk.hexId );
+			this.debugMessage('      Unknown color chunk: ' + subChunk.hexId);
 
 		}
 
@@ -659,22 +659,22 @@ class TDSLoader extends Loader {
 	 * @param {Chunk} chunk Chunk to read data from.
 	 * @return {Number} Data read from the dataview.
 	 */
-	readPercentage( chunk ) {
+	readPercentage(chunk) {
 
-		const subChunk = chunk.readChunk( );
+		const subChunk = chunk.readChunk();
 
-		switch ( subChunk.id ) {
+		switch (subChunk.id) {
 
 			case INT_PERCENTAGE:
-				return ( subChunk.readShort( ) / 100 );
+				return (subChunk.readShort() / 100);
 				break;
 
 			case FLOAT_PERCENTAGE:
-				return subChunk.readFloat( );
+				return subChunk.readFloat();
 				break;
 
 			default:
-				this.debugMessage( '      Unknown percentage chunk: ' + subChunk.hexId );
+				this.debugMessage('      Unknown percentage chunk: ' + subChunk.hexId);
 				return 0;
 
 		}
@@ -689,11 +689,11 @@ class TDSLoader extends Loader {
 	 * @method debugMessage
 	 * @param {Object} message Debug message to print to the console.
 	 */
-	debugMessage( message ) {
+	debugMessage(message) {
 
-		if ( this.debug ) {
+		if (this.debug) {
 
-			console.log( message );
+			console.log(message);
 
 		}
 
@@ -713,7 +713,7 @@ class Chunk {
 	 * @param {Number} position in data.
 	 * @param {Function} debugMessage logging callback.
 	 */
-	constructor( data, position, debugMessage ) {
+	constructor(data, position, debugMessage) {
 
 		this.data = data;
 		// the offset to the begin of this chunk
@@ -722,7 +722,7 @@ class Chunk {
 		this.position = position;
 		this.debugMessage = debugMessage;
 
-		if ( this.debugMessage instanceof Function ) {
+		if (this.debugMessage instanceof Function) {
 
 			this.debugMessage = function () {};
 
@@ -732,9 +732,9 @@ class Chunk {
 		this.size = this.readDWord();
 		this.end = this.offset + this.size;
 
-		if ( this.end > data.byteLength ) {
+		if (this.end > data.byteLength) {
 
-			this.debugMessage( 'Bad chunk size for chunk at ' + position );
+			this.debugMessage('Bad chunk size for chunk at ' + position);
 
 		}
 
@@ -748,7 +748,7 @@ class Chunk {
 	 */
 	readChunk() {
 
-		if ( this.endOfChunk ) {
+		if (this.endOfChunk) {
 
 			return null;
 
@@ -756,13 +756,13 @@ class Chunk {
 
 		try {
 
-			const next = new Chunk( this.data, this.position, this.debugMessage );
+			const next = new Chunk(this.data, this.position, this.debugMessage);
 			this.position += next.size;
 			return next;
 
-		}	catch ( e ) {
+		}	catch (e) {
 
-			this.debugMessage( 'Unable to read chunk at ' + this.position );
+			this.debugMessage('Unable to read chunk at ' + this.position);
 			return null;
 
 		}
@@ -777,7 +777,7 @@ class Chunk {
 	 */
 	get hexId() {
 
-		return this.id.toString( 16 );
+		return this.id.toString(16);
 
 	}
 
@@ -795,7 +795,7 @@ class Chunk {
 	 */
 	readByte() {
 
-		const v = this.data.getUint8( this.position, true );
+		const v = this.data.getUint8(this.position, true);
 		this.position += 1;
 		return v;
 
@@ -811,13 +811,13 @@ class Chunk {
 
 		try {
 
-			const v = this.data.getFloat32( this.position, true );
+			const v = this.data.getFloat32(this.position, true);
 			this.position += 4;
 			return v;
 
-		}	catch ( e ) {
+		}	catch (e) {
 
-			this.debugMessage( e + ' ' + this.position + ' ' + this.data.byteLength );
+			this.debugMessage(e + ' ' + this.position + ' ' + this.data.byteLength);
 			return 0;
 
 		}
@@ -832,7 +832,7 @@ class Chunk {
 	 */
 	readInt() {
 
-		const v = this.data.getInt32( this.position, true );
+		const v = this.data.getInt32(this.position, true);
 		this.position += 4;
 		return v;
 
@@ -846,7 +846,7 @@ class Chunk {
 	 */
 	readShort() {
 
-		const v = this.data.getInt16( this.position, true );
+		const v = this.data.getInt16(this.position, true);
 		this.position += 2;
 		return v;
 
@@ -860,7 +860,7 @@ class Chunk {
 	 */
 	readDWord() {
 
-		const v = this.data.getUint32( this.position, true );
+		const v = this.data.getUint32(this.position, true);
 		this.position += 4;
 		return v;
 
@@ -874,7 +874,7 @@ class Chunk {
 	 */
 	readWord() {
 
-		const v = this.data.getUint16( this.position, true );
+		const v = this.data.getUint16(this.position, true);
 		this.position += 2;
 		return v;
 
@@ -890,9 +890,9 @@ class Chunk {
 
 		let s = '';
 		let c = this.readByte();
-		while ( c ) {
+		while (c) {
 
-			s += String.fromCharCode( c );
+			s += String.fromCharCode(c);
 			c = this.readByte();
 
 		}
@@ -1121,4 +1121,4 @@ const MESH_MATRIX = 0x4160;
 // const VIEWPORT_SIZE = 0x7020;
 // const NETWORK_VIEW = 0x7030;
 
-export { TDSLoader };
+export {TDSLoader};

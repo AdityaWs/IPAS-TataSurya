@@ -14,19 +14,19 @@ import {
 
 export class LUT3dlLoader extends Loader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 		this.type = UnsignedByteType;
 
 	}
 
-	setType( type ) {
+	setType(type) {
 
-		if ( type !== UnsignedByteType && type !== FloatType ) {
+		if (type !== UnsignedByteType && type !== FloatType) {
 
-			throw new Error( 'LUT3dlLoader: Unsupported type' );
+			throw new Error('LUT3dlLoader: Unsupported type');
 
 		}
 
@@ -36,84 +36,84 @@ export class LUT3dlLoader extends Loader {
 
 	}
 
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
 
-		const loader = new FileLoader( this.manager );
-		loader.setPath( this.path );
-		loader.setResponseType( 'text' );
-		loader.load( url, text => {
+		const loader = new FileLoader(this.manager);
+		loader.setPath(this.path);
+		loader.setResponseType('text');
+		loader.load(url, text => {
 
 			try {
 
-				onLoad( this.parse( text ) );
+				onLoad(this.parse(text));
 
-			} catch ( e ) {
+			} catch (e) {
 
-				if ( onError ) {
+				if (onError) {
 
-					onError( e );
+					onError(e);
 
 				} else {
 
-					console.error( e );
+					console.error(e);
 
 				}
 
-				this.manager.itemError( url );
+				this.manager.itemError(url);
 
 			}
 
-		}, onProgress, onError );
+		}, onProgress, onError);
 
 	}
 
-	parse( input ) {
+	parse(input) {
 
 		const regExpGridInfo = /^[\d ]+$/m;
 		const regExpDataPoints = /^([\d.e+-]+) +([\d.e+-]+) +([\d.e+-]+) *$/gm;
 
 		// The first line describes the positions of values on the LUT grid.
-		let result = regExpGridInfo.exec( input );
+		let result = regExpGridInfo.exec(input);
 
-		if ( result === null ) {
+		if (result === null) {
 
-			throw new Error( 'LUT3dlLoader: Missing grid information' );
+			throw new Error('LUT3dlLoader: Missing grid information');
 
 		}
 
-		const gridLines = result[ 0 ].trim().split( /\s+/g ).map( Number );
+		const gridLines = result[ 0 ].trim().split(/\s+/g).map(Number);
 		const gridStep = gridLines[ 1 ] - gridLines[ 0 ];
 		const size = gridLines.length;
 		const sizeSq = size ** 2;
 
-		for ( let i = 1, l = gridLines.length; i < l; ++ i ) {
+		for (let i = 1, l = gridLines.length; i < l; ++ i) {
 
-			if ( gridStep !== ( gridLines[ i ] - gridLines[ i - 1 ] ) ) {
+			if (gridStep !== (gridLines[ i ] - gridLines[ i - 1 ])) {
 
-				throw new Error( 'LUT3dlLoader: Inconsistent grid size' );
+				throw new Error('LUT3dlLoader: Inconsistent grid size');
 
 			}
 
 		}
 
-		const dataFloat = new Float32Array( size ** 3 * 4 );
+		const dataFloat = new Float32Array(size ** 3 * 4);
 		let maxValue = 0.0;
 		let index = 0;
 
-		while ( ( result = regExpDataPoints.exec( input ) ) !== null ) {
+		while ((result = regExpDataPoints.exec(input)) !== null) {
 
-			const r = Number( result[ 1 ] );
-			const g = Number( result[ 2 ] );
-			const b = Number( result[ 3 ] );
+			const r = Number(result[ 1 ]);
+			const g = Number(result[ 2 ]);
+			const b = Number(result[ 3 ]);
 
-			maxValue = Math.max( maxValue, r, g, b );
+			maxValue = Math.max(maxValue, r, g, b);
 
 			const bLayer = index % size;
-			const gLayer = Math.floor( index / size ) % size;
-			const rLayer = Math.floor( index / ( sizeSq ) ) % size;
+			const gLayer = Math.floor(index / size) % size;
+			const rLayer = Math.floor(index / (sizeSq)) % size;
 
 			// b grows first, then g, then r.
-			const d4 = ( bLayer * sizeSq + gLayer * size + rLayer ) * 4;
+			const d4 = (bLayer * sizeSq + gLayer * size + rLayer) * 4;
 			dataFloat[ d4 + 0 ] = r;
 			dataFloat[ d4 + 1 ] = g;
 			dataFloat[ d4 + 2 ] = b;
@@ -123,13 +123,13 @@ export class LUT3dlLoader extends Loader {
 		}
 
 		// Determine the bit depth to scale the values to [0.0, 1.0].
-		const bits = Math.ceil( Math.log2( maxValue ) );
-		const maxBitValue = Math.pow( 2, bits );
+		const bits = Math.ceil(Math.log2(maxValue));
+		const maxBitValue = Math.pow(2, bits);
 
-		const data = this.type === UnsignedByteType ? new Uint8Array( dataFloat.length ) : dataFloat;
+		const data = this.type === UnsignedByteType ? new Uint8Array(dataFloat.length) : dataFloat;
 		const scale = this.type === UnsignedByteType ? 255 : 1;
 
-		for ( let i = 0, l = data.length; i < l; i += 4 ) {
+		for (let i = 0, l = data.length; i < l; i += 4) {
 
 			const i1 = i + 1;
 			const i2 = i + 2;

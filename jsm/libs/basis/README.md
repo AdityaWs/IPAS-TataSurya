@@ -24,21 +24,21 @@ Both are dependencies of `KTX2Loader`:
 
 ```js
 const ktx2Loader = new KTX2Loader();
-ktx2Loader.setTranscoderPath( 'examples/jsm/libs/basis/' );
-ktx2Loader.detectSupport( renderer );
-ktx2Loader.load( 'diffuse.ktx2', function ( texture ) {
+ktx2Loader.setTranscoderPath('examples/jsm/libs/basis/');
+ktx2Loader.detectSupport(renderer);
+ktx2Loader.load('diffuse.ktx2', function (texture) {
 
-	const material = new THREE.MeshStandardMaterial( { map: texture } );
+	const material = new THREE.MeshStandardMaterial({map: texture});
 
 }, function () {
 
-	console.log( 'onProgress' );
+	console.log('onProgress');
 
-}, function ( e ) {
+}, function (e) {
 
-	console.error( e );
+	console.error(e);
 
-} );
+});
 ```
 
 ## License

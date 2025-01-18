@@ -1,189 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>Venus</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link rel="stylesheet" href="./../css/style.css">
-	</head>
-	<body>
+<html lang="id">
+    <head>
+        <title>Venus</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="./../css/style.css">
+    </head>
+    <body>
 
-		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Venus</button>
+        <button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Venus</button>
 
-		<div class="info-blur"></div>
-		<div class="info">
-			<button class="info-close">X</button>
-			<div class="info-list">
-				<h1>Venus</h1>
-				<p>Venus adalah planet kedua dari Matahari dan merupakan salah satu planet terpanas di tata surya kita. Planet ini sering disebut sebagai "bintang fajar" atau "bintang kejora" karena terlihat terang di langit saat pagi atau sore hari. Venus dinamai berdasarkan dewi cinta dan kecantikan dalam mitologi Romawi. Meskipun sering disebut "kembaran" Bumi karena ukurannya yang hampir sama, Venus memiliki kondisi yang sangat berbeda dan ekstrem.</p>
+        <div class="info-blur"></div>
+        <div class="info">
+            <button class="info-close">X</button>
+            <div class="info-list">
+                <h1>Venus</h1>
+                <p>Venus adalah planet kedua dari Matahari dan merupakan salah satu planet terpanas di tata surya kita. Planet ini sering disebut sebagai "bintang fajar" atau "bintang kejora" karena terlihat terang di langit saat pagi atau sore hari. Venus dinamai berdasarkan dewi cinta dan kecantikan dalam mitologi Romawi. Meskipun sering disebut "kembaran" Bumi karena ukurannya yang hampir sama, Venus memiliki kondisi yang sangat berbeda dan ekstrem.</p>
                 <p>Venus memiliki atmosfer yang sangat tebal dan sebagian besar terdiri dari karbon dioksida, dengan awan asam sulfat yang menyelimuti permukaannya. Suhu permukaannya bisa mencapai lebih dari 470°C, cukup panas untuk melelehkan logam seperti timbal. Tidak seperti sebagian besar planet lainnya, Venus berputar searah jarum jam, yang disebut rotasi retrograde. Satu hari di Venus (rotasi penuh) lebih panjang dari satu tahun di Venus (revolusi mengelilingi Matahari).</p>
                 <p>Diameter Venus sekitar 12.104 km, hanya sedikit lebih kecil dari Bumi. Planet ini berjarak rata-rata sekitar 108 juta km dari Matahari, menjadikannya planet terdekat kedua. Permukaan Venus sebagian besar terdiri dari gunung berapi, dataran berbatu, dan kawah. Atmosfernya memiliki tekanan 90 kali lebih besar dari Bumi, setara dengan tekanan yang dirasakan di kedalaman 900 meter di bawah laut. Venus tidak memiliki bulan atau cincin, berbeda dengan banyak planet lain di tata surya.</p>
                 <p>Sejak zaman kuno, Venus telah diamati oleh berbagai peradaban karena kecerahannya di langit. Pada abad ke-20, misi ruang angkasa seperti Venera (Uni Soviet) dan Magellan (NASA) mengungkap lebih banyak tentang planet ini. Venus adalah satu-satunya planet yang dinamai berdasarkan dewi perempuan. Fakta menarik lainnya, karena atmosfernya yang memantulkan cahaya, Venus adalah objek alami paling terang kedua di langit malam setelah Bulan. Namun, kondisi ekstremnya membuatnya tidak layak dihuni oleh manusia atau bentuk kehidupan seperti yang kita kenal.</p>
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<script src="./../css/style.js"></script>
+        <script src="./../css/style.js"></script>
 
-		<script type="importmap">
-			{
-				"imports": {
-					"three": "../js/three.webgpu.js",
-					"three/webgpu": "../js/three.webgpu.js",
-					"three/tsl": "../js/three.tsl.js",
-					"three/addons/": "../jsm/"
-				}
-			}
-		</script>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "../js/three.webgpu.js",
+                    "three/webgpu": "../js/three.webgpu.js",
+                    "three/tsl": "../js/three.tsl.js",
+                    "three/addons/": "../jsm/"
+                }
+            }
+        </script>
 
-		<script type="module">
+        <script type="module">
 
-			import * as THREE from 'three';
-			import { step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max } from 'three/tsl';
-			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+            import * as THREE from "three";
+            import {step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max} from "three/tsl";
+            import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+            import {GUI} from "three/addons/libs/lil-gui.module.min.js";
 
-			let camera, scene, renderer, controls, globe, sphereSkybox, clock;
+            let camera, scene, renderer, controls, globe, sphereSkybox, clock;
 
-			init();
+            init();
 
-			function init() {
+            function init() {
 
-				clock = new THREE.Clock();
+                clock = new THREE.Clock();
 
-				camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 0.1, 100 );
-				camera.position.set( 4.5, 2, 3 );
+                camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera.position.set(4.5, 2, 3);
 
-				scene = new THREE.Scene();
+                scene = new THREE.Scene();
 
-				// sun
+                // sun
 
-				const sun = new THREE.DirectionalLight( '#ffffff', 2 );
-				sun.position.set( 0, 0, 3 );
-				scene.add( sun );
+                const sun = new THREE.DirectionalLight("#ffffff", 2);
+                sun.position.set(0, 0, 3);
+                scene.add(sun);
 
-				// uniforms
+                // uniforms
 
-				const atmosphereDayColor = uniform( color( '#eeeeee' ) );
-				const atmosphereTwilightColor = uniform( color( '#eeeeee' ) );
-				const roughnessLow = uniform( 0.25 );
-				const roughnessHigh = uniform( 0.35 );
+                const atmosphereDayColor = uniform(color("#eeeeee"));
+                const atmosphereTwilightColor = uniform(color("#eeeeee"));
+                const roughnessLow = uniform(0.25);
+                const roughnessHigh = uniform(0.35);
 
-				// textures
+                // textures
 
-				const textureLoader = new THREE.TextureLoader();
+                const textureLoader = new THREE.TextureLoader();
 
-				const dayTexture = textureLoader.load( './textures/venus_day_2048.jpg' );
-				dayTexture.colorSpace = THREE.SRGBColorSpace;
-				dayTexture.anisotropy = 8;
+                const dayTexture = textureLoader.load("./textures/venus_day_2048.jpg");
+                dayTexture.colorSpace = THREE.SRGBColorSpace;
+                dayTexture.anisotropy = 8;
 
-				const nightTexture = textureLoader.load( './textures/venus_night_2048.jpg' );
-				nightTexture.colorSpace = THREE.SRGBColorSpace;
-				nightTexture.anisotropy = 8;
+                const nightTexture = textureLoader.load("./textures/venus_night_2048.jpg");
+                nightTexture.colorSpace = THREE.SRGBColorSpace;
+                nightTexture.anisotropy = 8;
 
-                const atmosphereTexture = textureLoader.load( './textures/venus_atmosphere_2048.jpg' );
+                const atmosphereTexture = textureLoader.load("./textures/venus_atmosphere_2048.jpg");
                 atmosphereTexture.colorSpace = THREE.SRGBColorSpace;
                 atmosphereTexture.anisotropy = 8;
 
-				const spaceTexture = textureLoader.load( './../hdri_space.jpg');
-				spaceTexture.colorSpace = THREE.SRGBColorSpace;
-				spaceTexture.anisotropy = 8;
+                const spaceTexture = textureLoader.load("./../hdri_space.jpg");
+                spaceTexture.colorSpace = THREE.SRGBColorSpace;
+                spaceTexture.anisotropy = 8;
 
 
-				// fresnel
-				const viewDirection = positionWorld.sub( cameraPosition ).normalize();
-				const fresnel = viewDirection.dot( normalWorld ).abs().oneMinus().toVar();
-				// sun orientation
-				const sunOrientation = normalWorld.dot( normalize( sun.position ) ).toVar();
-				// atmosphere color
+                // fresnel
+                const viewDirection = positionWorld.sub(cameraPosition).normalize();
+                const fresnel = viewDirection.dot(normalWorld).abs().oneMinus().toVar();
+                // sun orientation
+                const sunOrientation = normalWorld.dot(normalize(sun.position)).toVar();
+                // atmosphere color
 
 
-				// globe
+                // globe
 
-				const globeMaterial = new THREE.MeshStandardNodeMaterial();
+                const globeMaterial = new THREE.MeshStandardNodeMaterial();
 
-				globeMaterial.colorNode = mix( texture( dayTexture ), vec3( 1 ), 0.0);
+                globeMaterial.colorNode = mix(texture(dayTexture), vec3(1), 0.0);
 
-				const night = texture( nightTexture );
-				const dayStrength = sunOrientation.smoothstep( - 0.25, 0.5 );
+                const night = texture(nightTexture);
+                const dayStrength = sunOrientation.smoothstep(- 0.25, 0.5);
 
-				let finalOutput = mix( night.rgb, output.rgb, dayStrength );
+                let finalOutput = mix(night.rgb, output.rgb, dayStrength);
 
-				globeMaterial.outputNode = vec4( finalOutput, output.a );
+                globeMaterial.outputNode = vec4(finalOutput, output.a);
 
-				const sphereGeometry = new THREE.SphereGeometry( 1, 64, 64 );
-				globe = new THREE.Mesh( sphereGeometry, globeMaterial );
-				scene.add( globe );
+                const sphereGeometry = new THREE.SphereGeometry(1, 64, 64);
+                globe = new THREE.Mesh(sphereGeometry, globeMaterial);
+                scene.add(globe);
 
 
-				// atmosphere
+                // atmosphere
 
                 const atmosphereGeometry = new THREE.SphereGeometry(1.01, 64, 64);
-				const atmosphereMaterial = new THREE.MeshBasicNodeMaterial( {color: 0x000, transparent: true } );
+                const atmosphereMaterial = new THREE.MeshBasicNodeMaterial({color: 0x000, transparent: true});
 
                 let atmosphereOutput = mix(texture(atmosphereTexture).rgb, output.rgb, 0.0);
 
-                let alpha = fresnel.remap( 0, 1, 1, 0 );
+                let alpha = fresnel.remap(0, 1, 1, 0);
                 atmosphereMaterial.outputNode = vec4(atmosphereOutput, alpha);
 
-				const atmosphere = new THREE.Mesh( atmosphereGeometry, atmosphereMaterial );
-				scene.add( atmosphere );
+                const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+                scene.add(atmosphere);
 
 
-				// skybox
+                // skybox
 
-				const sphereSkyboxGeometry = new THREE.SphereGeometry(10, 32, 16);
-				const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
+                const sphereSkyboxGeometry = new THREE.SphereGeometry(50, 32, 16);
+                const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
 
-				let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
-				sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
+                let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
+                sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
 
-				sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
-				scene.add(sphereSkybox)
-				console.log("sphere")
-
-
-				// renderer
-
-				renderer = new THREE.WebGPURenderer();
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.setAnimationLoop( animate );
-				document.body.appendChild( renderer.domElement );
+                sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
+                scene.add(sphereSkybox)
 
 
-				// controls
+                // renderer
 
-				controls = new OrbitControls( camera, renderer.domElement );
-				controls.enableDamping = true;
-				controls.minDistance = 0.1;
-				controls.maxDistance = 50;
+                renderer = new THREE.WebGPURenderer();
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setAnimationLoop(animate);
+                document.body.appendChild(renderer.domElement);
 
-				window.addEventListener( 'resize', onWindowResize );
 
-			}
+                // controls
 
-			function onWindowResize() {
+                controls = new OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.minDistance = 0.1;
+                controls.maxDistance = 50;
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+                window.addEventListener("resize", onWindowResize);
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+            }
 
-			}
+            function onWindowResize() {
 
-			async function animate() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
 
-				const delta = clock.getDelta();
-				globe.rotation.y += delta * 0.025;
-				sphereSkybox.rotation.y += delta * 0.025;
-			
-				controls.update();
+                renderer.setSize(window.innerWidth, window.innerHeight);
 
-				renderer.render( scene, camera );
+            }
 
-			}
+            async function animate() {
 
-		</script>
+                const delta = clock.getDelta();
+                globe.rotation.y += delta * 0.025;
+                sphereSkybox.rotation.y += delta * 0.025;
+            
+                controls.update();
 
-	</body>
+                renderer.render(scene, camera);
+
+            }
+
+        </script>
+
+    </body>
 </html>

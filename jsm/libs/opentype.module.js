@@ -22,7 +22,7 @@ if (!String.prototype.codePointAt) {
 			var size = string.length;
 			// `ToInteger`
 			var index = position ? Number(position) : 0;
-			if (index != index) { // better `isNaN`
+			if (index != index) {// better `isNaN`
 				index = 0;
 			}
 			// Account for out-of-bounds indices:
@@ -32,12 +32,12 @@ if (!String.prototype.codePointAt) {
 			// Get the first code unit
 			var first = string.charCodeAt(index);
 			var second;
-			if ( // check if it’s the start of a surrogate pair
+			if (// check if it’s the start of a surrogate pair
 				first >= 0xD800 && first <= 0xDBFF && // high surrogate
 				size > index + 1 // there is a next code unit
 			) {
 				second = string.charCodeAt(index + 1);
-				if (second >= 0xDC00 && second <= 0xDFFF) { // low surrogate
+				if (second >= 0xDC00 && second <= 0xDFFF) {// low surrogate
 					// https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
 					return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
 				}
@@ -112,14 +112,14 @@ function tinf_build_bits_base(bits, base, delta, first) {
   var i, sum;
 
   /* build bits table */
-  for (i = 0; i < delta; ++i) { bits[i] = 0; }
-  for (i = 0; i < 30 - delta; ++i) { bits[i + delta] = i / delta | 0; }
+  for (i = 0; i < delta; ++i) {bits[i] = 0;}
+  for (i = 0; i < 30 - delta; ++i) {bits[i + delta] = i / delta | 0;}
 
   /* build base table */
   for (sum = first, i = 0; i < 30; ++i) {
     base[i] = sum;
     sum += 1 << bits[i];
-  }
+ }
 }
 
 /* build the fixed huffman trees */
@@ -127,23 +127,23 @@ function tinf_build_fixed_trees(lt, dt) {
   var i;
 
   /* build fixed length tree */
-  for (i = 0; i < 7; ++i) { lt.table[i] = 0; }
+  for (i = 0; i < 7; ++i) {lt.table[i] = 0;}
 
   lt.table[7] = 24;
   lt.table[8] = 152;
   lt.table[9] = 112;
 
-  for (i = 0; i < 24; ++i) { lt.trans[i] = 256 + i; }
-  for (i = 0; i < 144; ++i) { lt.trans[24 + i] = i; }
-  for (i = 0; i < 8; ++i) { lt.trans[24 + 144 + i] = 280 + i; }
-  for (i = 0; i < 112; ++i) { lt.trans[24 + 144 + 8 + i] = 144 + i; }
+  for (i = 0; i < 24; ++i) {lt.trans[i] = 256 + i;}
+  for (i = 0; i < 144; ++i) {lt.trans[24 + i] = i;}
+  for (i = 0; i < 8; ++i) {lt.trans[24 + 144 + i] = 280 + i;}
+  for (i = 0; i < 112; ++i) {lt.trans[24 + 144 + 8 + i] = 144 + i;}
 
   /* build fixed distance tree */
-  for (i = 0; i < 5; ++i) { dt.table[i] = 0; }
+  for (i = 0; i < 5; ++i) {dt.table[i] = 0;}
 
   dt.table[5] = 32;
 
-  for (i = 0; i < 32; ++i) { dt.trans[i] = i; }
+  for (i = 0; i < 32; ++i) {dt.trans[i] = i;}
 }
 
 /* given an array of code lengths, build a tree */
@@ -153,10 +153,10 @@ function tinf_build_tree(t, lengths, off, num) {
   var i, sum;
 
   /* clear code length count table */
-  for (i = 0; i < 16; ++i) { t.table[i] = 0; }
+  for (i = 0; i < 16; ++i) {t.table[i] = 0;}
 
   /* scan symbol lengths, and sum code length counts */
-  for (i = 0; i < num; ++i) { t.table[lengths[off + i]]++; }
+  for (i = 0; i < num; ++i) {t.table[lengths[off + i]]++;}
 
   t.table[0] = 0;
 
@@ -164,12 +164,12 @@ function tinf_build_tree(t, lengths, off, num) {
   for (sum = 0, i = 0; i < 16; ++i) {
     offs[i] = sum;
     sum += t.table[i];
-  }
+ }
 
   /* create code->symbol translation table (symbols sorted by code) */
   for (i = 0; i < num; ++i) {
-    if (lengths[off + i]) { t.trans[offs[lengths[off + i]]++] = i; }
-  }
+    if (lengths[off + i]) {t.trans[offs[lengths[off + i]]++] = i;}
+ }
 }
 
 /* ---------------------- *
@@ -183,7 +183,7 @@ function tinf_getbit(d) {
     /* load next tag */
     d.tag = d.source[d.sourceIndex++];
     d.bitcount = 7;
-  }
+ }
 
   /* shift bit out of tag */
   var bit = d.tag & 1;
@@ -195,12 +195,12 @@ function tinf_getbit(d) {
 /* read a num bit value from a stream and add base */
 function tinf_read_bits(d, num, base) {
   if (!num)
-    { return base; }
+    {return base;}
 
   while (d.bitcount < 24) {
     d.tag |= d.source[d.sourceIndex++] << d.bitcount;
     d.bitcount += 8;
-  }
+ }
 
   var val = d.tag & (0xffff >>> (16 - num));
   d.tag >>>= num;
@@ -213,7 +213,7 @@ function tinf_decode_symbol(d, t) {
   while (d.bitcount < 24) {
     d.tag |= d.source[d.sourceIndex++] << d.bitcount;
     d.bitcount += 8;
-  }
+ }
   
   var sum = 0, cur = 0, len = 0;
   var tag = d.tag;
@@ -226,7 +226,7 @@ function tinf_decode_symbol(d, t) {
 
     sum += t.table[len];
     cur -= t.table[len];
-  } while (cur >= 0);
+ } while (cur >= 0);
   
   d.tag = tag;
   d.bitcount -= len;
@@ -248,14 +248,14 @@ function tinf_decode_trees(d, lt, dt) {
   /* get 4 bits HCLEN (4-19) */
   hclen = tinf_read_bits(d, 4, 4);
 
-  for (i = 0; i < 19; ++i) { lengths[i] = 0; }
+  for (i = 0; i < 19; ++i) {lengths[i] = 0;}
 
   /* read code lengths for code length alphabet */
   for (i = 0; i < hclen; ++i) {
     /* get 3 bits code length (0-7) */
     var clen = tinf_read_bits(d, 3, 0);
     lengths[clcidx[i]] = clen;
-  }
+ }
 
   /* build code length tree */
   tinf_build_tree(code_tree, lengths, 0, 19);
@@ -270,26 +270,26 @@ function tinf_decode_trees(d, lt, dt) {
         var prev = lengths[num - 1];
         for (length = tinf_read_bits(d, 2, 3); length; --length) {
           lengths[num++] = prev;
-        }
+       }
         break;
       case 17:
         /* repeat code length 0 for 3-10 times (read 3 bits) */
         for (length = tinf_read_bits(d, 3, 3); length; --length) {
           lengths[num++] = 0;
-        }
+       }
         break;
       case 18:
         /* repeat code length 0 for 11-138 times (read 7 bits) */
         for (length = tinf_read_bits(d, 7, 11); length; --length) {
           lengths[num++] = 0;
-        }
+       }
         break;
       default:
         /* values 0-15 represent the actual code lengths */
         lengths[num++] = sym;
         break;
-    }
-  }
+   }
+ }
 
   /* build dynamic trees */
   tinf_build_tree(lt, lengths, 0, hlit);
@@ -308,11 +308,11 @@ function tinf_inflate_block_data(d, lt, dt) {
     /* check for end of block */
     if (sym === 256) {
       return TINF_OK;
-    }
+   }
 
     if (sym < 256) {
       d.dest[d.destLen++] = sym;
-    } else {
+   } else {
       var length, dist, offs;
       var i;
 
@@ -329,9 +329,9 @@ function tinf_inflate_block_data(d, lt, dt) {
       /* copy match */
       for (i = offs; i < offs + length; ++i) {
         d.dest[d.destLen++] = d.dest[i];
-      }
-    }
-  }
+     }
+   }
+ }
 }
 
 /* inflate an uncompressed block of data */
@@ -343,7 +343,7 @@ function tinf_inflate_uncompressed_block(d) {
   while (d.bitcount > 8) {
     d.sourceIndex--;
     d.bitcount -= 8;
-  }
+ }
 
   /* get length */
   length = d.source[d.sourceIndex + 1];
@@ -355,13 +355,13 @@ function tinf_inflate_uncompressed_block(d) {
 
   /* check length */
   if (length !== (~invlength & 0x0000ffff))
-    { return TINF_DATA_ERROR; }
+    {return TINF_DATA_ERROR;}
 
   d.sourceIndex += 4;
 
   /* copy block */
   for (i = length; i; --i)
-    { d.dest[d.destLen++] = d.source[d.sourceIndex++]; }
+    {d.dest[d.destLen++] = d.source[d.sourceIndex++];}
 
   /* make sure we start next block on a byte boundary */
   d.bitcount = 0;
@@ -398,19 +398,19 @@ function tinf_uncompress(source, dest) {
         break;
       default:
         res = TINF_DATA_ERROR;
-    }
+   }
 
     if (res !== TINF_OK)
-      { throw new Error('Data error'); }
+      {throw new Error('Data error');}
 
-  } while (!bfinal);
+ } while (!bfinal);
 
   if (d.destLen < d.dest.length) {
     if (typeof d.dest.slice === 'function')
-      { return d.dest.slice(0, d.destLen); }
+      {return d.dest.slice(0, d.destLen);}
     else
-      { return d.dest.subarray(0, d.destLen); }
-  }
+      {return d.dest.subarray(0, d.destLen);}
+ }
   
   return d.dest;
 }
@@ -475,26 +475,26 @@ BoundingBox.prototype.addPoint = function(x, y) {
         if (isNaN(this.x1) || isNaN(this.x2)) {
             this.x1 = x;
             this.x2 = x;
-        }
+       }
         if (x < this.x1) {
             this.x1 = x;
-        }
+       }
         if (x > this.x2) {
             this.x2 = x;
-        }
-    }
+       }
+   }
     if (typeof y === 'number') {
         if (isNaN(this.y1) || isNaN(this.y2)) {
             this.y1 = y;
             this.y2 = y;
-        }
+       }
         if (y < this.y1) {
             this.y1 = y;
-        }
+       }
         if (y > this.y2) {
             this.y2 = y;
-        }
-    }
+       }
+   }
 };
 
 /**
@@ -547,28 +547,28 @@ BoundingBox.prototype.addBezier = function(x0, y0, x1, y1, x2, y2, x, y) {
         var c = 3 * p1[i] - 3 * p0[i];
 
         if (a === 0) {
-            if (b === 0) { continue; }
+            if (b === 0) {continue;}
             var t = -c / b;
             if (0 < t && t < 1) {
-                if (i === 0) { this.addX(derive(p0[i], p1[i], p2[i], p3[i], t)); }
-                if (i === 1) { this.addY(derive(p0[i], p1[i], p2[i], p3[i], t)); }
-            }
+                if (i === 0) {this.addX(derive(p0[i], p1[i], p2[i], p3[i], t));}
+                if (i === 1) {this.addY(derive(p0[i], p1[i], p2[i], p3[i], t));}
+           }
             continue;
-        }
+       }
 
         var b2ac = Math.pow(b, 2) - 4 * c * a;
-        if (b2ac < 0) { continue; }
+        if (b2ac < 0) {continue;}
         var t1 = (-b + Math.sqrt(b2ac)) / (2 * a);
         if (0 < t1 && t1 < 1) {
-            if (i === 0) { this.addX(derive(p0[i], p1[i], p2[i], p3[i], t1)); }
-            if (i === 1) { this.addY(derive(p0[i], p1[i], p2[i], p3[i], t1)); }
-        }
+            if (i === 0) {this.addX(derive(p0[i], p1[i], p2[i], p3[i], t1));}
+            if (i === 1) {this.addY(derive(p0[i], p1[i], p2[i], p3[i], t1));}
+       }
         var t2 = (-b - Math.sqrt(b2ac)) / (2 * a);
         if (0 < t2 && t2 < 1) {
-            if (i === 0) { this.addX(derive(p0[i], p1[i], p2[i], p3[i], t2)); }
-            if (i === 1) { this.addY(derive(p0[i], p1[i], p2[i], p3[i], t2)); }
-        }
-    }
+            if (i === 0) {this.addX(derive(p0[i], p1[i], p2[i], p3[i], t2));}
+            if (i === 1) {this.addY(derive(p0[i], p1[i], p2[i], p3[i], t2));}
+       }
+   }
 };
 
 /**
@@ -614,7 +614,7 @@ Path.prototype.moveTo = function(x, y) {
         type: 'M',
         x: x,
         y: y
-    });
+   });
 };
 
 /**
@@ -626,7 +626,7 @@ Path.prototype.lineTo = function(x, y) {
         type: 'L',
         x: x,
         y: y
-    });
+   });
 };
 
 /**
@@ -664,7 +664,7 @@ Path.prototype.curveTo = Path.prototype.bezierCurveTo = function(x1, y1, x2, y2,
         y2: y2,
         x: x,
         y: y
-    });
+   });
 };
 
 /**
@@ -695,7 +695,7 @@ Path.prototype.quadTo = Path.prototype.quadraticCurveTo = function(x1, y1, x, y)
         y1: y1,
         x: x,
         y: y
-    });
+   });
 };
 
 /**
@@ -712,7 +712,7 @@ Path.prototype.quadTo = Path.prototype.quadraticCurveTo = function(x1, y1, x, y)
 Path.prototype.close = Path.prototype.closePath = function() {
     this.commands.push({
         type: 'Z'
-    });
+   });
 };
 
 /**
@@ -722,7 +722,7 @@ Path.prototype.close = Path.prototype.closePath = function() {
 Path.prototype.extend = function(pathOrCommands) {
     if (pathOrCommands.commands) {
         pathOrCommands = pathOrCommands.commands;
-    } else if (pathOrCommands instanceof BoundingBox) {
+   } else if (pathOrCommands instanceof BoundingBox) {
         var box = pathOrCommands;
         this.moveTo(box.x1, box.y1);
         this.lineTo(box.x2, box.y1);
@@ -730,7 +730,7 @@ Path.prototype.extend = function(pathOrCommands) {
         this.lineTo(box.x1, box.y2);
         this.close();
         return;
-    }
+   }
 
     Array.prototype.push.apply(this.commands, pathOrCommands);
 };
@@ -775,11 +775,11 @@ Path.prototype.getBoundingBox = function() {
                 break;
             default:
                 throw new Error('Unexpected path command ' + cmd.type);
-        }
-    }
+       }
+   }
     if (box.isEmpty()) {
         box.addPoint(0, 0);
-    }
+   }
     return box;
 };
 
@@ -793,27 +793,27 @@ Path.prototype.draw = function(ctx) {
         var cmd = this.commands[i];
         if (cmd.type === 'M') {
             ctx.moveTo(cmd.x, cmd.y);
-        } else if (cmd.type === 'L') {
+       } else if (cmd.type === 'L') {
             ctx.lineTo(cmd.x, cmd.y);
-        } else if (cmd.type === 'C') {
+       } else if (cmd.type === 'C') {
             ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
-        } else if (cmd.type === 'Q') {
+       } else if (cmd.type === 'Q') {
             ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
-        } else if (cmd.type === 'Z') {
+       } else if (cmd.type === 'Z') {
             ctx.closePath();
-        }
-    }
+       }
+   }
 
     if (this.fill) {
         ctx.fillStyle = this.fill;
         ctx.fill();
-    }
+   }
 
     if (this.stroke) {
         ctx.strokeStyle = this.stroke;
         ctx.lineWidth = this.strokeWidth;
         ctx.stroke();
-    }
+   }
 };
 
 /**
@@ -828,10 +828,10 @@ Path.prototype.toPathData = function(decimalPlaces) {
     function floatToString(v) {
         if (Math.round(v) === v) {
             return '' + Math.round(v);
-        } else {
+       } else {
             return v.toFixed(decimalPlaces);
-        }
-    }
+       }
+   }
 
     function packValues() {
         var arguments$1 = arguments;
@@ -841,29 +841,29 @@ Path.prototype.toPathData = function(decimalPlaces) {
             var v = arguments$1[i];
             if (v >= 0 && i > 0) {
                 s += ' ';
-            }
+           }
 
             s += floatToString(v);
-        }
+       }
 
         return s;
-    }
+   }
 
     var d = '';
     for (var i = 0; i < this.commands.length; i += 1) {
         var cmd = this.commands[i];
         if (cmd.type === 'M') {
             d += 'M' + packValues(cmd.x, cmd.y);
-        } else if (cmd.type === 'L') {
+       } else if (cmd.type === 'L') {
             d += 'L' + packValues(cmd.x, cmd.y);
-        } else if (cmd.type === 'C') {
+       } else if (cmd.type === 'C') {
             d += 'C' + packValues(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
-        } else if (cmd.type === 'Q') {
+       } else if (cmd.type === 'Q') {
             d += 'Q' + packValues(cmd.x1, cmd.y1, cmd.x, cmd.y);
-        } else if (cmd.type === 'Z') {
+       } else if (cmd.type === 'Z') {
             d += 'Z';
-        }
-    }
+       }
+   }
 
     return d;
 };
@@ -880,14 +880,14 @@ Path.prototype.toSVG = function(decimalPlaces) {
     if (this.fill && this.fill !== 'black') {
         if (this.fill === null) {
             svg += ' fill="none"';
-        } else {
+       } else {
             svg += ' fill="' + this.fill + '"';
-        }
-    }
+       }
+   }
 
     if (this.stroke) {
         svg += ' stroke="' + this.stroke + '" stroke-width="' + this.strokeWidth + '"';
-    }
+   }
 
     svg += '/>';
     return svg;
@@ -918,9 +918,9 @@ function fail(message) {
 function argument(predicate, message) {
     if (!predicate) {
         fail(message);
-    }
+   }
 }
-var check = { fail: fail, argument: argument, assert: argument };
+var check = {fail: fail, argument: argument, assert: argument};
 
 // Data types used in the OpenType font file.
 
@@ -947,7 +947,7 @@ var sizeOf = {};
 function constant(v) {
     return function() {
         return v;
-    };
+   };
 }
 
 // OpenType data types //////////////////////////////////////////////////////
@@ -991,11 +991,11 @@ encode.CHARARRAY = function(v) {
     if (typeof v === 'undefined') {
         v = '';
         console.warn('Undefined CHARARRAY encountered and treated as an empty string. This is probably caused by a missing glyph name.');
-    }
+   }
     var b = [];
     for (var i = 0; i < v.length; i += 1) {
         b[i] = v.charCodeAt(i);
-    }
+   }
 
     return b;
 };
@@ -1007,7 +1007,7 @@ encode.CHARARRAY = function(v) {
 sizeOf.CHARARRAY = function(v) {
     if (typeof v === 'undefined') {
         return 0;
-    }
+   }
     return v.length;
 };
 
@@ -1035,7 +1035,7 @@ encode.SHORT = function(v) {
     // Two's complement
     if (v >= LIMIT16) {
         v = -(2 * LIMIT16 - v);
-    }
+   }
 
     return [(v >> 8) & 0xFF, v & 0xFF];
 };
@@ -1085,7 +1085,7 @@ encode.LONG = function(v) {
     // Two's complement
     if (v >= LIMIT32) {
         v = -(2 * LIMIT32 - v);
-    }
+   }
 
     return [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
 };
@@ -1162,17 +1162,17 @@ sizeOf.SID = sizeOf.USHORT;
 encode.NUMBER = function(v) {
     if (v >= -107 && v <= 107) {
         return [v + 139];
-    } else if (v >= 108 && v <= 1131) {
+   } else if (v >= 108 && v <= 1131) {
         v = v - 108;
         return [(v >> 8) + 247, v & 0xFF];
-    } else if (v >= -1131 && v <= -108) {
+   } else if (v >= -1131 && v <= -108) {
         v = -v - 108;
         return [(v >> 8) + 251, v & 0xFF];
-    } else if (v >= -32768 && v <= 32767) {
+   } else if (v >= -32768 && v <= 32767) {
         return encode.NUMBER16(v);
-    } else {
+   } else {
         return encode.NUMBER32(v);
-    }
+   }
 };
 
 /**
@@ -1229,27 +1229,27 @@ encode.REAL = function(v) {
     if (m) {
         var epsilon = parseFloat('1e' + ((m[2] ? +m[2] : 0) + m[1].length));
         value = (Math.round(v * epsilon) / epsilon).toString();
-    }
+   }
 
     var nibbles = '';
     for (var i = 0, ii = value.length; i < ii; i += 1) {
         var c = value[i];
         if (c === 'e') {
             nibbles += value[++i] === '-' ? 'c' : 'b';
-        } else if (c === '.') {
+       } else if (c === '.') {
             nibbles += 'a';
-        } else if (c === '-') {
+       } else if (c === '-') {
             nibbles += 'e';
-        } else {
+       } else {
             nibbles += c;
-        }
-    }
+       }
+   }
 
     nibbles += (nibbles.length & 1) ? 'f' : 'ff';
     var out = [30];
     for (var i$1 = 0, ii$1 = nibbles.length; i$1 < ii$1; i$1 += 2) {
         out.push(parseInt(nibbles.substr(i$1, 2), 16));
-    }
+   }
 
     return out;
 };
@@ -1279,7 +1279,7 @@ decode.UTF8 = function(data, offset, numBytes) {
     var numChars = numBytes;
     for (var j = 0; j < numChars; j++, offset += 1) {
         codePoints[j] = data.getUint8(offset);
-    }
+   }
 
     return String.fromCharCode.apply(null, codePoints);
 };
@@ -1295,7 +1295,7 @@ decode.UTF16 = function(data, offset, numBytes) {
     var numChars = numBytes / 2;
     for (var j = 0; j < numChars; j++, offset += 2) {
         codePoints[j] = data.getUint16(offset);
-    }
+   }
 
     return String.fromCharCode.apply(null, codePoints);
 };
@@ -1311,7 +1311,7 @@ encode.UTF16 = function(v) {
         var codepoint = v.charCodeAt(i);
         b[b.length] = (codepoint >> 8) & 0xFF;
         b[b.length] = codepoint & 0xFF;
-    }
+   }
 
     return b;
 };
@@ -1385,7 +1385,7 @@ decode.MACSTRING = function(dataView, offset, dataLength, encoding) {
     var table = eightBitMacEncodings[encoding];
     if (table === undefined) {
         return undefined;
-    }
+   }
 
     var result = '';
     for (var i = 0; i < dataLength; i++) {
@@ -1394,10 +1394,10 @@ decode.MACSTRING = function(dataView, offset, dataLength, encoding) {
         // mapped to U+0000..U+007F; we only need to look up the others.
         if (c <= 0x7F) {
             result += String.fromCharCode(c);
-        } else {
+       } else {
             result += table[c & 0x7F];
-        }
-    }
+       }
+   }
 
     return result;
 };
@@ -1417,13 +1417,13 @@ var getMacEncodingTable = function (encoding) {
         for (var e in eightBitMacEncodings) {
             /*jshint -W053 */  // Suppress "Do not use String as a constructor."
             macEncodingCacheKeys[e] = new String(e);
-        }
-    }
+       }
+   }
 
     var cacheKey = macEncodingCacheKeys[encoding];
     if (cacheKey === undefined) {
         return undefined;
-    }
+   }
 
     // We can't do "if (cache.has(key)) {return cache.get(key)}" here:
     // since garbage collection may run at any time, it could also kick in
@@ -1433,22 +1433,22 @@ var getMacEncodingTable = function (encoding) {
         var cachedTable = macEncodingTableCache.get(cacheKey);
         if (cachedTable !== undefined) {
             return cachedTable;
-        }
-    }
+       }
+   }
 
     var decodingTable = eightBitMacEncodings[encoding];
     if (decodingTable === undefined) {
         return undefined;
-    }
+   }
 
     var encodingTable = {};
     for (var i = 0; i < decodingTable.length; i++) {
         encodingTable[decodingTable.charCodeAt(i)] = i + 0x80;
-    }
+   }
 
     if (macEncodingTableCache) {
         macEncodingTableCache.set(cacheKey, encodingTable);
-    }
+   }
 
     return encodingTable;
 };
@@ -1466,7 +1466,7 @@ encode.MACSTRING = function(str, encoding) {
     var table = getMacEncodingTable(encoding);
     if (table === undefined) {
         return undefined;
-    }
+   }
 
     var result = [];
     for (var i = 0; i < str.length; i++) {
@@ -1480,11 +1480,11 @@ encode.MACSTRING = function(str, encoding) {
                 // str contains a Unicode character that cannot be encoded
                 // in the requested encoding.
                 return undefined;
-            }
-        }
+           }
+       }
         result[i] = c;
         // result.push(c);
-    }
+   }
 
     return result;
 };
@@ -1498,9 +1498,9 @@ sizeOf.MACSTRING = function(str, encoding) {
     var b = encode.MACSTRING(str, encoding);
     if (b !== undefined) {
         return b.length;
-    } else {
+   } else {
         return 0;
-    }
+   }
 };
 
 // Helper for encode.VARDELTAS
@@ -1515,7 +1515,7 @@ function encodeVarDeltaRunAsZeroes(deltas, pos, result) {
     while (pos < numDeltas && runLength < 64 && deltas[pos] === 0) {
         ++pos;
         ++runLength;
-    }
+   }
     result.push(0x80 | (runLength - 1));
     return pos;
 }
@@ -1529,7 +1529,7 @@ function encodeVarDeltaRunAsBytes(deltas, offset, result) {
         var value = deltas[pos];
         if (!isByteEncodable(value)) {
             break;
-        }
+       }
 
         // Within a byte-encoded run of deltas, a single zero is best
         // stored literally as 0x00 value. However, if we have two or
@@ -1540,15 +1540,15 @@ function encodeVarDeltaRunAsBytes(deltas, offset, result) {
         // when starting a new run.
         if (value === 0 && pos + 1 < numDeltas && deltas[pos + 1] === 0) {
             break;
-        }
+       }
 
         ++pos;
         ++runLength;
-    }
+   }
     result.push(runLength - 1);
     for (var i = offset; i < pos; ++i) {
         result.push((deltas[i] + 256) & 0xff);
-    }
+   }
     return pos;
 }
 
@@ -1568,7 +1568,7 @@ function encodeVarDeltaRunAsWords(deltas, offset, result) {
         // new run (40 66 66 80 40 77 77).
         if (value === 0) {
             break;
-        }
+       }
 
         // Within a word-encoded run of deltas, a single value in the
         // range (-128..127) should be encoded within the current run
@@ -1578,16 +1578,16 @@ function encodeVarDeltaRunAsWords(deltas, offset, result) {
         // a new run (40 66 66 00 02 40 77 77).
         if (isByteEncodable(value) && pos + 1 < numDeltas && isByteEncodable(deltas[pos + 1])) {
             break;
-        }
+       }
 
         ++pos;
         ++runLength;
-    }
+   }
     result.push(0x40 | (runLength - 1));
     for (var i = offset; i < pos; ++i) {
         var val = deltas[i];
         result.push(((val + 0x10000) >> 8) & 0xff, (val + 0x100) & 0xff);
-    }
+   }
     return pos;
 }
 
@@ -1610,12 +1610,12 @@ encode.VARDELTAS = function(deltas) {
         var value = deltas[pos];
         if (value === 0) {
             pos = encodeVarDeltaRunAsZeroes(deltas, pos, result);
-        } else if (value >= -128 && value <= 127) {
+       } else if (value >= -128 && value <= 127) {
             pos = encodeVarDeltaRunAsBytes(deltas, pos, result);
-        } else {
+       } else {
             pos = encodeVarDeltaRunAsWords(deltas, pos, result);
-        }
-    }
+       }
+   }
     return result;
 };
 
@@ -1639,11 +1639,11 @@ encode.INDEX = function(l) {
         Array.prototype.push.apply(data, v);
         offset += v.length;
         offsets.push(offset);
-    }
+   }
 
     if (data.length === 0) {
         return [0, 0];
-    }
+   }
 
     var encodedOffsets = [];
     var offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
@@ -1651,7 +1651,7 @@ encode.INDEX = function(l) {
     for (var i$1 = 0; i$1 < offsets.length; i$1 += 1) {
         var encodedOffset = offsetEncoder(offsets[i$1]);
         Array.prototype.push.apply(encodedOffsets, encodedOffset);
-    }
+   }
 
     return Array.prototype.concat(encode.Card16(l.length),
                            encode.OffSize(offSize),
@@ -1686,7 +1686,7 @@ encode.DICT = function(m) {
         // Value comes before the key.
         d = d.concat(encode.OPERAND(v.value, v.type));
         d = d.concat(encode.OPERATOR(k));
-    }
+   }
 
     return d;
 };
@@ -1706,9 +1706,9 @@ sizeOf.DICT = function(m) {
 encode.OPERATOR = function(v) {
     if (v < 1200) {
         return [v];
-    } else {
+   } else {
         return [12, v - 1200];
-    }
+   }
 };
 
 /**
@@ -1722,23 +1722,23 @@ encode.OPERAND = function(v, type) {
         for (var i = 0; i < type.length; i += 1) {
             check.argument(v.length === type.length, 'Not enough arguments given for type' + type);
             d = d.concat(encode.OPERAND(v[i], type[i]));
-        }
-    } else {
+       }
+   } else {
         if (type === 'SID') {
             d = d.concat(encode.NUMBER(v));
-        } else if (type === 'offset') {
+       } else if (type === 'offset') {
             // We make it easy for ourselves and always encode offsets as
             // 4 bytes. This makes offset calculation for the top dict easier.
             d = d.concat(encode.NUMBER32(v));
-        } else if (type === 'number') {
+       } else if (type === 'number') {
             d = d.concat(encode.NUMBER(v));
-        } else if (type === 'real') {
+       } else if (type === 'real') {
             d = d.concat(encode.REAL(v));
-        } else {
+       } else {
             throw new Error('Unknown operand type ' + type);
             // FIXME Add support for booleans
-        }
-    }
+       }
+   }
 
     return d;
 };
@@ -1760,8 +1760,8 @@ encode.CHARSTRING = function(ops) {
         var cachedValue = wmm.get(ops);
         if (cachedValue !== undefined) {
             return cachedValue;
-        }
-    }
+       }
+   }
 
     var d = [];
     var length = ops.length;
@@ -1769,11 +1769,11 @@ encode.CHARSTRING = function(ops) {
     for (var i = 0; i < length; i += 1) {
         var op = ops[i];
         d = d.concat(encode[op.type](op.value));
-    }
+   }
 
     if (wmm) {
         wmm.set(ops, d);
-    }
+   }
 
     return d;
 };
@@ -1829,7 +1829,7 @@ encode.TABLE = function(table) {
         var value = table[field.name];
         if (value === undefined) {
             value = field.value;
-        }
+       }
 
         var bytes = encodingFunction(value);
 
@@ -1837,10 +1837,10 @@ encode.TABLE = function(table) {
             subtableOffsets.push(d.length);
             d = d.concat([0, 0]);
             subtables.push(bytes);
-        } else {
+       } else {
             d = d.concat(bytes);
-        }
-    }
+       }
+   }
 
     for (var i$1 = 0; i$1 < subtables.length; i$1 += 1) {
         var o = subtableOffsets[i$1];
@@ -1849,7 +1849,7 @@ encode.TABLE = function(table) {
         d[o] = offset >> 8;
         d[o + 1] = offset & 0xff;
         d = d.concat(subtables[i$1]);
-    }
+   }
 
     return d;
 };
@@ -1869,15 +1869,15 @@ sizeOf.TABLE = function(table) {
         var value = table[field.name];
         if (value === undefined) {
             value = field.value;
-        }
+       }
 
         numBytes += sizeOfFunction(value);
 
         // Subtables take 2 more bytes for offsets.
         if (field.type === 'TABLE') {
             numBytes += 2;
-        }
-    }
+       }
+   }
 
     return numBytes;
 };
@@ -1912,8 +1912,8 @@ function Table(tableName, fields, options) {
         for (var i = 0; i < fields.length; i += 1) {
             var field = fields[i];
             this[field.name] = field.value;
-        }
-    }
+       }
+   }
 
     this.tableName = tableName;
     this.fields = fields;
@@ -1924,9 +1924,9 @@ function Table(tableName, fields, options) {
             var v = options[k];
             if (this[k] !== undefined) {
                 this[k] = v;
-            }
-        }
-    }
+           }
+       }
+   }
 }
 
 /**
@@ -1951,12 +1951,12 @@ Table.prototype.sizeOf = function() {
 function ushortList(itemName, list, count) {
     if (count === undefined) {
         count = list.length;
-    }
+   }
     var fields = new Array(list.length + 1);
     fields[0] = {name: itemName + 'Count', type: 'USHORT', value: count};
     for (var i = 0; i < list.length; i++) {
         fields[i + 1] = {name: itemName + i, type: 'USHORT', value: list[i]};
-    }
+   }
     return fields;
 }
 
@@ -1969,7 +1969,7 @@ function tableList(itemName, records, itemCallback) {
     fields[0] = {name: itemName + 'Count', type: 'USHORT', value: count};
     for (var i = 0; i < count; i++) {
         fields[i + 1] = {name: itemName + i, type: 'TABLE', value: itemCallback(records[i], i)};
-    }
+   }
     return fields;
 }
 
@@ -1982,7 +1982,7 @@ function recordList(itemName, records, itemCallback) {
     fields[0] = {name: itemName + 'Count', type: 'USHORT', value: count};
     for (var i = 0; i < count; i++) {
         fields = fields.concat(itemCallback(records[i], i));
-    }
+   }
     return fields;
 }
 
@@ -2000,8 +2000,8 @@ function Coverage(coverageTable) {
         Table.call(this, 'coverageTable',
             [{name: 'coverageFormat', type: 'USHORT', value: 1}]
             .concat(ushortList('glyph', coverageTable.glyphs))
-        );
-    } else if (coverageTable.format === 2) {
+       );
+   } else if (coverageTable.format === 2) {
         Table.call(this, 'coverageTable',
             [{name: 'coverageFormat', type: 'USHORT', value: 2}]
             .concat(recordList('rangeRecord', coverageTable.ranges, function(RangeRecord) {
@@ -2009,11 +2009,11 @@ function Coverage(coverageTable) {
                     {name: 'startGlyphID', type: 'USHORT', value: RangeRecord.start},
                     {name: 'endGlyphID', type: 'USHORT', value: RangeRecord.end},
                     {name: 'startCoverageIndex', type: 'USHORT', value: RangeRecord.index} ];
-            }))
-        );
-    } else {
+           }))
+       );
+   } else {
         check.assert(false, 'Coverage format must be 1 or 2.');
-    }
+   }
 }
 Coverage.prototype = Object.create(Table.prototype);
 Coverage.prototype.constructor = Coverage;
@@ -2040,10 +2040,10 @@ function ScriptList(scriptListTable) {
                                 {name: 'reqFeatureIndex', type: 'USHORT', value: langSys.reqFeatureIndex}
                                 ].concat(ushortList('featureIndex', langSys.featureIndexes)))}
                         ];
-                    })))}
+                   })))}
             ];
-        })
-    );
+       })
+   );
 }
 ScriptList.prototype = Object.create(Table.prototype);
 ScriptList.prototype.constructor = ScriptList;
@@ -2064,8 +2064,8 @@ function FeatureList(featureListTable) {
                 {name: 'feature' + i, type: 'TABLE', value: new Table('featureTable', [
                     {name: 'featureParams', type: 'USHORT', value: feature.featureParams} ].concat(ushortList('lookupListIndex', feature.lookupListIndexes)))}
             ];
-        })
-    );
+       })
+   );
 }
 FeatureList.prototype = Object.create(Table.prototype);
 FeatureList.prototype.constructor = FeatureList;
@@ -2086,7 +2086,7 @@ function LookupList(lookupListTable, subtableMakers) {
             {name: 'lookupType', type: 'USHORT', value: lookupTable.lookupType},
             {name: 'lookupFlag', type: 'USHORT', value: lookupTable.lookupFlag}
         ].concat(tableList('subtable', lookupTable.subtables, subtableCallback)));
-    }));
+   }));
 }
 LookupList.prototype = Object.create(Table.prototype);
 LookupList.prototype.constructor = LookupList;
@@ -2144,7 +2144,7 @@ function getTag(dataView, offset) {
     var tag = '';
     for (var i = offset; i < offset + 4; i += 1) {
         tag += String.fromCharCode(dataView.getInt8(i));
-    }
+   }
 
     return tag;
 }
@@ -2156,7 +2156,7 @@ function getOffset(dataView, offset, offSize) {
     for (var i = 0; i < offSize; i += 1) {
         v <<= 8;
         v += dataView.getUint8(offset + i);
-    }
+   }
 
     return v;
 }
@@ -2166,7 +2166,7 @@ function getBytes(dataView, startOffset, endOffset) {
     var bytes = [];
     for (var i = startOffset; i < endOffset; i += 1) {
         bytes.push(dataView.getUint8(i));
-    }
+   }
 
     return bytes;
 }
@@ -2176,7 +2176,7 @@ function bytesToString(bytes) {
     var s = '';
     for (var i = 0; i < bytes.length; i += 1) {
         s += String.fromCharCode(bytes[i]);
-    }
+   }
 
     return s;
 }
@@ -2256,7 +2256,7 @@ Parser.prototype.parseString = function(length) {
     this.relativeOffset += length;
     for (var i = 0; i < length; i++) {
         string += String.fromCharCode(dataView.getUint8(offset + i));
-    }
+   }
 
     return string;
 };
@@ -2286,14 +2286,14 @@ Parser.prototype.parseVersion = function(minorBase) {
     // Set minorBase to 1 for tables that use minor = N where N is 0-9
     var minor = getUShort(this.data, this.offset + this.relativeOffset + 2);
     this.relativeOffset += 4;
-    if (minorBase === undefined) { minorBase = 0x1000; }
+    if (minorBase === undefined) {minorBase = 0x1000;}
     return major + minor / minorBase / 10;
 };
 
 Parser.prototype.skip = function(type, amount) {
     if (amount === undefined) {
         amount = 1;
-    }
+   }
 
     this.relativeOffset += typeOffsets[type] * amount;
 };
@@ -2302,14 +2302,14 @@ Parser.prototype.skip = function(type, amount) {
 
 // Parse a list of 32 bit unsigned integers.
 Parser.prototype.parseULongList = function(count) {
-    if (count === undefined) { count = this.parseULong(); }
+    if (count === undefined) {count = this.parseULong();}
     var offsets = new Array(count);
     var dataView = this.data;
     var offset = this.offset + this.relativeOffset;
     for (var i = 0; i < count; i++) {
         offsets[i] = dataView.getUint32(offset);
         offset += 4;
-    }
+   }
 
     this.relativeOffset += count * 4;
     return offsets;
@@ -2319,14 +2319,14 @@ Parser.prototype.parseULongList = function(count) {
 // or provided as an argument.
 Parser.prototype.parseOffset16List =
 Parser.prototype.parseUShortList = function(count) {
-    if (count === undefined) { count = this.parseUShort(); }
+    if (count === undefined) {count = this.parseUShort();}
     var offsets = new Array(count);
     var dataView = this.data;
     var offset = this.offset + this.relativeOffset;
     for (var i = 0; i < count; i++) {
         offsets[i] = dataView.getUint16(offset);
         offset += 2;
-    }
+   }
 
     this.relativeOffset += count * 2;
     return offsets;
@@ -2340,7 +2340,7 @@ Parser.prototype.parseShortList = function(count) {
     for (var i = 0; i < count; i++) {
         list[i] = dataView.getInt16(offset);
         offset += 2;
-    }
+   }
 
     this.relativeOffset += count * 2;
     return list;
@@ -2353,7 +2353,7 @@ Parser.prototype.parseByteList = function(count) {
     var offset = this.offset + this.relativeOffset;
     for (var i = 0; i < count; i++) {
         list[i] = dataView.getUint8(offset++);
-    }
+   }
 
     this.relativeOffset += count;
     return list;
@@ -2368,11 +2368,11 @@ Parser.prototype.parseList = function(count, itemCallback) {
     if (!itemCallback) {
         itemCallback = count;
         count = this.parseUShort();
-    }
+   }
     var list = new Array(count);
     for (var i = 0; i < count; i++) {
         list[i] = itemCallback.call(this);
-    }
+   }
     return list;
 };
 
@@ -2380,25 +2380,25 @@ Parser.prototype.parseList32 = function(count, itemCallback) {
     if (!itemCallback) {
         itemCallback = count;
         count = this.parseULong();
-    }
+   }
     var list = new Array(count);
     for (var i = 0; i < count; i++) {
         list[i] = itemCallback.call(this);
-    }
+   }
     return list;
 };
 
 /**
  * Parse a list of records.
  * Record count is optional, if omitted it is read from the stream.
- * Example of recordDescription: { sequenceIndex: Parser.uShort, lookupListIndex: Parser.uShort }
+ * Example of recordDescription: {sequenceIndex: Parser.uShort, lookupListIndex: Parser.uShort}
  */
 Parser.prototype.parseRecordList = function(count, recordDescription) {
     // If the count argument is absent, read it in the stream.
     if (!recordDescription) {
         recordDescription = count;
         count = this.parseUShort();
-    }
+   }
     var records = new Array(count);
     var fields = Object.keys(recordDescription);
     for (var i = 0; i < count; i++) {
@@ -2407,9 +2407,9 @@ Parser.prototype.parseRecordList = function(count, recordDescription) {
             var fieldName = fields[j];
             var fieldType = recordDescription[fieldName];
             rec[fieldName] = fieldType.call(this);
-        }
+       }
         records[i] = rec;
-    }
+   }
     return records;
 };
 
@@ -2418,7 +2418,7 @@ Parser.prototype.parseRecordList32 = function(count, recordDescription) {
     if (!recordDescription) {
         recordDescription = count;
         count = this.parseULong();
-    }
+   }
     var records = new Array(count);
     var fields = Object.keys(recordDescription);
     for (var i = 0; i < count; i++) {
@@ -2427,27 +2427,27 @@ Parser.prototype.parseRecordList32 = function(count, recordDescription) {
             var fieldName = fields[j];
             var fieldType = recordDescription[fieldName];
             rec[fieldName] = fieldType.call(this);
-        }
+       }
         records[i] = rec;
-    }
+   }
     return records;
 };
 
 // Parse a data structure into an object
-// Example of description: { sequenceIndex: Parser.uShort, lookupListIndex: Parser.uShort }
+// Example of description: {sequenceIndex: Parser.uShort, lookupListIndex: Parser.uShort}
 Parser.prototype.parseStruct = function(description) {
     if (typeof description === 'function') {
         return description.call(this);
-    } else {
+   } else {
         var fields = Object.keys(description);
         var struct = {};
         for (var j = 0; j < fields.length; j++) {
             var fieldName = fields[j];
             var fieldType = description[fieldName];
             struct[fieldName] = fieldType.call(this);
-        }
+       }
         return struct;
-    }
+   }
 };
 
 /**
@@ -2458,25 +2458,25 @@ Parser.prototype.parseStruct = function(description) {
 Parser.prototype.parseValueRecord = function(valueFormat) {
     if (valueFormat === undefined) {
         valueFormat = this.parseUShort();
-    }
+   }
     if (valueFormat === 0) {
         // valueFormat2 in kerning pairs is most often 0
         // in this case return undefined instead of an empty object, to save space
         return;
-    }
+   }
     var valueRecord = {};
 
-    if (valueFormat & 0x0001) { valueRecord.xPlacement = this.parseShort(); }
-    if (valueFormat & 0x0002) { valueRecord.yPlacement = this.parseShort(); }
-    if (valueFormat & 0x0004) { valueRecord.xAdvance = this.parseShort(); }
-    if (valueFormat & 0x0008) { valueRecord.yAdvance = this.parseShort(); }
+    if (valueFormat & 0x0001) {valueRecord.xPlacement = this.parseShort();}
+    if (valueFormat & 0x0002) {valueRecord.yPlacement = this.parseShort();}
+    if (valueFormat & 0x0004) {valueRecord.xAdvance = this.parseShort();}
+    if (valueFormat & 0x0008) {valueRecord.yAdvance = this.parseShort();}
 
     // Device table (non-variable font) / VariationIndex table (variable font) not supported
     // https://docs.microsoft.com/fr-fr/typography/opentype/spec/chapter2#devVarIdxTbls
-    if (valueFormat & 0x0010) { valueRecord.xPlaDevice = undefined; this.parseShort(); }
-    if (valueFormat & 0x0020) { valueRecord.yPlaDevice = undefined; this.parseShort(); }
-    if (valueFormat & 0x0040) { valueRecord.xAdvDevice = undefined; this.parseShort(); }
-    if (valueFormat & 0x0080) { valueRecord.yAdvDevice = undefined; this.parseShort(); }
+    if (valueFormat & 0x0010) {valueRecord.xPlaDevice = undefined; this.parseShort();}
+    if (valueFormat & 0x0020) {valueRecord.yPlaDevice = undefined; this.parseShort();}
+    if (valueFormat & 0x0040) {valueRecord.xAdvDevice = undefined; this.parseShort();}
+    if (valueFormat & 0x0080) {valueRecord.yAdvDevice = undefined; this.parseShort();}
 
     return valueRecord;
 };
@@ -2492,7 +2492,7 @@ Parser.prototype.parseValueRecordList = function() {
     var values = new Array(valueCount);
     for (var i = 0; i < valueCount; i++) {
         values[i] = this.parseValueRecord(valueFormat);
-    }
+   }
     return values;
 };
 
@@ -2501,7 +2501,7 @@ Parser.prototype.parsePointer = function(description) {
     if (structOffset > 0) {
         // NULL offset => return undefined
         return new Parser(this.data, this.offset + structOffset).parseStruct(description);
-    }
+   }
     return undefined;
 };
 
@@ -2510,7 +2510,7 @@ Parser.prototype.parsePointer32 = function(description) {
     if (structOffset > 0) {
         // NULL offset => return undefined
         return new Parser(this.data, this.offset + structOffset).parseStruct(description);
-    }
+   }
     return undefined;
 };
 
@@ -2533,7 +2533,7 @@ Parser.prototype.parseListOfLists = function(itemCallback) {
             // Add i as owned property to list. Convenient with assert.
             list[i] = undefined;
             continue;
-        }
+       }
         this.relativeOffset = start;
         if (itemCallback) {
             var subOffsets = this.parseOffset16List();
@@ -2541,12 +2541,12 @@ Parser.prototype.parseListOfLists = function(itemCallback) {
             for (var j = 0; j < subOffsets.length; j++) {
                 this.relativeOffset = start + subOffsets[j];
                 subList[j] = itemCallback.call(this);
-            }
+           }
             list[i] = subList;
-        } else {
+       } else {
             list[i] = this.parseUShortList();
-        }
-    }
+       }
+   }
     this.relativeOffset = relativeOffset;
     return list;
 };
@@ -2564,21 +2564,21 @@ Parser.prototype.parseCoverage = function() {
         return {
             format: 1,
             glyphs: this.parseUShortList(count)
-        };
-    } else if (format === 2) {
+       };
+   } else if (format === 2) {
         var ranges = new Array(count);
         for (var i = 0; i < count; i++) {
             ranges[i] = {
                 start: this.parseUShort(),
                 end: this.parseUShort(),
                 index: this.parseUShort()
-            };
-        }
+           };
+       }
         return {
             format: 2,
             ranges: ranges
-        };
-    }
+       };
+   }
     throw new Error('0x' + startOffset.toString(16) + ': Coverage format must be 1 or 2.');
 };
 
@@ -2592,17 +2592,17 @@ Parser.prototype.parseClassDef = function() {
             format: 1,
             startGlyph: this.parseUShort(),
             classes: this.parseUShortList()
-        };
-    } else if (format === 2) {
+       };
+   } else if (format === 2) {
         return {
             format: 2,
             ranges: this.parseRecordList({
                 start: Parser.uShort,
                 end: Parser.uShort,
                 classId: Parser.uShort
-            })
-        };
-    }
+           })
+       };
+   }
     throw new Error('0x' + startOffset.toString(16) + ': ClassDef format must be 1 or 2.');
 };
 
@@ -2612,37 +2612,37 @@ Parser.prototype.parseClassDef = function() {
 Parser.list = function(count, itemCallback) {
     return function() {
         return this.parseList(count, itemCallback);
-    };
+   };
 };
 
 Parser.list32 = function(count, itemCallback) {
     return function() {
         return this.parseList32(count, itemCallback);
-    };
+   };
 };
 
 Parser.recordList = function(count, recordDescription) {
     return function() {
         return this.parseRecordList(count, recordDescription);
-    };
+   };
 };
 
 Parser.recordList32 = function(count, recordDescription) {
     return function() {
         return this.parseRecordList32(count, recordDescription);
-    };
+   };
 };
 
 Parser.pointer = function(description) {
     return function() {
         return this.parsePointer(description);
-    };
+   };
 };
 
 Parser.pointer32 = function(description) {
     return function() {
         return this.parsePointer32(description);
-    };
+   };
 };
 
 Parser.tag = Parser.prototype.parseTag;
@@ -2672,9 +2672,9 @@ Parser.prototype.parseScriptList = function() {
             langSysRecords: Parser.recordList({
                 tag: Parser.tag,
                 langSys: Parser.pointer(langSysTable)
-            })
-        })
-    })) || [];
+           })
+       })
+   })) || [];
 };
 
 Parser.prototype.parseFeatureList = function() {
@@ -2683,8 +2683,8 @@ Parser.prototype.parseFeatureList = function() {
         feature: Parser.pointer({
             featureParams: Parser.offset16,
             lookupListIndexes: Parser.uShortList
-        })
-    })) || [];
+       })
+   })) || [];
 };
 
 Parser.prototype.parseLookupList = function(lookupTableParsers) {
@@ -2698,8 +2698,8 @@ Parser.prototype.parseLookupList = function(lookupTableParsers) {
             lookupFlag: lookupFlag,
             subtables: this.parseList(Parser.pointer(lookupTableParsers[lookupType])),
             markFilteringSet: useMarkFilteringSet ? this.parseUShort() : undefined
-        };
-    }))) || [];
+       };
+   }))) || [];
 };
 
 Parser.prototype.parseFeatureVariationsList = function() {
@@ -2710,9 +2710,9 @@ Parser.prototype.parseFeatureVariationsList = function() {
         var featureVariations = this.parseRecordList32({
             conditionSetOffset: Parser.offset32,
             featureTableSubstitutionOffset: Parser.offset32
-        });
+       });
         return featureVariations;
-    }) || [];
+   }) || [];
 };
 
 var parse = {
@@ -2752,8 +2752,8 @@ function parseCmapTableFormat12(cmap, p) {
         for (var c = startCharCode; c <= endCharCode; c += 1) {
             cmap.glyphIndexMap[c] = startGlyphId;
             startGlyphId++;
-        }
-    }
+       }
+   }
 }
 
 function parseCmapTableFormat4(cmap, p, data, start, offset) {
@@ -2795,14 +2795,14 @@ function parseCmapTableFormat4(cmap, p, data, start, offset) {
                 glyphIndex = parse.getUShort(data, glyphIndexOffset);
                 if (glyphIndex !== 0) {
                     glyphIndex = (glyphIndex + idDelta) & 0xFFFF;
-                }
-            } else {
+               }
+           } else {
                 glyphIndex = (c + idDelta) & 0xFFFF;
-            }
+           }
 
             cmap.glyphIndexMap[c] = glyphIndex;
-        }
-    }
+       }
+   }
 }
 
 // Parse the `cmap` table. This table stores the mappings from characters to glyphs.
@@ -2824,24 +2824,24 @@ function parseCmapTable(data, start) {
             (platformId === 0 && (encodingId === 0 || encodingId === 1 || encodingId === 2 || encodingId === 3 || encodingId === 4))) {
             offset = parse.getULong(data, start + 4 + (i * 8) + 4);
             break;
-        }
-    }
+       }
+   }
 
     if (offset === -1) {
         // There is no cmap table in the font that we support.
         throw new Error('No valid cmap sub-tables found.');
-    }
+   }
 
     var p = new parse.Parser(data, start + offset);
     cmap.format = p.parseUShort();
 
     if (cmap.format === 12) {
         parseCmapTableFormat12(cmap, p);
-    } else if (cmap.format === 4) {
+   } else if (cmap.format === 4) {
         parseCmapTableFormat4(cmap, p, data, start, offset);
-    } else {
+   } else {
         throw new Error('Only format 4 and 12 cmap tables are supported (found format ' + cmap.format + ').');
-    }
+   }
 
     return cmap;
 }
@@ -2853,7 +2853,7 @@ function addSegment(t, code, glyphIndex) {
         delta: -(code - glyphIndex),
         offset: 0,
         glyphIndex: glyphIndex
-    });
+   });
 }
 
 function addTerminatorSegment(t) {
@@ -2862,7 +2862,7 @@ function addTerminatorSegment(t) {
         start: 0xFFFF,
         delta: 1,
         offset: 0
-    });
+   });
 }
 
 // Make cmap table, format 4 by default, 12 if needed only
@@ -2878,8 +2878,8 @@ function makeCmapTable(glyphs) {
             console.log('Adding CMAP format 12 (needed!)');
             isPlan0Only = false;
             break;
-        }
-    }
+       }
+   }
 
     var cmapTable = [
         {name: 'version', type: 'USHORT', value: 0},
@@ -2892,12 +2892,12 @@ function makeCmapTable(glyphs) {
     ];
 
     if (!isPlan0Only)
-        { cmapTable = cmapTable.concat([
+        {cmapTable = cmapTable.concat([
             // CMAP 12 header
             {name: 'cmap12PlatformID', type: 'USHORT', value: 3}, // We encode only for PlatformID = 3 (Windows) because it is supported everywhere
             {name: 'cmap12EncodingID', type: 'USHORT', value: 10},
             {name: 'cmap12Offset', type: 'ULONG', value: 0}
-        ]); }
+        ]);}
 
     cmapTable = cmapTable.concat([
         // CMAP 4 Subtable
@@ -2917,12 +2917,12 @@ function makeCmapTable(glyphs) {
         var glyph = glyphs.get(i);
         for (var j = 0; j < glyph.unicodes.length; j += 1) {
             addSegment(t, glyph.unicodes[j], i);
-        }
+       }
 
         t.segments = t.segments.sort(function (a, b) {
             return a.start - b.start;
-        });
-    }
+       });
+   }
 
     addTerminatorSegment(t);
 
@@ -2955,11 +2955,11 @@ function makeCmapTable(glyphs) {
             idRangeOffsets = idRangeOffsets.concat({name: 'idRangeOffset_' + i, type: 'USHORT', value: segment.offset});
             if (segment.glyphId !== undefined) {
                 glyphIds = glyphIds.concat({name: 'glyph_' + i, type: 'USHORT', value: segment.glyphId});
-            }
-        } else {
+           }
+       } else {
             // Skip Unicode > 65535 (16bit unsigned max) for CMAP 4, will be added in CMAP 12
             segCountToRemove += 1;
-        }
+       }
 
         // CMAP 12
         // Skip Terminator Segment
@@ -2967,8 +2967,8 @@ function makeCmapTable(glyphs) {
             cmap12Groups = cmap12Groups.concat({name: 'cmap12Start_' + i, type: 'ULONG', value: segment.start});
             cmap12Groups = cmap12Groups.concat({name: 'cmap12End_' + i, type: 'ULONG', value: segment.end});
             cmap12Groups = cmap12Groups.concat({name: 'cmap12Glyph_' + i, type: 'ULONG', value: segment.glyphIndex});
-        }
-    }
+       }
+   }
 
     // CMAP 4 Subtable
     t.segCountX2 = (segCount - segCountToRemove) * 2;
@@ -3006,12 +3006,12 @@ function makeCmapTable(glyphs) {
         ]);
 
         t.fields = t.fields.concat(cmap12Groups);
-    }
+   }
 
     return t;
 }
 
-var cmap = { parse: parseCmapTable, make: makeCmapTable };
+var cmap = {parse: parseCmapTable, make: makeCmapTable};
 
 // Glyph encoding
 
@@ -3156,10 +3156,10 @@ DefaultEncoding.prototype.charToGlyphIndex = function(c) {
             for (var j = 0; j < glyph.unicodes.length; j += 1) {
                 if (glyph.unicodes[j] === code) {
                     return i;
-                }
-            }
-        }
-    }
+               }
+           }
+       }
+   }
     return null;
 };
 
@@ -3219,17 +3219,17 @@ function GlyphNames(post) {
             for (var i = 0; i < post.numberOfGlyphs; i++) {
                 if (post.glyphNameIndex[i] < standardNames.length) {
                     this.names[i] = standardNames[post.glyphNameIndex[i]];
-                } else {
+               } else {
                     this.names[i] = post.names[post.glyphNameIndex[i] - standardNames.length];
-                }
-            }
+               }
+           }
 
             break;
         case 2.5:
             this.names = new Array(post.numberOfGlyphs);
             for (var i$1 = 0; i$1 < post.numberOfGlyphs; i$1++) {
                 this.names[i$1] = standardNames[i$1 + post.glyphNameIndex[i$1]];
-            }
+           }
 
             break;
         case 3:
@@ -3238,7 +3238,7 @@ function GlyphNames(post) {
         default:
             this.names = [];
             break;
-    }
+   }
 }
 
 /**
@@ -3268,20 +3268,20 @@ function addGlyphNamesAll(font) {
         var glyphIndex = glyphIndexMap[c];
         glyph = font.glyphs.get(glyphIndex);
         glyph.addUnicode(parseInt(c));
-    }
+   }
 
     for (var i$1 = 0; i$1 < font.glyphs.length; i$1 += 1) {
         glyph = font.glyphs.get(i$1);
         if (font.cffEncoding) {
             if (font.isCIDFont) {
                 glyph.name = 'gid' + i$1;
-            } else {
+           } else {
                 glyph.name = font.cffEncoding.charset[i$1];
-            }
-        } else if (font.glyphNames.names) {
+           }
+       } else if (font.glyphNames.names) {
             glyph.name = font.glyphNames.glyphIndexToName(i$1);
-        }
-    }
+       }
+   }
 }
 
 function addGlyphNamesToUnicodeMap(font) {
@@ -3296,11 +3296,11 @@ function addGlyphNamesToUnicodeMap(font) {
         if (font._IndexToUnicodeMap[glyphIndex] === undefined) {
             font._IndexToUnicodeMap[glyphIndex] = {
                 unicodes: [parseInt(c)]
-            };
-        } else {
+           };
+       } else {
             font._IndexToUnicodeMap[glyphIndex].unicodes.push(parseInt(c));
-        }
-    }
+       }
+   }
 }
 
 /**
@@ -3311,9 +3311,9 @@ function addGlyphNamesToUnicodeMap(font) {
 function addGlyphNames(font, opt) {
     if (opt.lowMemory) {
         addGlyphNamesToUnicodeMap(font);
-    } else {
+   } else {
         addGlyphNamesAll(font);
-    }
+   }
 }
 
 // Drawing utility functions.
@@ -3326,7 +3326,7 @@ function line(ctx, x1, y1, x2, y2) {
     ctx.stroke();
 }
 
-var draw = { line: line };
+var draw = {line: line};
 
 // The Glyph object
 // import glyf from './tables/glyf' Can't be imported here, because it's a circular dependency
@@ -3339,15 +3339,15 @@ function getPathDefinition(glyph, path) {
         get: function() {
             if (typeof _path === 'function') {
                 _path = _path();
-            }
+           }
 
             return _path;
-        },
+       },
 
         set: function(p) {
             _path = p;
-        }
-    };
+       }
+   };
 }
 /**
  * @typedef GlyphOptions
@@ -3394,23 +3394,23 @@ Glyph.prototype.bindConstructorValues = function(options) {
     // the memory requirements by almost 3% for larger fonts.
     if ('xMin' in options) {
         this.xMin = options.xMin;
-    }
+   }
 
     if ('yMin' in options) {
         this.yMin = options.yMin;
-    }
+   }
 
     if ('xMax' in options) {
         this.xMax = options.xMax;
-    }
+   }
 
     if ('yMax' in options) {
         this.yMax = options.yMax;
-    }
+   }
 
     if ('advanceWidth' in options) {
         this.advanceWidth = options.advanceWidth;
-    }
+   }
 
     // The path for a glyph is the most memory intensive, and is bound as a value
     // with a getter/setter to ensure we actually do path parsing only once the
@@ -3424,7 +3424,7 @@ Glyph.prototype.bindConstructorValues = function(options) {
 Glyph.prototype.addUnicode = function(unicode) {
     if (this.unicodes.length === 0) {
         this.unicode = unicode;
-    }
+   }
 
     this.unicodes.push(unicode);
 };
@@ -3452,7 +3452,7 @@ Glyph.prototype.getPath = function(x, y, fontSize, options, font) {
     fontSize = fontSize !== undefined ? fontSize : 72;
     var commands;
     var hPoints;
-    if (!options) { options = { }; }
+    if (!options) {options = {};}
     var xScale = options.xScale;
     var yScale = options.yScale;
 
@@ -3462,7 +3462,7 @@ Glyph.prototype.getPath = function(x, y, fontSize, options, font) {
         hPoints = this.path && font.hinting.exec(this, fontSize);
         // in case the hinting engine failed hPoints is undefined
         // and thus reverts to plain rending
-    }
+   }
 
     if (hPoints) {
         // Call font.hinting.getCommands instead of `glyf.getPath(hPoints).commands` to avoid a circular dependency
@@ -3471,31 +3471,31 @@ Glyph.prototype.getPath = function(x, y, fontSize, options, font) {
         y = Math.round(y);
         // TODO in case of hinting xyScaling is not yet supported
         xScale = yScale = 1;
-    } else {
+   } else {
         commands = this.path.commands;
         var scale = 1 / (this.path.unitsPerEm || 1000) * fontSize;
-        if (xScale === undefined) { xScale = scale; }
-        if (yScale === undefined) { yScale = scale; }
-    }
+        if (xScale === undefined) {xScale = scale;}
+        if (yScale === undefined) {yScale = scale;}
+   }
 
     var p = new Path();
     for (var i = 0; i < commands.length; i += 1) {
         var cmd = commands[i];
         if (cmd.type === 'M') {
             p.moveTo(x + (cmd.x * xScale), y + (-cmd.y * yScale));
-        } else if (cmd.type === 'L') {
+       } else if (cmd.type === 'L') {
             p.lineTo(x + (cmd.x * xScale), y + (-cmd.y * yScale));
-        } else if (cmd.type === 'Q') {
+       } else if (cmd.type === 'Q') {
             p.quadraticCurveTo(x + (cmd.x1 * xScale), y + (-cmd.y1 * yScale),
                                x + (cmd.x * xScale), y + (-cmd.y * yScale));
-        } else if (cmd.type === 'C') {
+       } else if (cmd.type === 'C') {
             p.curveTo(x + (cmd.x1 * xScale), y + (-cmd.y1 * yScale),
                       x + (cmd.x2 * xScale), y + (-cmd.y2 * yScale),
                       x + (cmd.x * xScale), y + (-cmd.y * yScale));
-        } else if (cmd.type === 'Z') {
+       } else if (cmd.type === 'Z') {
             p.closePath();
-        }
-    }
+       }
+   }
 
     return p;
 };
@@ -3509,7 +3509,7 @@ Glyph.prototype.getPath = function(x, y, fontSize, options, font) {
 Glyph.prototype.getContours = function() {
     if (this.points === undefined) {
         return [];
-    }
+   }
 
     var contours = [];
     var currentContour = [];
@@ -3519,8 +3519,8 @@ Glyph.prototype.getContours = function() {
         if (pt.lastPointOfContour) {
             contours.push(currentContour);
             currentContour = [];
-        }
-    }
+       }
+   }
 
     check.argument(currentContour.length === 0, 'There are still points left in the current contour.');
     return contours;
@@ -3539,18 +3539,18 @@ Glyph.prototype.getMetrics = function() {
         if (cmd.type !== 'Z') {
             xCoords.push(cmd.x);
             yCoords.push(cmd.y);
-        }
+       }
 
         if (cmd.type === 'Q' || cmd.type === 'C') {
             xCoords.push(cmd.x1);
             yCoords.push(cmd.y1);
-        }
+       }
 
         if (cmd.type === 'C') {
             xCoords.push(cmd.x2);
             yCoords.push(cmd.y2);
-        }
-    }
+       }
+   }
 
     var metrics = {
         xMin: Math.min.apply(null, xCoords),
@@ -3558,23 +3558,23 @@ Glyph.prototype.getMetrics = function() {
         xMax: Math.max.apply(null, xCoords),
         yMax: Math.max.apply(null, yCoords),
         leftSideBearing: this.leftSideBearing
-    };
+   };
 
     if (!isFinite(metrics.xMin)) {
         metrics.xMin = 0;
-    }
+   }
 
     if (!isFinite(metrics.xMax)) {
         metrics.xMax = this.advanceWidth;
-    }
+   }
 
     if (!isFinite(metrics.yMin)) {
         metrics.yMin = 0;
-    }
+   }
 
     if (!isFinite(metrics.yMax)) {
         metrics.yMax = 0;
-    }
+   }
 
     metrics.rightSideBearing = this.advanceWidth - metrics.leftSideBearing - (metrics.xMax - metrics.xMin);
     return metrics;
@@ -3606,11 +3606,11 @@ Glyph.prototype.drawPoints = function(ctx, x, y, fontSize) {
         for (var j = 0; j < l.length; j += 1) {
             ctx.moveTo(x + (l[j].x * scale), y + (l[j].y * scale));
             ctx.arc(x + (l[j].x * scale), y + (l[j].y * scale), 2, 0, Math.PI * 2, false);
-        }
+       }
 
         ctx.closePath();
         ctx.fill();
-    }
+   }
 
     x = x !== undefined ? x : 0;
     y = y !== undefined ? y : 0;
@@ -3624,16 +3624,16 @@ Glyph.prototype.drawPoints = function(ctx, x, y, fontSize) {
         var cmd = path.commands[i];
         if (cmd.x !== undefined) {
             blueCircles.push({x: cmd.x, y: -cmd.y});
-        }
+       }
 
         if (cmd.x1 !== undefined) {
             redCircles.push({x: cmd.x1, y: -cmd.y1});
-        }
+       }
 
         if (cmd.x2 !== undefined) {
             redCircles.push({x: cmd.x2, y: -cmd.y2});
-        }
-    }
+       }
+   }
 
     ctx.fillStyle = 'blue';
     drawCircles(blueCircles, x, y, scale);
@@ -3693,13 +3693,13 @@ function defineDependentProperty(glyph, externalName, internalName) {
             // Request the path property to make sure the path is loaded.
             glyph.path; // jshint ignore:line
             return glyph[internalName];
-        },
+       },
         set: function(newValue) {
             glyph[internalName] = newValue;
-        },
+       },
         enumerable: true,
         configurable: true
-    });
+   });
 }
 
 /**
@@ -3719,8 +3719,8 @@ function GlyphSet(font, glyphs) {
             var glyph = glyphs[i];
             glyph.path.unitsPerEm = font.unitsPerEm;
             this.glyphs[i] = glyph;
-        }
-    }
+       }
+   }
 
     this.length = (glyphs && glyphs.length) || 0;
 }
@@ -3735,33 +3735,33 @@ GlyphSet.prototype.get = function(index) {
         this.font._push(index);
         if (typeof this.glyphs[index] === 'function') {
             this.glyphs[index] = this.glyphs[index]();
-        }
+       }
 
         var glyph = this.glyphs[index];
         var unicodeObj = this.font._IndexToUnicodeMap[index];
 
         if (unicodeObj) {
             for (var j = 0; j < unicodeObj.unicodes.length; j++)
-                { glyph.addUnicode(unicodeObj.unicodes[j]); }
-        }
+                {glyph.addUnicode(unicodeObj.unicodes[j]);}
+       }
 
         if (this.font.cffEncoding) {
             if (this.font.isCIDFont) {
                 glyph.name = 'gid' + index;
-            } else {
+           } else {
                 glyph.name = this.font.cffEncoding.charset[index];
-            }
-        } else if (this.font.glyphNames.names) {
+           }
+       } else if (this.font.glyphNames.names) {
             glyph.name = this.font.glyphNames.glyphIndexToName(index);
-        }
+       }
 
         this.glyphs[index].advanceWidth = this.font._hmtxTableData[index].advanceWidth;
         this.glyphs[index].leftSideBearing = this.font._hmtxTableData[index].leftSideBearing;
-    } else {
+   } else {
         if (typeof this.glyphs[index] === 'function') {
             this.glyphs[index] = this.glyphs[index]();
-        }
-    }
+       }
+   }
 
     return this.glyphs[index];
 };
@@ -3807,7 +3807,7 @@ function ttfGlyphLoader(font, index, parseGlyph, data, position, buildPath) {
             var path = buildPath(font.glyphs, glyph);
             path.unitsPerEm = font.unitsPerEm;
             return path;
-        };
+       };
 
         defineDependentProperty(glyph, 'xMin', '_xMin');
         defineDependentProperty(glyph, 'xMax', '_xMax');
@@ -3815,7 +3815,7 @@ function ttfGlyphLoader(font, index, parseGlyph, data, position, buildPath) {
         defineDependentProperty(glyph, 'yMax', '_yMax');
 
         return glyph;
-    };
+   };
 }
 /**
  * @alias opentype.cffGlyphLoader
@@ -3833,13 +3833,13 @@ function cffGlyphLoader(font, index, parseCFFCharstring, charstring) {
             var path = parseCFFCharstring(font, glyph, charstring);
             path.unitsPerEm = font.unitsPerEm;
             return path;
-        };
+       };
 
         return glyph;
-    };
+   };
 }
 
-var glyphset = { GlyphSet: GlyphSet, glyphLoader: glyphLoader, ttfGlyphLoader: ttfGlyphLoader, cffGlyphLoader: cffGlyphLoader };
+var glyphset = {GlyphSet: GlyphSet, glyphLoader: glyphLoader, ttfGlyphLoader: ttfGlyphLoader, cffGlyphLoader: cffGlyphLoader};
 
 // The `CFF` table contains the glyph outlines in PostScript format.
 
@@ -3847,21 +3847,21 @@ var glyphset = { GlyphSet: GlyphSet, glyphLoader: glyphLoader, ttfGlyphLoader: t
 function equals(a, b) {
     if (a === b) {
         return true;
-    } else if (Array.isArray(a) && Array.isArray(b)) {
+   } else if (Array.isArray(a) && Array.isArray(b)) {
         if (a.length !== b.length) {
             return false;
-        }
+       }
 
         for (var i = 0; i < a.length; i += 1) {
             if (!equals(a[i], b[i])) {
                 return false;
-            }
-        }
+           }
+       }
 
         return true;
-    } else {
+   } else {
         return false;
-    }
+   }
 }
 
 // Subroutines are encoded using the negative half of the number space.
@@ -3870,11 +3870,11 @@ function calcCFFSubroutineBias(subrs) {
     var bias;
     if (subrs.length < 1240) {
         bias = 107;
-    } else if (subrs.length < 33900) {
+   } else if (subrs.length < 33900) {
         bias = 1131;
-    } else {
+   } else {
         bias = 32768;
-    }
+   }
 
     return bias;
 }
@@ -3894,22 +3894,22 @@ function parseCFFIndex(data, start, conversionFn) {
         for (var i = 0; i < count + 1; i += 1) {
             offsets.push(parse.getOffset(data, pos, offsetSize));
             pos += offsetSize;
-        }
+       }
 
         // The total size of the index array is 4 header bytes + the value of the last offset.
         endOffset = objectOffset + offsets[count];
-    } else {
+   } else {
         endOffset = start + 2;
-    }
+   }
 
     for (var i$1 = 0; i$1 < offsets.length - 1; i$1 += 1) {
         var value = parse.getBytes(data, objectOffset + offsets[i$1], objectOffset + offsets[i$1 + 1]);
         if (conversionFn) {
             value = conversionFn(value);
-        }
+       }
 
         objects.push(value);
-    }
+   }
 
     return {objects: objects, startOffset: start, endOffset: endOffset};
 }
@@ -3926,13 +3926,13 @@ function parseCFFIndexLowMemory(data, start) {
         for (var i = 0; i < count + 1; i += 1) {
             offsets.push(parse.getOffset(data, pos, offsetSize));
             pos += offsetSize;
-        }
+       }
 
         // The total size of the index array is 4 header bytes + the value of the last offset.
         endOffset = objectOffset + offsets[count];
-    } else {
+   } else {
         endOffset = start + 2;
-    }
+   }
 
     return {offsets: offsets, startOffset: start, endOffset: endOffset};
 }
@@ -3942,12 +3942,12 @@ function getCffIndexObject(i, offsets, data, start, conversionFn) {
     if (count !== 0) {
         var offsetSize = parse.getByte(data, start + 2);
         objectOffset = start + ((count + 1) * offsetSize) + 2;
-    }
+   }
 
     var value = parse.getBytes(data, objectOffset + offsets[i], objectOffset + offsets[i + 1]);
     if (conversionFn) {
         value = conversionFn(value);
-    }
+   }
     return value;
 }
 
@@ -3963,16 +3963,16 @@ function parseFloatOperand(parser) {
 
         if (n1 === eof) {
             break;
-        }
+       }
 
         s += lookup[n1];
 
         if (n2 === eof) {
             break;
-        }
+       }
 
         s += lookup[n2];
-    }
+   }
 
     return parseFloat(s);
 }
@@ -3987,7 +3987,7 @@ function parseOperand(parser, b0) {
         b1 = parser.parseByte();
         b2 = parser.parseByte();
         return b1 << 8 | b2;
-    }
+   }
 
     if (b0 === 29) {
         b1 = parser.parseByte();
@@ -3995,25 +3995,25 @@ function parseOperand(parser, b0) {
         b3 = parser.parseByte();
         b4 = parser.parseByte();
         return b1 << 24 | b2 << 16 | b3 << 8 | b4;
-    }
+   }
 
     if (b0 === 30) {
         return parseFloatOperand(parser);
-    }
+   }
 
     if (b0 >= 32 && b0 <= 246) {
         return b0 - 139;
-    }
+   }
 
     if (b0 >= 247 && b0 <= 250) {
         b1 = parser.parseByte();
         return (b0 - 247) * 256 + b1 + 108;
-    }
+   }
 
     if (b0 >= 251 && b0 <= 254) {
         b1 = parser.parseByte();
         return -(b0 - 251) * 256 - b1 - 108;
-    }
+   }
 
     throw new Error('Invalid b0 ' + b0);
 }
@@ -4028,16 +4028,16 @@ function entriesToObject(entries) {
         var value = (void 0);
         if (values.length === 1) {
             value = values[0];
-        } else {
+       } else {
             value = values;
-        }
+       }
 
         if (o.hasOwnProperty(key) && !isNaN(o[key])) {
             throw new Error('Object ' + o + ' already has key ' + key);
-        }
+       }
 
         o[key] = value;
-    }
+   }
 
     return o;
 }
@@ -4060,16 +4060,16 @@ function parseCFFDict(data, start, size) {
             // Two-byte operators have an initial escape byte of 12.
             if (op === 12) {
                 op = 1200 + parser.parseByte();
-            }
+           }
 
             entries.push([op, operands]);
             operands = [];
-        } else {
+       } else {
             // Since the operands (values) come before the operators (keys), we store all operands in a list
             // until we encounter an operator.
             operands.push(parseOperand(parser, op));
-        }
-    }
+       }
+   }
 
     return entriesToObject(entries);
 }
@@ -4079,9 +4079,9 @@ function parseCFFDict(data, start, size) {
 function getCFFString(strings, index) {
     if (index <= 390) {
         index = cffStandardStrings[index];
-    } else {
+   } else {
         index = strings[index - 391];
-    }
+   }
 
     return index;
 }
@@ -4104,25 +4104,25 @@ function interpretDict(dict, meta, strings) {
                 value = dict[m.op] !== undefined ? dict[m.op][j] : undefined;
                 if (value === undefined) {
                     value = m.value !== undefined && m.value[j] !== undefined ? m.value[j] : null;
-                }
+               }
                 if (m.type[j] === 'SID') {
                     value = getCFFString(strings, value);
-                }
+               }
                 values[j] = value;
-            }
+           }
             newDict[m.name] = values;
-        } else {
+       } else {
             value = dict[m.op];
             if (value === undefined) {
                 value = m.value !== undefined ? m.value : null;
-            }
+           }
 
             if (m.type === 'SID') {
                 value = getCFFString(strings, value);
-            }
+           }
             newDict[m.name] = value;
-        }
-    }
+       }
+   }
 
     return newDict;
 }
@@ -4157,7 +4157,7 @@ var TOP_DICT_META = [
         op: 1207,
         type: ['real', 'real', 'real', 'real', 'real', 'real'],
         value: [0.001, 0, 0, 0.001, 0, 0]
-    },
+   },
     {name: 'uniqueId', op: 13, type: 'number'},
     {name: 'fontBBox', op: 5, type: ['number', 'number', 'number', 'number'], value: [0, 0, 0, 0]},
     {name: 'strokeWidth', op: 1208, type: 'number', value: 0},
@@ -4231,11 +4231,11 @@ function gatherCFFTopDicts(data, start, cffIndex, strings) {
                 var subrIndex = parseCFFIndex(data, subrOffset + start);
                 topDict._subrs = subrIndex.objects;
                 topDict._subrsBias = calcCFFSubroutineBias(topDict._subrs);
-            }
+           }
             topDict._privateDict = privateDict;
-        }
+       }
         topDictArray.push(topDict);
-    }
+   }
     return topDictArray;
 }
 
@@ -4256,28 +4256,28 @@ function parseCFFCharset(data, start, nGlyphs, strings) {
         for (var i = 0; i < nGlyphs; i += 1) {
             sid = parser.parseSID();
             charset.push(getCFFString(strings, sid));
-        }
-    } else if (format === 1) {
+       }
+   } else if (format === 1) {
         while (charset.length <= nGlyphs) {
             sid = parser.parseSID();
             count = parser.parseCard8();
             for (var i$1 = 0; i$1 <= count; i$1 += 1) {
                 charset.push(getCFFString(strings, sid));
                 sid += 1;
-            }
-        }
-    } else if (format === 2) {
+           }
+       }
+   } else if (format === 2) {
         while (charset.length <= nGlyphs) {
             sid = parser.parseSID();
             count = parser.parseCard16();
             for (var i$2 = 0; i$2 <= count; i$2 += 1) {
                 charset.push(getCFFString(strings, sid));
                 sid += 1;
-            }
-        }
-    } else {
+           }
+       }
+   } else {
         throw new Error('Unknown charset format ' + format);
-    }
+   }
 
     return charset;
 }
@@ -4294,8 +4294,8 @@ function parseCFFEncoding(data, start, charset) {
         for (var i = 0; i < nCodes; i += 1) {
             code = parser.parseCard8();
             enc[code] = i;
-        }
-    } else if (format === 1) {
+       }
+   } else if (format === 1) {
         var nRanges = parser.parseCard8();
         code = 1;
         for (var i$1 = 0; i$1 < nRanges; i$1 += 1) {
@@ -4304,11 +4304,11 @@ function parseCFFEncoding(data, start, charset) {
             for (var j = first; j <= first + nLeft; j += 1) {
                 enc[j] = code;
                 code += 1;
-            }
-        }
-    } else {
+           }
+       }
+   } else {
         throw new Error('Unknown encoding format ' + format);
-    }
+   }
 
     return new CffEncoding(enc, charset);
 }
@@ -4339,22 +4339,22 @@ function parseCFFCharstring(font, glyph, code) {
         subrsBias = fdDict._subrsBias;
         defaultWidthX = fdDict._defaultWidthX;
         nominalWidthX = fdDict._nominalWidthX;
-    } else {
+   } else {
         subrs = font.tables.cff.topDict._subrs;
         subrsBias = font.tables.cff.topDict._subrsBias;
         defaultWidthX = font.tables.cff.topDict._defaultWidthX;
         nominalWidthX = font.tables.cff.topDict._nominalWidthX;
-    }
+   }
     var width = defaultWidthX;
 
     function newContour(x, y) {
         if (open) {
             p.closePath();
-        }
+       }
 
         p.moveTo(x, y);
         open = true;
-    }
+   }
 
     function parseStems() {
         var hasWidthArg;
@@ -4364,12 +4364,12 @@ function parseCFFCharstring(font, glyph, code) {
         hasWidthArg = stack.length % 2 !== 0;
         if (hasWidthArg && !haveWidth) {
             width = stack.shift() + nominalWidthX;
-        }
+       }
 
         nStems += stack.length >> 1;
         stack.length = 0;
         haveWidth = true;
-    }
+   }
 
     function parse(code) {
         var b1;
@@ -4400,7 +4400,7 @@ function parseCFFCharstring(font, glyph, code) {
                     if (stack.length > 1 && !haveWidth) {
                         width = stack.shift() + nominalWidthX;
                         haveWidth = true;
-                    }
+                   }
 
                     y += stack.pop();
                     newContour(x, y);
@@ -4410,7 +4410,7 @@ function parseCFFCharstring(font, glyph, code) {
                         x += stack.shift();
                         y += stack.shift();
                         p.lineTo(x, y);
-                    }
+                   }
 
                     break;
                 case 6: // hlineto
@@ -4419,11 +4419,11 @@ function parseCFFCharstring(font, glyph, code) {
                         p.lineTo(x, y);
                         if (stack.length === 0) {
                             break;
-                        }
+                       }
 
                         y += stack.shift();
                         p.lineTo(x, y);
-                    }
+                   }
 
                     break;
                 case 7: // vlineto
@@ -4432,11 +4432,11 @@ function parseCFFCharstring(font, glyph, code) {
                         p.lineTo(x, y);
                         if (stack.length === 0) {
                             break;
-                        }
+                       }
 
                         x += stack.shift();
                         p.lineTo(x, y);
-                    }
+                   }
 
                     break;
                 case 8: // rrcurveto
@@ -4448,7 +4448,7 @@ function parseCFFCharstring(font, glyph, code) {
                         x = c2x + stack.shift();
                         y = c2y + stack.shift();
                         p.curveTo(c1x, c1y, c2x, c2y, x, y);
-                    }
+                   }
 
                     break;
                 case 10: // callsubr
@@ -4456,7 +4456,7 @@ function parseCFFCharstring(font, glyph, code) {
                     subrCode = subrs[codeIndex];
                     if (subrCode) {
                         parse(subrCode);
-                    }
+                   }
 
                     break;
                 case 11: // return
@@ -4529,9 +4529,9 @@ function parseCFFCharstring(font, glyph, code) {
                             c4y = c3y + stack.shift();    // dy5
                             if (Math.abs(c4x - x) > Math.abs(c4y - y)) {
                                 x = c4x + stack.shift();
-                            } else {
+                           } else {
                                 y = c4y + stack.shift();
-                            }
+                           }
 
                             p.curveTo(c1x, c1y, c2x, c2y, jpx, jpy);
                             p.curveTo(c3x, c3y, c4x, c4y, x, y);
@@ -4539,18 +4539,18 @@ function parseCFFCharstring(font, glyph, code) {
                         default:
                             console.log('Glyph ' + glyph.index + ': unknown operator ' + 1200 + v);
                             stack.length = 0;
-                    }
+                   }
                     break;
                 case 14: // endchar
                     if (stack.length > 0 && !haveWidth) {
                         width = stack.shift() + nominalWidthX;
                         haveWidth = true;
-                    }
+                   }
 
                     if (open) {
                         p.closePath();
                         open = false;
-                    }
+                   }
 
                     break;
                 case 18: // hstemhm
@@ -4565,7 +4565,7 @@ function parseCFFCharstring(font, glyph, code) {
                     if (stack.length > 2 && !haveWidth) {
                         width = stack.shift() + nominalWidthX;
                         haveWidth = true;
-                    }
+                   }
 
                     y += stack.pop();
                     x += stack.pop();
@@ -4575,7 +4575,7 @@ function parseCFFCharstring(font, glyph, code) {
                     if (stack.length > 1 && !haveWidth) {
                         width = stack.shift() + nominalWidthX;
                         haveWidth = true;
-                    }
+                   }
 
                     x += stack.pop();
                     newContour(x, y);
@@ -4592,7 +4592,7 @@ function parseCFFCharstring(font, glyph, code) {
                         x = c2x + stack.shift();
                         y = c2y + stack.shift();
                         p.curveTo(c1x, c1y, c2x, c2y, x, y);
-                    }
+                   }
 
                     x += stack.shift();
                     y += stack.shift();
@@ -4603,7 +4603,7 @@ function parseCFFCharstring(font, glyph, code) {
                         x += stack.shift();
                         y += stack.shift();
                         p.lineTo(x, y);
-                    }
+                   }
 
                     c1x = x + stack.shift();
                     c1y = y + stack.shift();
@@ -4616,7 +4616,7 @@ function parseCFFCharstring(font, glyph, code) {
                 case 26: // vvcurveto
                     if (stack.length % 2) {
                         x += stack.shift();
-                    }
+                   }
 
                     while (stack.length > 0) {
                         c1x = x;
@@ -4626,13 +4626,13 @@ function parseCFFCharstring(font, glyph, code) {
                         x = c2x;
                         y = c2y + stack.shift();
                         p.curveTo(c1x, c1y, c2x, c2y, x, y);
-                    }
+                   }
 
                     break;
                 case 27: // hhcurveto
                     if (stack.length % 2) {
                         y += stack.shift();
-                    }
+                   }
 
                     while (stack.length > 0) {
                         c1x = x + stack.shift();
@@ -4642,7 +4642,7 @@ function parseCFFCharstring(font, glyph, code) {
                         x = c2x + stack.shift();
                         y = c2y;
                         p.curveTo(c1x, c1y, c2x, c2y, x, y);
-                    }
+                   }
 
                     break;
                 case 28: // shortint
@@ -4656,7 +4656,7 @@ function parseCFFCharstring(font, glyph, code) {
                     subrCode = font.gsubrs[codeIndex];
                     if (subrCode) {
                         parse(subrCode);
-                    }
+                   }
 
                     break;
                 case 30: // vhcurveto
@@ -4670,7 +4670,7 @@ function parseCFFCharstring(font, glyph, code) {
                         p.curveTo(c1x, c1y, c2x, c2y, x, y);
                         if (stack.length === 0) {
                             break;
-                        }
+                       }
 
                         c1x = x + stack.shift();
                         c1y = y;
@@ -4679,7 +4679,7 @@ function parseCFFCharstring(font, glyph, code) {
                         y = c2y + stack.shift();
                         x = c2x + (stack.length === 1 ? stack.shift() : 0);
                         p.curveTo(c1x, c1y, c2x, c2y, x, y);
-                    }
+                   }
 
                     break;
                 case 31: // hvcurveto
@@ -4693,7 +4693,7 @@ function parseCFFCharstring(font, glyph, code) {
                         p.curveTo(c1x, c1y, c2x, c2y, x, y);
                         if (stack.length === 0) {
                             break;
-                        }
+                       }
 
                         c1x = x;
                         c1y = y + stack.shift();
@@ -4702,33 +4702,33 @@ function parseCFFCharstring(font, glyph, code) {
                         x = c2x + stack.shift();
                         y = c2y + (stack.length === 1 ? stack.shift() : 0);
                         p.curveTo(c1x, c1y, c2x, c2y, x, y);
-                    }
+                   }
 
                     break;
                 default:
                     if (v < 32) {
                         console.log('Glyph ' + glyph.index + ': unknown operator ' + v);
-                    } else if (v < 247) {
+                   } else if (v < 247) {
                         stack.push(v - 139);
-                    } else if (v < 251) {
+                   } else if (v < 251) {
                         b1 = code[i];
                         i += 1;
                         stack.push((v - 247) * 256 + b1 + 108);
-                    } else if (v < 255) {
+                   } else if (v < 255) {
                         b1 = code[i];
                         i += 1;
                         stack.push(-(v - 251) * 256 - b1 - 108);
-                    } else {
+                   } else {
                         b1 = code[i];
                         b2 = code[i + 1];
                         b3 = code[i + 2];
                         b4 = code[i + 3];
                         i += 4;
                         stack.push(((b1 << 24) | (b2 << 16) | (b3 << 8) | b4) / 65536);
-                    }
-            }
-        }
-    }
+                   }
+           }
+       }
+   }
 
     parse(code);
 
@@ -4747,37 +4747,37 @@ function parseCFFFDSelect(data, start, nGlyphs, fdArrayCount) {
             fdIndex = parser.parseCard8();
             if (fdIndex >= fdArrayCount) {
                 throw new Error('CFF table CID Font FDSelect has bad FD index value ' + fdIndex + ' (FD count ' + fdArrayCount + ')');
-            }
+           }
             fdSelect.push(fdIndex);
-        }
-    } else if (format === 3) {
+       }
+   } else if (format === 3) {
         // Ranges
         var nRanges = parser.parseCard16();
         var first = parser.parseCard16();
         if (first !== 0) {
             throw new Error('CFF Table CID Font FDSelect format 3 range has bad initial GID ' + first);
-        }
+       }
         var next;
         for (var iRange = 0; iRange < nRanges; iRange++) {
             fdIndex = parser.parseCard8();
             next = parser.parseCard16();
             if (fdIndex >= fdArrayCount) {
                 throw new Error('CFF table CID Font FDSelect has bad FD index value ' + fdIndex + ' (FD count ' + fdArrayCount + ')');
-            }
+           }
             if (next > nGlyphs) {
                 throw new Error('CFF Table CID Font FDSelect format 3 range has bad GID ' + next);
-            }
+           }
             for (; first < next; first++) {
                 fdSelect.push(fdIndex);
-            }
+           }
             first = next;
-        }
+       }
         if (next !== nGlyphs) {
             throw new Error('CFF Table CID Font FDSelect format 3 range has bad final GID ' + next);
-        }
-    } else {
+       }
+   } else {
         throw new Error('CFF Table CID Font FDSelect table has unsupported format ' + format);
-    }
+   }
     return fdSelect;
 }
 
@@ -4795,7 +4795,7 @@ function parseCFFTable(data, start, font, opt) {
     var topDictArray = gatherCFFTopDicts(data, start, topDictIndex.objects, stringIndex.objects);
     if (topDictArray.length !== 1) {
         throw new Error('CFF table has too many fonts in \'FontSet\' - count of fonts NameIndex.length = ' + topDictArray.length);
-    }
+   }
 
     var topDict = topDictArray[0];
     font.tables.cff.topDict = topDict;
@@ -4803,25 +4803,25 @@ function parseCFFTable(data, start, font, opt) {
     if (topDict._privateDict) {
         font.defaultWidthX = topDict._privateDict.defaultWidthX;
         font.nominalWidthX = topDict._privateDict.nominalWidthX;
-    }
+   }
 
     if (topDict.ros[0] !== undefined && topDict.ros[1] !== undefined) {
         font.isCIDFont = true;
-    }
+   }
 
     if (font.isCIDFont) {
         var fdArrayOffset = topDict.fdArray;
         var fdSelectOffset = topDict.fdSelect;
         if (fdArrayOffset === 0 || fdSelectOffset === 0) {
             throw new Error('Font is marked as a CID font, but FDArray and/or FDSelect information is missing');
-        }
+       }
         fdArrayOffset += start;
         var fdArrayIndex = parseCFFIndex(data, fdArrayOffset);
         var fdArray = gatherCFFTopDicts(data, start, fdArrayIndex.objects, stringIndex.objects);
         topDict._fdArray = fdArray;
         fdSelectOffset += start;
         topDict._fdSelect = parseCFFFDSelect(data, fdSelectOffset, font.numGlyphs, fdArray.length);
-    }
+   }
 
     var privateDictOffset = start + topDict.private[1];
     var privateDict = parseCFFPrivateDict(data, privateDictOffset, topDict.private[0], stringIndex.objects);
@@ -4833,31 +4833,31 @@ function parseCFFTable(data, start, font, opt) {
         var subrIndex = parseCFFIndex(data, subrOffset);
         font.subrs = subrIndex.objects;
         font.subrsBias = calcCFFSubroutineBias(font.subrs);
-    } else {
+   } else {
         font.subrs = [];
         font.subrsBias = 0;
-    }
+   }
 
     // Offsets in the top dict are relative to the beginning of the CFF data, so add the CFF start offset.
     var charStringsIndex;
     if (opt.lowMemory) {
         charStringsIndex = parseCFFIndexLowMemory(data, start + topDict.charStrings);
         font.nGlyphs = charStringsIndex.offsets.length;
-    } else {
+   } else {
         charStringsIndex = parseCFFIndex(data, start + topDict.charStrings);
         font.nGlyphs = charStringsIndex.objects.length;
-    }
+   }
 
     var charset = parseCFFCharset(data, start + topDict.charset, font.nGlyphs, stringIndex.objects);
     if (topDict.encoding === 0) {
         // Standard encoding
         font.cffEncoding = new CffEncoding(cffStandardEncoding, charset);
-    } else if (topDict.encoding === 1) {
+   } else if (topDict.encoding === 1) {
         // Expert encoding
         font.cffEncoding = new CffEncoding(cffExpertEncoding, charset);
-    } else {
+   } else {
         font.cffEncoding = parseCFFEncoding(data, start + topDict.encoding, charset);
-    }
+   }
 
     // Prefer the CMAP encoding to the CFF encoding.
     font.encoding = font.encoding || font.cffEncoding;
@@ -4867,13 +4867,13 @@ function parseCFFTable(data, start, font, opt) {
         font._push = function(i) {
             var charString = getCffIndexObject(i, charStringsIndex.offsets, data, start + topDict.charStrings);
             font.glyphs.push(i, glyphset.cffGlyphLoader(font, i, parseCFFCharstring, charString));
-        };
-    } else {
+       };
+   } else {
         for (var i = 0; i < font.nGlyphs; i += 1) {
             var charString = charStringsIndex.objects[i];
             font.glyphs.push(i, glyphset.cffGlyphLoader(font, i, parseCFFCharstring, charString));
-        }
-    }
+       }
+   }
 }
 
 // Convert a string to a String ID (SID).
@@ -4885,16 +4885,16 @@ function encodeString(s, strings) {
     var i = cffStandardStrings.indexOf(s);
     if (i >= 0) {
         sid = i;
-    }
+   }
 
     // Is the string already in the string index?
     i = strings.indexOf(s);
     if (i >= 0) {
         sid = i + cffStandardStrings.length;
-    } else {
+   } else {
         sid = cffStandardStrings.length + strings.length;
         strings.push(s);
-    }
+   }
 
     return sid;
 }
@@ -4915,7 +4915,7 @@ function makeNameIndex(fontNames) {
     t.names = [];
     for (var i = 0; i < fontNames.length; i += 1) {
         t.names.push({name: 'name_' + i, type: 'NAME', value: fontNames[i]});
-    }
+   }
 
     return t;
 }
@@ -4929,11 +4929,11 @@ function makeDict(meta, attrs, strings) {
         if (value !== undefined && !equals(value, entry.value)) {
             if (entry.type === 'SID') {
                 value = encodeString(value, strings);
-            }
+           }
 
             m[entry.op] = {name: entry.name, type: entry.type, value: value};
-        }
-    }
+       }
+   }
 
     return m;
 }
@@ -4962,7 +4962,7 @@ function makeStringIndex(strings) {
     t.strings = [];
     for (var i = 0; i < strings.length; i += 1) {
         t.strings.push({name: 'string_' + i, type: 'STRING', value: strings[i]});
-    }
+   }
 
     return t;
 }
@@ -4982,7 +4982,7 @@ function makeCharsets(glyphNames, strings) {
         var glyphName = glyphNames[i];
         var glyphSID = encodeString(glyphName, strings);
         t.fields.push({name: 'glyph_' + i, type: 'SID', value: glyphSID});
-    }
+   }
 
     return t;
 }
@@ -5012,8 +5012,8 @@ function glyphToOps(glyph) {
                 y1: Math.round(_13 * y + _23 * cmd.y1),
                 x2: Math.round(_13 * cmd.x + _23 * cmd.x1),
                 y2: Math.round(_13 * cmd.y + _23 * cmd.y1)
-            };
-        }
+           };
+       }
 
         if (cmd.type === 'M') {
             dx = Math.round(cmd.x - x);
@@ -5023,7 +5023,7 @@ function glyphToOps(glyph) {
             ops.push({name: 'rmoveto', type: 'OP', value: 21});
             x = Math.round(cmd.x);
             y = Math.round(cmd.y);
-        } else if (cmd.type === 'L') {
+       } else if (cmd.type === 'L') {
             dx = Math.round(cmd.x - x);
             dy = Math.round(cmd.y - y);
             ops.push({name: 'dx', type: 'NUMBER', value: dx});
@@ -5031,7 +5031,7 @@ function glyphToOps(glyph) {
             ops.push({name: 'rlineto', type: 'OP', value: 5});
             x = Math.round(cmd.x);
             y = Math.round(cmd.y);
-        } else if (cmd.type === 'C') {
+       } else if (cmd.type === 'C') {
             var dx1 = Math.round(cmd.x1 - x);
             var dy1 = Math.round(cmd.y1 - y);
             var dx2 = Math.round(cmd.x2 - cmd.x1);
@@ -5047,10 +5047,10 @@ function glyphToOps(glyph) {
             ops.push({name: 'rrcurveto', type: 'OP', value: 8});
             x = Math.round(cmd.x);
             y = Math.round(cmd.y);
-        }
+       }
 
         // Contours are closed automatically.
-    }
+   }
 
     ops.push({name: 'endchar', type: 'OP', value: 14});
     return ops;
@@ -5065,7 +5065,7 @@ function makeCharStringsIndex(glyphs) {
         var glyph = glyphs.get(i);
         var ops = glyphToOps(glyph);
         t.charStrings.push({name: glyph.name, type: 'CHARSTRING', value: ops});
-    }
+   }
 
     return t;
 }
@@ -5105,7 +5105,7 @@ function makeCFFTable(glyphs, options) {
         encoding: 0,
         charStrings: 999,
         private: [0, 999]
-    };
+   };
 
     var privateAttrs = {};
 
@@ -5116,7 +5116,7 @@ function makeCFFTable(glyphs, options) {
     for (var i = 1; i < glyphs.length; i += 1) {
         glyph = glyphs.get(i);
         glyphNames.push(glyph.name);
-    }
+   }
 
     var strings = [];
 
@@ -5151,7 +5151,7 @@ function makeCFFTable(glyphs, options) {
     return t;
 }
 
-var cff = { parse: parseCFFTable, make: makeCFFTable };
+var cff = {parse: parseCFFTable, make: makeCFFTable};
 
 // The `head` table contains global information about the font.
 
@@ -5187,7 +5187,7 @@ function makeHeadTable(options) {
 
     if (options.createdTimestamp) {
         createdTimestamp = options.createdTimestamp + 2082844800;
-    }
+   }
 
     return new table.Table('head', [
         {name: 'version', type: 'FIXED', value: 0x00010000},
@@ -5210,7 +5210,7 @@ function makeHeadTable(options) {
     ], options);
 }
 
-var head = { parse: parseHeadTable, make: makeHeadTable };
+var head = {parse: parseHeadTable, make: makeHeadTable};
 
 // The `hhea` table contains information for horizontal layout.
 
@@ -5257,7 +5257,7 @@ function makeHheaTable(options) {
     ], options);
 }
 
-var hhea = { parse: parseHheaTable, make: makeHheaTable };
+var hhea = {parse: parseHheaTable, make: makeHheaTable};
 
 // The `hmtx` table contains the horizontal metrics for all glyphs.
 
@@ -5270,12 +5270,12 @@ function parseHmtxTableAll(data, start, numMetrics, numGlyphs, glyphs) {
         if (i < numMetrics) {
             advanceWidth = p.parseUShort();
             leftSideBearing = p.parseShort();
-        }
+       }
 
         var glyph = glyphs.get(i);
         glyph.advanceWidth = advanceWidth;
         glyph.leftSideBearing = leftSideBearing;
-    }
+   }
 }
 
 function parseHmtxTableOnLowMemory(font, data, start, numMetrics, numGlyphs) {
@@ -5289,22 +5289,22 @@ function parseHmtxTableOnLowMemory(font, data, start, numMetrics, numGlyphs) {
         if (i < numMetrics) {
             advanceWidth = p.parseUShort();
             leftSideBearing = p.parseShort();
-        }
+       }
 
         font._hmtxTableData[i] = {
             advanceWidth: advanceWidth,
             leftSideBearing: leftSideBearing
-        };
-    }
+       };
+   }
 }
 
 // Parse the `hmtx` table, which contains the horizontal metrics for all glyphs.
 // This function augments the glyph array, adding the advanceWidth and leftSideBearing to each glyph.
 function parseHmtxTable(font, data, start, numMetrics, numGlyphs, glyphs, opt) {
     if (opt.lowMemory)
-        { parseHmtxTableOnLowMemory(font, data, start, numMetrics, numGlyphs); }
+        {parseHmtxTableOnLowMemory(font, data, start, numMetrics, numGlyphs);}
     else
-        { parseHmtxTableAll(data, start, numMetrics, numGlyphs, glyphs); }
+        {parseHmtxTableAll(data, start, numMetrics, numGlyphs, glyphs);}
 }
 
 function makeHmtxTable(glyphs) {
@@ -5315,12 +5315,12 @@ function makeHmtxTable(glyphs) {
         var leftSideBearing = glyph.leftSideBearing || 0;
         t.fields.push({name: 'advanceWidth_' + i, type: 'USHORT', value: advanceWidth});
         t.fields.push({name: 'leftSideBearing_' + i, type: 'SHORT', value: leftSideBearing});
-    }
+   }
 
     return t;
 }
 
-var hmtx = { parse: parseHmtxTable, make: makeHmtxTable };
+var hmtx = {parse: parseHmtxTable, make: makeHmtxTable};
 
 // The `ltag` table stores IETF BCP-47 language tags. It allows supporting
 
@@ -5338,11 +5338,11 @@ function makeLtagTable(tags) {
         if (pos < 0) {
             pos = stringPool.length;
             stringPool += tags[i];
-        }
+       }
 
         result.fields.push({name: 'offset ' + i, type: 'USHORT', value: stringPoolOffset + pos});
         result.fields.push({name: 'length ' + i, type: 'USHORT', value: tags[i].length});
-    }
+   }
 
     result.fields.push({name: 'stringPool', type: 'CHARARRAY', value: stringPool});
     return result;
@@ -5363,15 +5363,15 @@ function parseLtagTable(data, start) {
         var length = p.parseUShort();
         for (var j = offset; j < offset + length; ++j) {
             tag += String.fromCharCode(data.getInt8(j));
-        }
+       }
 
         tags.push(tag);
-    }
+   }
 
     return tags;
 }
 
-var ltag = { make: makeLtagTable, parse: parseLtagTable };
+var ltag = {make: makeLtagTable, parse: parseLtagTable};
 
 // The `maxp` table establishes the memory requirements for the font.
 
@@ -5395,7 +5395,7 @@ function parseMaxpTable(data, start) {
         maxp.maxSizeOfInstructions = p.parseUShort();
         maxp.maxComponentElements = p.parseUShort();
         maxp.maxComponentDepth = p.parseUShort();
-    }
+   }
 
     return maxp;
 }
@@ -5407,7 +5407,7 @@ function makeMaxpTable(numGlyphs) {
     ]);
 }
 
-var maxp = { parse: parseMaxpTable, make: makeMaxpTable };
+var maxp = {parse: parseMaxpTable, make: makeMaxpTable};
 
 // The `name` naming table.
 
@@ -5934,9 +5934,9 @@ function getLanguageCode(platformID, languageID, ltag) {
         case 0:  // Unicode
             if (languageID === 0xFFFF) {
                 return 'und';
-            } else if (ltag) {
+           } else if (ltag) {
                 return ltag[languageID];
-            }
+           }
 
             break;
 
@@ -5945,7 +5945,7 @@ function getLanguageCode(platformID, languageID, ltag) {
 
         case 3:  // Windows
             return windowsLanguages[languageID];
-    }
+   }
 
     return undefined;
 }
@@ -6021,10 +6021,10 @@ function getEncoding(platformID, encodingID, languageID) {
         case 3:  // Microsoft Windows
             if (encodingID === 1 || encodingID === 10) {
                 return utf16;
-            }
+           }
 
             break;
-    }
+   }
 
     return undefined;
 }
@@ -6052,26 +6052,26 @@ function parseNameTable(data, start, ltag) {
             var text = (void 0);
             if (encoding === utf16) {
                 text = decode.UTF16(data, stringOffset + offset, byteLength);
-            } else {
+           } else {
                 text = decode.MACSTRING(data, stringOffset + offset, byteLength, encoding);
-            }
+           }
 
             if (text) {
                 var translations = name[property];
                 if (translations === undefined) {
                     translations = name[property] = {};
-                }
+               }
 
                 translations[language] = text;
-            }
-        }
-    }
+           }
+       }
+   }
 
     var langTagCount = 0;
     if (format === 1) {
         // FIXME: Also handle Microsoft's 'name' table 1.
         langTagCount = p.parseUShort();
-    }
+   }
 
     return name;
 }
@@ -6082,7 +6082,7 @@ function reverseDict(dict) {
     var result = {};
     for (var key in dict) {
         result[dict[key]] = parseInt(key);
-    }
+   }
 
     return result;
 }
@@ -6110,12 +6110,12 @@ function findSubArray(needle, haystack) {
             for (var k = 0; k < needleLength; k++) {
                 if (haystack[pos + k] !== needle[k]) {
                     continue loop;
-                }
-            }
+               }
+           }
 
             return pos;
-        }
-    }
+       }
+   }
 
     return -1;
 }
@@ -6128,9 +6128,9 @@ function addStringToPool(s, pool) {
         var len = s.length;
         for (; i < len; ++i) {
             pool.push(s[i]);
-        }
+       }
 
-    }
+   }
 
     return offset;
 }
@@ -6145,17 +6145,17 @@ function makeNameTable(names, ltag) {
         var id = nameTableIds[key];
         if (id === undefined) {
             id = key;
-        }
+       }
 
         nameID = parseInt(id);
 
         if (isNaN(nameID)) {
             throw new Error('Name table entry "' + key + '" does not exist, see nameTableNames for complete list.');
-        }
+       }
 
         namesWithNumericKeys[nameID] = names[key];
         nameIDs.push(nameID);
-    }
+   }
 
     var macLanguageIds = reverseDict(macLanguages);
     var windowsLanguageIds = reverseDict(windowsLanguages);
@@ -6194,11 +6194,11 @@ function makeNameTable(names, ltag) {
                 if (macLanguage < 0) {
                     macLanguage = ltag.length;
                     ltag.push(lang);
-                }
+               }
 
                 macScript = 4;  // Unicode 2.0 and later
                 macName = encode.UTF16(text);
-            }
+           }
 
             var macNameOffset = addStringToPool(macName, stringPool);
             nameRecords.push(makeNameRecord(macPlatform, macScript, macLanguage,
@@ -6210,16 +6210,16 @@ function makeNameTable(names, ltag) {
                 var winNameOffset = addStringToPool(winName, stringPool);
                 nameRecords.push(makeNameRecord(3, 1, winLanguage,
                                                 nameID, winName.length, winNameOffset));
-            }
-        }
-    }
+           }
+       }
+   }
 
     nameRecords.sort(function(a, b) {
         return ((a.platformID - b.platformID) ||
                 (a.encodingID - b.encodingID) ||
                 (a.languageID - b.languageID) ||
                 (a.nameID - b.nameID));
-    });
+   });
 
     var t = new table.Table('name', [
         {name: 'format', type: 'USHORT', value: 0},
@@ -6229,13 +6229,13 @@ function makeNameTable(names, ltag) {
 
     for (var r = 0; r < nameRecords.length; r++) {
         t.fields.push({name: 'record_' + r, type: 'RECORD', value: nameRecords[r]});
-    }
+   }
 
     t.fields.push({name: 'strings', type: 'LITERAL', value: stringPool});
     return t;
 }
 
-var _name = { parse: parseNameTable, make: makeNameTable };
+var _name = {parse: parseNameTable, make: makeNameTable};
 
 // The `OS/2` table contains metrics required in OpenType fonts.
 
@@ -6370,8 +6370,8 @@ function getUnicodeRange(unicode) {
         var range = unicodeRanges[i];
         if (unicode >= range.begin && unicode < range.end) {
             return i;
-        }
-    }
+       }
+   }
 
     return -1;
 }
@@ -6399,7 +6399,7 @@ function parseOS2Table(data, start) {
     os2.panose = [];
     for (var i = 0; i < 10; i++) {
         os2.panose[i] = p.parseByte();
-    }
+   }
 
     os2.ulUnicodeRange1 = p.parseULong();
     os2.ulUnicodeRange2 = p.parseULong();
@@ -6417,7 +6417,7 @@ function parseOS2Table(data, start) {
     if (os2.version >= 1) {
         os2.ulCodePageRange1 = p.parseULong();
         os2.ulCodePageRange2 = p.parseULong();
-    }
+   }
 
     if (os2.version >= 2) {
         os2.sxHeight = p.parseShort();
@@ -6425,7 +6425,7 @@ function parseOS2Table(data, start) {
         os2.usDefaultChar = p.parseUShort();
         os2.usBreakChar = p.parseUShort();
         os2.usMaxContent = p.parseUShort();
-    }
+   }
 
     return os2;
 }
@@ -6481,7 +6481,7 @@ function makeOS2Table(options) {
     ], options);
 }
 
-var os2 = { parse: parseOS2Table, make: makeOS2Table, unicodeRanges: unicodeRanges, getUnicodeRange: getUnicodeRange };
+var os2 = {parse: parseOS2Table, make: makeOS2Table, unicodeRanges: unicodeRanges, getUnicodeRange: getUnicodeRange};
 
 // The `post` table stores additional PostScript information, such as glyph names.
 
@@ -6507,15 +6507,15 @@ function parsePostTable(data, start) {
             post.glyphNameIndex = new Array(post.numberOfGlyphs);
             for (var i = 0; i < post.numberOfGlyphs; i++) {
                 post.glyphNameIndex[i] = p.parseUShort();
-            }
+           }
 
             post.names = [];
             for (var i$1 = 0; i$1 < post.numberOfGlyphs; i$1++) {
                 if (post.glyphNameIndex[i$1] >= standardNames.length) {
                     var nameLength = p.parseChar();
                     post.names.push(p.parseString(nameLength));
-                }
-            }
+               }
+           }
 
             break;
         case 2.5:
@@ -6523,10 +6523,10 @@ function parsePostTable(data, start) {
             post.offset = new Array(post.numberOfGlyphs);
             for (var i$2 = 0; i$2 < post.numberOfGlyphs; i$2++) {
                 post.offset[i$2] = p.parseChar();
-            }
+           }
 
             break;
-    }
+   }
     return post;
 }
 
@@ -6544,7 +6544,7 @@ function makePostTable() {
     ]);
 }
 
-var post = { parse: parsePostTable, make: makePostTable };
+var post = {parse: parsePostTable, make: makePostTable};
 
 // The `GSUB` table contains ligatures, among other things.
 
@@ -6559,14 +6559,14 @@ subtableParsers[1] = function parseLookup1() {
             substFormat: 1,
             coverage: this.parsePointer(Parser.coverage),
             deltaGlyphId: this.parseUShort()
-        };
-    } else if (substFormat === 2) {
+       };
+   } else if (substFormat === 2) {
         return {
             substFormat: 2,
             coverage: this.parsePointer(Parser.coverage),
             substitute: this.parseOffset16List()
-        };
-    }
+       };
+   }
     check.assert(false, '0x' + start.toString(16) + ': lookup type 1 format must be 1 or 2.');
 };
 
@@ -6578,7 +6578,7 @@ subtableParsers[2] = function parseLookup2() {
         substFormat: substFormat,
         coverage: this.parsePointer(Parser.coverage),
         sequences: this.parseListOfLists()
-    };
+   };
 };
 
 // https://www.microsoft.com/typography/OTSPEC/GSUB.htm#AS
@@ -6589,7 +6589,7 @@ subtableParsers[3] = function parseLookup3() {
         substFormat: substFormat,
         coverage: this.parsePointer(Parser.coverage),
         alternateSets: this.parseListOfLists()
-    };
+   };
 };
 
 // https://www.microsoft.com/typography/OTSPEC/GSUB.htm#LS
@@ -6603,9 +6603,9 @@ subtableParsers[4] = function parseLookup4() {
             return {
                 ligGlyph: this.parseUShort(),
                 components: this.parseUShortList(this.parseUShort() - 1)
-            };
-        })
-    };
+           };
+       })
+   };
 };
 
 var lookupRecordDesc = {
@@ -6628,10 +6628,10 @@ subtableParsers[5] = function parseLookup5() {
                 return {
                     input: this.parseUShortList(glyphCount - 1),
                     lookupRecords: this.parseRecordList(substCount, lookupRecordDesc)
-                };
-            })
-        };
-    } else if (substFormat === 2) {
+               };
+           })
+       };
+   } else if (substFormat === 2) {
         return {
             substFormat: substFormat,
             coverage: this.parsePointer(Parser.coverage),
@@ -6642,18 +6642,18 @@ subtableParsers[5] = function parseLookup5() {
                 return {
                     classes: this.parseUShortList(glyphCount - 1),
                     lookupRecords: this.parseRecordList(substCount, lookupRecordDesc)
-                };
-            })
-        };
-    } else if (substFormat === 3) {
+               };
+           })
+       };
+   } else if (substFormat === 3) {
         var glyphCount = this.parseUShort();
         var substCount = this.parseUShort();
         return {
             substFormat: substFormat,
             coverages: this.parseList(glyphCount, Parser.pointer(Parser.coverage)),
             lookupRecords: this.parseRecordList(substCount, lookupRecordDesc)
-        };
-    }
+       };
+   }
     check.assert(false, '0x' + start.toString(16) + ': lookup type 5 format must be 1, 2 or 3.');
 };
 
@@ -6671,10 +6671,10 @@ subtableParsers[6] = function parseLookup6() {
                     input: this.parseUShortList(this.parseShort() - 1),
                     lookahead: this.parseUShortList(),
                     lookupRecords: this.parseRecordList(lookupRecordDesc)
-                };
-            })
-        };
-    } else if (substFormat === 2) {
+               };
+           })
+       };
+   } else if (substFormat === 2) {
         return {
             substFormat: 2,
             coverage: this.parsePointer(Parser.coverage),
@@ -6687,18 +6687,18 @@ subtableParsers[6] = function parseLookup6() {
                     input: this.parseUShortList(this.parseShort() - 1),
                     lookahead: this.parseUShortList(),
                     lookupRecords: this.parseRecordList(lookupRecordDesc)
-                };
-            })
-        };
-    } else if (substFormat === 3) {
+               };
+           })
+       };
+   } else if (substFormat === 3) {
         return {
             substFormat: 3,
             backtrackCoverage: this.parseList(Parser.pointer(Parser.coverage)),
             inputCoverage: this.parseList(Parser.pointer(Parser.coverage)),
             lookaheadCoverage: this.parseList(Parser.pointer(Parser.coverage)),
             lookupRecords: this.parseRecordList(lookupRecordDesc)
-        };
-    }
+       };
+   }
     check.assert(false, '0x' + start.toString(16) + ': lookup type 6 format must be 1, 2 or 3.');
 };
 
@@ -6713,7 +6713,7 @@ subtableParsers[7] = function parseLookup7() {
         substFormat: 1,
         lookupType: extensionLookupType,
         extension: subtableParsers[extensionLookupType].call(extensionParser)
-    };
+   };
 };
 
 // https://www.microsoft.com/typography/OTSPEC/GSUB.htm#RCCS
@@ -6726,7 +6726,7 @@ subtableParsers[8] = function parseLookup8() {
         backtrackCoverage: this.parseList(Parser.pointer(Parser.coverage)),
         lookaheadCoverage: this.parseList(Parser.pointer(Parser.coverage)),
         substitutes: this.parseUShortList()
-    };
+   };
 };
 
 // https://www.microsoft.com/typography/OTSPEC/gsub.htm
@@ -6741,16 +6741,16 @@ function parseGsubTable(data, start) {
             scripts: p.parseScriptList(),
             features: p.parseFeatureList(),
             lookups: p.parseLookupList(subtableParsers)
-        };
-    } else {
+       };
+   } else {
         return {
             version: tableVersion,
             scripts: p.parseScriptList(),
             features: p.parseFeatureList(),
             lookups: p.parseLookupList(subtableParsers),
             variations: p.parseFeatureVariationsList()
-        };
-    }
+       };
+   }
 
 }
 
@@ -6764,12 +6764,12 @@ subtableMakers[1] = function makeLookup1(subtable) {
             {name: 'coverage', type: 'TABLE', value: new table.Coverage(subtable.coverage)},
             {name: 'deltaGlyphID', type: 'USHORT', value: subtable.deltaGlyphId}
         ]);
-    } else {
+   } else {
         return new table.Table('substitutionTable', [
             {name: 'substFormat', type: 'USHORT', value: 2},
             {name: 'coverage', type: 'TABLE', value: new table.Coverage(subtable.coverage)}
         ].concat(table.ushortList('substitute', subtable.substitute)));
-    }
+   }
 };
 
 subtableMakers[2] = function makeLookup2(subtable) {
@@ -6779,7 +6779,7 @@ subtableMakers[2] = function makeLookup2(subtable) {
         {name: 'coverage', type: 'TABLE', value: new table.Coverage(subtable.coverage)}
     ].concat(table.tableList('seqSet', subtable.sequences, function(sequenceSet) {
         return new table.Table('sequenceSetTable', table.ushortList('sequence', sequenceSet));
-    })));
+   })));
 };
 
 subtableMakers[3] = function makeLookup3(subtable) {
@@ -6789,7 +6789,7 @@ subtableMakers[3] = function makeLookup3(subtable) {
         {name: 'coverage', type: 'TABLE', value: new table.Coverage(subtable.coverage)}
     ].concat(table.tableList('altSet', subtable.alternateSets, function(alternateSet) {
         return new table.Table('alternateSetTable', table.ushortList('alternate', alternateSet));
-    })));
+   })));
 };
 
 subtableMakers[4] = function makeLookup4(subtable) {
@@ -6802,9 +6802,9 @@ subtableMakers[4] = function makeLookup4(subtable) {
             return new table.Table('ligatureTable',
                 [{name: 'ligGlyph', type: 'USHORT', value: ligature.ligGlyph}]
                 .concat(table.ushortList('component', ligature.components, ligature.components.length + 1))
-            );
-        }));
-    })));
+           );
+       }));
+   })));
 };
 
 subtableMakers[6] = function makeLookup6(subtable) {
@@ -6823,41 +6823,41 @@ subtableMakers[6] = function makeLookup6(subtable) {
                     tableData = tableData
                         .concat({name: 'sequenceIndex' + i, type: 'USHORT', value: record.sequenceIndex})
                         .concat({name: 'lookupListIndex' + i, type: 'USHORT', value: record.lookupListIndex});
-                });
+               });
                 return new table.Table('chainRuleTable', tableData);
-            }));
-        })));
+           }));
+       })));
         return returnTable;
-    } else if (subtable.substFormat === 2) {
+   } else if (subtable.substFormat === 2) {
         check.assert(false, 'lookup type 6 format 2 is not yet supported.');
-    } else if (subtable.substFormat === 3) {
+   } else if (subtable.substFormat === 3) {
         var tableData = [
             {name: 'substFormat', type: 'USHORT', value: subtable.substFormat} ];
 
         tableData.push({name: 'backtrackGlyphCount', type: 'USHORT', value: subtable.backtrackCoverage.length});
         subtable.backtrackCoverage.forEach(function (coverage, i) {
             tableData.push({name: 'backtrackCoverage' + i, type: 'TABLE', value: new table.Coverage(coverage)});
-        });
+       });
         tableData.push({name: 'inputGlyphCount', type: 'USHORT', value: subtable.inputCoverage.length});
         subtable.inputCoverage.forEach(function (coverage, i) {
             tableData.push({name: 'inputCoverage' + i, type: 'TABLE', value: new table.Coverage(coverage)});
-        });
+       });
         tableData.push({name: 'lookaheadGlyphCount', type: 'USHORT', value: subtable.lookaheadCoverage.length});
         subtable.lookaheadCoverage.forEach(function (coverage, i) {
             tableData.push({name: 'lookaheadCoverage' + i, type: 'TABLE', value: new table.Coverage(coverage)});
-        });
+       });
 
         tableData.push({name: 'substitutionCount', type: 'USHORT', value: subtable.lookupRecords.length});
         subtable.lookupRecords.forEach(function (record, i) {
             tableData = tableData
                 .concat({name: 'sequenceIndex' + i, type: 'USHORT', value: record.sequenceIndex})
                 .concat({name: 'lookupListIndex' + i, type: 'USHORT', value: record.lookupListIndex});
-        });
+       });
 
         var returnTable$1 = new table.Table('chainContextTable', tableData);
 
         return returnTable$1;
-    }
+   }
 
     check.assert(false, 'lookup type 6 format must be 1, 2 or 3.');
 };
@@ -6871,7 +6871,7 @@ function makeGsubTable(gsub) {
     ]);
 }
 
-var gsub = { parse: parseGsubTable, make: makeGsubTable };
+var gsub = {parse: parseGsubTable, make: makeGsubTable};
 
 // The `GPOS` table contains kerning pairs, among other things.
 
@@ -6893,7 +6893,7 @@ function parseMetaTable(data, start) {
         var text = decode.UTF8(data, start + dataOffset, dataLength);
 
         tags[tag] = text;
-    }
+   }
     return tags;
 }
 
@@ -6916,14 +6916,14 @@ function makeMetaTable(tags) {
         result.fields.push({name: 'tag ' + tag, type: 'TAG', value: tag});
         result.fields.push({name: 'offset ' + tag, type: 'ULONG', value: stringPoolOffset + pos});
         result.fields.push({name: 'length ' + tag, type: 'ULONG', value: tags[tag].length});
-    }
+   }
 
     result.fields.push({name: 'stringPool', type: 'CHARARRAY', value: stringPool});
 
     return result;
 }
 
-var meta = { parse: parseMetaTable, make: makeMetaTable };
+var meta = {parse: parseMetaTable, make: makeMetaTable};
 
 // The `COLR` table adds support for multi-colored glyphs
 
@@ -6940,43 +6940,43 @@ function parseColrTable(data, start) {
         glyphID: Parser.uShort,
         firstLayerIndex: Parser.uShort,
         numLayers: Parser.uShort,
-    });
+   });
     p.relativeOffset = layerRecordsOffset;
     var layerRecords = p.parseRecordList(numLayerRecords, {
         glyphID: Parser.uShort,
         paletteIndex: Parser.uShort
-    });
+   });
 
     return {
         version: version,
         baseGlyphRecords: baseGlyphRecords,
         layerRecords: layerRecords,
-    };
+   };
 }
 
 function makeColrTable(ref) {
-    var version = ref.version; if ( version === void 0 ) version = 0x0000;
-    var baseGlyphRecords = ref.baseGlyphRecords; if ( baseGlyphRecords === void 0 ) baseGlyphRecords = [];
-    var layerRecords = ref.layerRecords; if ( layerRecords === void 0 ) layerRecords = [];
+    var version = ref.version; if (version === void 0) version = 0x0000;
+    var baseGlyphRecords = ref.baseGlyphRecords; if (baseGlyphRecords === void 0) baseGlyphRecords = [];
+    var layerRecords = ref.layerRecords; if (layerRecords === void 0) layerRecords = [];
 
     check.argument(version === 0x0000, 'Only COLRv0 supported.');
     var baseGlyphRecordsOffset = 14;
     var layerRecordsOffset = baseGlyphRecordsOffset + (baseGlyphRecords.length * 6);
     return new table.Table('COLR', [
-        { name: 'version', type: 'USHORT', value: version },
-        { name: 'numBaseGlyphRecords', type: 'USHORT', value: baseGlyphRecords.length },
-        { name: 'baseGlyphRecordsOffset', type: 'ULONG', value: baseGlyphRecordsOffset },
-        { name: 'layerRecordsOffset', type: 'ULONG', value: layerRecordsOffset },
-        { name: 'numLayerRecords', type: 'USHORT', value: layerRecords.length } ].concat( baseGlyphRecords.map(function (glyph, i) { return [
-            { name: 'glyphID_' + i, type: 'USHORT', value: glyph.glyphID },
-            { name: 'firstLayerIndex_' + i, type: 'USHORT', value: glyph.firstLayerIndex },
-            { name: 'numLayers_' + i, type: 'USHORT', value: glyph.numLayers } ]; }).flat(),
-        layerRecords.map(function (layer, i) { return [
-            { name: 'LayerGlyphID_' + i, type: 'USHORT', value: layer.glyphID },
-            { name: 'paletteIndex_' + i, type: 'USHORT', value: layer.paletteIndex } ]; }).flat() ));
+        {name: 'version', type: 'USHORT', value: version},
+        {name: 'numBaseGlyphRecords', type: 'USHORT', value: baseGlyphRecords.length},
+        {name: 'baseGlyphRecordsOffset', type: 'ULONG', value: baseGlyphRecordsOffset},
+        {name: 'layerRecordsOffset', type: 'ULONG', value: layerRecordsOffset},
+        {name: 'numLayerRecords', type: 'USHORT', value: layerRecords.length} ].concat(baseGlyphRecords.map(function (glyph, i) {return [
+            {name: 'glyphID_' + i, type: 'USHORT', value: glyph.glyphID},
+            {name: 'firstLayerIndex_' + i, type: 'USHORT', value: glyph.firstLayerIndex},
+            {name: 'numLayers_' + i, type: 'USHORT', value: glyph.numLayers} ];}).flat(),
+        layerRecords.map(function (layer, i) {return [
+            {name: 'LayerGlyphID_' + i, type: 'USHORT', value: layer.glyphID},
+            {name: 'paletteIndex_' + i, type: 'USHORT', value: layer.paletteIndex} ];}).flat()));
 }
 
-var colr = { parse: parseColrTable, make: makeColrTable };
+var colr = {parse: parseColrTable, make: makeColrTable};
 
 // The `CPAL` define a contiguous list of colors (colorRecords)
 
@@ -6996,29 +6996,29 @@ function parseCpalTable(data, start) {
     numPaletteEntries: numPaletteEntries,
     colorRecords: colorRecords,
     colorRecordIndices: colorRecordIndices,
-  };
+ };
 }
 
 function makeCpalTable(ref) {
-  var version = ref.version; if ( version === void 0 ) version = 0;
-  var numPaletteEntries = ref.numPaletteEntries; if ( numPaletteEntries === void 0 ) numPaletteEntries = 0;
-  var colorRecords = ref.colorRecords; if ( colorRecords === void 0 ) colorRecords = [];
-  var colorRecordIndices = ref.colorRecordIndices; if ( colorRecordIndices === void 0 ) colorRecordIndices = [0];
+  var version = ref.version; if (version === void 0) version = 0;
+  var numPaletteEntries = ref.numPaletteEntries; if (numPaletteEntries === void 0) numPaletteEntries = 0;
+  var colorRecords = ref.colorRecords; if (colorRecords === void 0) colorRecords = [];
+  var colorRecordIndices = ref.colorRecordIndices; if (colorRecordIndices === void 0) colorRecordIndices = [0];
 
   check.argument(version === 0, 'Only CPALv0 are supported.');
   check.argument(colorRecords.length, 'No colorRecords given.');
   check.argument(colorRecordIndices.length, 'No colorRecordIndices given.');
   check.argument(!numPaletteEntries && colorRecordIndices.length == 1, 'Can\'t infer numPaletteEntries on multiple colorRecordIndices');
   return new table.Table('CPAL', [
-    { name: 'version', type: 'USHORT', value: version },
-    { name: 'numPaletteEntries', type: 'USHORT', value: numPaletteEntries || colorRecords.length },
-    { name: 'numPalettes', type: 'USHORT', value: colorRecordIndices.length },
-    { name: 'numColorRecords', type: 'USHORT', value: colorRecords.length },
-    { name: 'colorRecordsArrayOffset', type: 'ULONG', value: 12 + 2 * colorRecordIndices.length } ].concat( colorRecordIndices.map(function (palette, i) { return ({ name: 'colorRecordIndices_' + i, type: 'USHORT', value: palette }); }),
-    colorRecords.map(function (color, i) { return ({ name: 'colorRecords_' + i, type: 'ULONG', value: color }); }) ));
+    {name: 'version', type: 'USHORT', value: version},
+    {name: 'numPaletteEntries', type: 'USHORT', value: numPaletteEntries || colorRecords.length},
+    {name: 'numPalettes', type: 'USHORT', value: colorRecordIndices.length},
+    {name: 'numColorRecords', type: 'USHORT', value: colorRecords.length},
+    {name: 'colorRecordsArrayOffset', type: 'ULONG', value: 12 + 2 * colorRecordIndices.length} ].concat(colorRecordIndices.map(function (palette, i) {return ({name: 'colorRecordIndices_' + i, type: 'USHORT', value: palette});}),
+    colorRecords.map(function (color, i) {return ({name: 'colorRecords_' + i, type: 'ULONG', value: color});})));
 }
 
-var cpal = { parse: parseCpalTable, make: makeCpalTable };
+var cpal = {parse: parseCpalTable, make: makeCpalTable};
 
 // The `sfnt` wrapper provides organization for the tables in the font.
 
@@ -7029,7 +7029,7 @@ function log2(v) {
 function computeCheckSum(bytes) {
     while (bytes.length % 4 !== 0) {
         bytes.push(0);
-    }
+   }
 
     var sum = 0;
     for (var i = 0; i < bytes.length; i += 4) {
@@ -7037,7 +7037,7 @@ function computeCheckSum(bytes) {
             (bytes[i + 1] << 16) +
             (bytes[i + 2] << 8) +
             (bytes[i + 3]);
-    }
+   }
 
     sum %= Math.pow(2, 32);
     return sum;
@@ -7074,7 +7074,7 @@ function makeSfntTable(tables) {
     while (offset % 4 !== 0) {
         offset += 1;
         tableFields.push({name: 'padding', type: 'BYTE', value: 0});
-    }
+   }
 
     for (var i = 0; i < tables.length; i += 1) {
         var t = tables[i];
@@ -7088,17 +7088,17 @@ function makeSfntTable(tables) {
         while (offset % 4 !== 0) {
             offset += 1;
             tableFields.push({name: 'padding', type: 'BYTE', value: 0});
-        }
-    }
+       }
+   }
 
     // Table records need to be sorted alphabetically.
     recordFields.sort(function(r1, r2) {
         if (r1.value.tag > r2.value.tag) {
             return 1;
-        } else {
+       } else {
             return -1;
-        }
-    });
+       }
+   });
 
     sfnt.fields = sfnt.fields.concat(recordFields);
     sfnt.fields = sfnt.fields.concat(tableFields);
@@ -7114,8 +7114,8 @@ function metricsForChar(font, chars, notFoundMetrics) {
         if (glyphIndex > 0) {
             var glyph = font.glyphs.get(glyphIndex);
             return glyph.getMetrics();
-        }
-    }
+       }
+   }
 
     return notFoundMetrics;
 }
@@ -7124,7 +7124,7 @@ function average(vs) {
     var sum = 0;
     for (var i = 0; i < vs.length; i += 1) {
         sum += vs[i];
-    }
+   }
 
     return sum / vs.length;
 }
@@ -7152,33 +7152,33 @@ function fontToSfntTable(font) {
 
         if (isNaN(glyph.advanceWidth)) {
             throw new Error('Glyph ' + glyph.name + ' (' + i + '): advanceWidth is not a number.');
-        }
+       }
 
         if (firstCharIndex > unicode || firstCharIndex === undefined) {
             // ignore .notdef char
             if (unicode > 0) {
                 firstCharIndex = unicode;
-            }
-        }
+           }
+       }
 
         if (lastCharIndex < unicode) {
             lastCharIndex = unicode;
-        }
+       }
 
         var position = os2.getUnicodeRange(unicode);
         if (position < 32) {
             ulUnicodeRange1 |= 1 << position;
-        } else if (position < 64) {
+       } else if (position < 64) {
             ulUnicodeRange2 |= 1 << position - 32;
-        } else if (position < 96) {
+       } else if (position < 96) {
             ulUnicodeRange3 |= 1 << position - 64;
-        } else if (position < 123) {
+       } else if (position < 123) {
             ulUnicodeRange4 |= 1 << position - 96;
-        } else {
+       } else {
             throw new Error('Unicode ranges bits > 123 are reserved for internal usage');
-        }
+       }
         // Skip non-important characters.
-        if (glyph.name === '.notdef') { continue; }
+        if (glyph.name === '.notdef') {continue;}
         var metrics = glyph.getMetrics();
         xMins.push(metrics.xMin);
         yMins.push(metrics.yMin);
@@ -7187,7 +7187,7 @@ function fontToSfntTable(font) {
         leftSideBearings.push(metrics.leftSideBearing);
         rightSideBearings.push(metrics.rightSideBearing);
         advanceWidths.push(glyph.advanceWidth);
-    }
+   }
 
     var globals = {
         xMin: Math.min.apply(null, xMins),
@@ -7199,7 +7199,7 @@ function fontToSfntTable(font) {
         minLeftSideBearing: Math.min.apply(null, leftSideBearings),
         maxLeftSideBearing: Math.max.apply(null, leftSideBearings),
         minRightSideBearing: Math.min.apply(null, rightSideBearings)
-    };
+   };
     globals.ascender = font.ascender;
     globals.descender = font.descender;
 
@@ -7212,7 +7212,7 @@ function fontToSfntTable(font) {
         yMax: globals.yMax,
         lowestRecPPEM: 3,
         createdTimestamp: font.createdTimestamp
-    });
+   });
 
     var hheaTable = hhea.make({
         ascender: globals.ascender,
@@ -7222,7 +7222,7 @@ function fontToSfntTable(font) {
         minRightSideBearing: globals.minRightSideBearing,
         xMaxExtent: globals.maxLeftSideBearing + (globals.xMax - globals.xMin),
         numberOfHMetrics: font.glyphs.length
-    });
+   });
 
     var maxpTable = maxp.make(font.glyphs.length);
 
@@ -7248,7 +7248,7 @@ function fontToSfntTable(font) {
         sCapHeight: metricsForChar(font, 'HIKLEFJMNTZBDPRAGOQSUVWXY', globals).yMax,
         usDefaultChar: font.hasChar(' ') ? 32 : 0, // Use space as the default character, if available.
         usBreakChar: font.hasChar(' ') ? 32 : 0, // Use space as the break character, if available.
-    }, font.tables.os2));
+   }, font.tables.os2));
 
     var hmtxTable = hmtx.make(font.glyphs);
     var cmapTable = cmap.make(font.glyphs);
@@ -7259,28 +7259,28 @@ function fontToSfntTable(font) {
     var postScriptName = font.getEnglishName('postScriptName');
     if (!postScriptName) {
         postScriptName = englishFamilyName.replace(/\s/g, '') + '-' + englishStyleName;
-    }
+   }
 
     var names = {};
     for (var n in font.names) {
         names[n] = font.names[n];
-    }
+   }
 
     if (!names.uniqueID) {
         names.uniqueID = {en: font.getEnglishName('manufacturer') + ':' + englishFullName};
-    }
+   }
 
     if (!names.postScriptName) {
         names.postScriptName = {en: postScriptName};
-    }
+   }
 
     if (!names.preferredFamily) {
         names.preferredFamily = font.names.fontFamily;
-    }
+   }
 
     if (!names.preferredSubfamily) {
         names.preferredSubfamily = font.names.fontSubfamily;
-    }
+   }
 
     var languageTags = [];
     var nameTable = _name.make(names, languageTags);
@@ -7295,7 +7295,7 @@ function fontToSfntTable(font) {
         postScriptName: postScriptName,
         unitsPerEm: font.unitsPerEm,
         fontBBox: [0, globals.yMin, globals.ascender, globals.advanceWidthMax]
-    });
+   });
 
     var metaTable = (font.metas && Object.keys(font.metas).length > 0) ? meta.make(font.metas) : undefined;
 
@@ -7303,20 +7303,20 @@ function fontToSfntTable(font) {
     var tables = [headTable, hheaTable, maxpTable, os2Table, nameTable, cmapTable, postTable, cffTable, hmtxTable];
     if (ltagTable) {
         tables.push(ltagTable);
-    }
+   }
     // Optional tables
     if (font.tables.gsub) {
         tables.push(gsub.make(font.tables.gsub));
-    }
+   }
     if (font.tables.cpal) {
         tables.push(cpal.make(font.tables.cpal));
-    }
+   }
     if (font.tables.colr) {
         tables.push(colr.make(font.tables.colr));
-    }
+   }
     if (metaTable) {
         tables.push(metaTable);
-    }
+   }
 
     var sfntTable = makeSfntTable(tables);
 
@@ -7330,17 +7330,17 @@ function fontToSfntTable(font) {
             tableFields[i$1].value.checkSumAdjustment = 0xB1B0AFBA - checkSum;
             checkSumAdjusted = true;
             break;
-        }
-    }
+       }
+   }
 
     if (!checkSumAdjusted) {
         throw new Error('Could not find head table with checkSum to adjust.');
-    }
+   }
 
     return sfntTable;
 }
 
-var sfnt = { make: makeSfntTable, fontToTable: fontToSfntTable, computeCheckSum: computeCheckSum };
+var sfnt = {make: makeSfntTable, fontToTable: fontToSfntTable, computeCheckSum: computeCheckSum};
 
 // The Layout object is the prototype of Substitution objects, and provides
 
@@ -7353,10 +7353,10 @@ function searchTag(arr, tag) {
         var val = arr[imid].tag;
         if (val === tag) {
             return imid;
-        } else if (val < tag) {
+       } else if (val < tag) {
             imin = imid + 1;
-        } else { imax = imid - 1; }
-    }
+       } else {imax = imid - 1;}
+   }
     // Not found: return -1-insertion point
     return -imin - 1;
 }
@@ -7370,10 +7370,10 @@ function binSearch(arr, value) {
         var val = arr[imid];
         if (val === value) {
             return imid;
-        } else if (val < value) {
+       } else if (val < value) {
             imin = imid + 1;
-        } else { imax = imid - 1; }
-    }
+       } else {imax = imid - 1;}
+   }
     // Not found: return -1-insertion point
     return -imin - 1;
 }
@@ -7390,15 +7390,15 @@ function searchRange(ranges, value) {
         var start = range.start;
         if (start === value) {
             return range;
-        } else if (start < value) {
+       } else if (start < value) {
             imin = imid + 1;
-        } else { imax = imid - 1; }
-    }
+       } else {imax = imid - 1;}
+   }
     if (imin > 0) {
         range = ranges[imin - 1];
-        if (value > range.end) { return 0; }
+        if (value > range.end) {return 0;}
         return range;
-    }
+   }
 }
 
 /**
@@ -7443,9 +7443,9 @@ Layout.prototype = {
         var layout = this.font.tables[this.tableName];
         if (!layout && create) {
             layout = this.font.tables[this.tableName] = this.createDefaultTable();
-        }
+       }
         return layout;
-    },
+   },
 
     /**
      * Returns all scripts in the substitution table.
@@ -7454,11 +7454,11 @@ Layout.prototype = {
      */
     getScriptNames: function() {
         var layout = this.getTable();
-        if (!layout) { return []; }
+        if (!layout) {return [];}
         return layout.scripts.map(function(script) {
             return script.tag;
-        });
-    },
+       });
+   },
 
     /**
      * Returns the best bet for a script name.
@@ -7468,15 +7468,15 @@ Layout.prototype = {
      */
     getDefaultScriptName: function() {
         var layout = this.getTable();
-        if (!layout) { return; }
+        if (!layout) {return;}
         var hasLatn = false;
         for (var i = 0; i < layout.scripts.length; i++) {
             var name = layout.scripts[i].tag;
-            if (name === 'DFLT') { return name; }
-            if (name === 'latn') { hasLatn = true; }
-        }
-        if (hasLatn) { return 'latn'; }
-    },
+            if (name === 'DFLT') {return name;}
+            if (name === 'latn') {hasLatn = true;}
+       }
+        if (hasLatn) {return 'latn';}
+   },
 
     /**
      * Returns all LangSysRecords in the given script.
@@ -7493,19 +7493,19 @@ Layout.prototype = {
             var pos = searchTag(layout.scripts, script);
             if (pos >= 0) {
                 return scripts[pos].script;
-            } else if (create) {
+           } else if (create) {
                 var scr = {
                     tag: script,
                     script: {
                         defaultLangSys: {reserved: 0, reqFeatureIndex: 0xffff, featureIndexes: []},
                         langSysRecords: []
-                    }
-                };
+                   }
+               };
                 scripts.splice(-1 - pos, 0, scr);
                 return scr.script;
-            }
-        }
-    },
+           }
+       }
+   },
 
     /**
      * Returns a language system table
@@ -7520,20 +7520,20 @@ Layout.prototype = {
         if (scriptTable) {
             if (!language || language === 'dflt' || language === 'DFLT') {
                 return scriptTable.defaultLangSys;
-            }
+           }
             var pos = searchTag(scriptTable.langSysRecords, language);
             if (pos >= 0) {
                 return scriptTable.langSysRecords[pos].langSys;
-            } else if (create) {
+           } else if (create) {
                 var langSysRecord = {
                     tag: language,
                     langSys: {reserved: 0, reqFeatureIndex: 0xffff, featureIndexes: []}
-                };
+               };
                 scriptTable.langSysRecords.splice(-1 - pos, 0, langSysRecord);
                 return langSysRecord.langSys;
-            }
-        }
-    },
+           }
+       }
+   },
 
     /**
      * Get a specific feature table.
@@ -7556,22 +7556,22 @@ Layout.prototype = {
                 featureRecord = allFeatures[featIndexes[i]];
                 if (featureRecord.tag === feature) {
                     return featureRecord.feature;
-                }
-            }
+               }
+           }
             if (create) {
                 var index = allFeatures.length;
                 // Automatic ordering of features would require to shift feature indexes in the script list.
                 check.assert(index === 0 || feature >= allFeatures[index - 1].tag, 'Features must be added in alphabetical order.');
                 featureRecord = {
                     tag: feature,
-                    feature: { params: 0, lookupListIndexes: [] }
-                };
+                    feature: {params: 0, lookupListIndexes: []}
+               };
                 allFeatures.push(featureRecord);
                 featIndexes.push(index);
                 return featureRecord.feature;
-            }
-        }
-    },
+           }
+       }
+   },
 
     /**
      * Get the lookup tables of a given type for a script/language/feature.
@@ -7595,23 +7595,23 @@ Layout.prototype = {
                 lookupTable = allLookups[lookupListIndexes[i]];
                 if (lookupTable.lookupType === lookupType) {
                     tables.push(lookupTable);
-                }
-            }
+               }
+           }
             if (tables.length === 0 && create) {
                 lookupTable = {
                     lookupType: lookupType,
                     lookupFlag: 0,
                     subtables: [],
                     markFilteringSet: undefined
-                };
+               };
                 var index = allLookups.length;
                 allLookups.push(lookupTable);
                 lookupListIndexes.push(index);
                 return [lookupTable];
-            }
-        }
+           }
+       }
         return tables;
-    },
+   },
 
     /**
      * Find a glyph in a class definition table
@@ -7625,13 +7625,13 @@ Layout.prototype = {
             case 1:
                 if (classDefTable.startGlyph <= glyphIndex && glyphIndex < classDefTable.startGlyph + classDefTable.classes.length) {
                     return classDefTable.classes[glyphIndex - classDefTable.startGlyph];
-                }
+               }
                 return 0;
             case 2:
                 var range = searchRange(classDefTable.ranges, glyphIndex);
                 return range ? range.classId : 0;
-        }
-    },
+       }
+   },
 
     /**
      * Find a glyph in a coverage table
@@ -7648,8 +7648,8 @@ Layout.prototype = {
             case 2:
                 var range = searchRange(coverageTable.ranges, glyphIndex);
                 return range ? range.index + glyphIndex - range.start : -1;
-        }
-    },
+       }
+   },
 
     /**
      * Returns the list of glyph indexes of a coverage table.
@@ -7662,7 +7662,7 @@ Layout.prototype = {
     expandCoverage: function(coverageTable) {
         if (coverageTable.format === 1) {
             return coverageTable.glyphs;
-        } else {
+       } else {
             var glyphs = [];
             var ranges = coverageTable.ranges;
             for (var i = 0; i < ranges.length; i++) {
@@ -7671,11 +7671,11 @@ Layout.prototype = {
                 var end = range.end;
                 for (var j = start; j <= end; j++) {
                     glyphs.push(j);
-                }
-            }
+               }
+           }
             return glyphs;
-        }
-    }
+       }
+   }
 
 };
 
@@ -7715,7 +7715,7 @@ Position.prototype.getKerningValue = function(kerningLookups, leftIndex, rightIn
         for (var j = 0; j < subtables.length; j++) {
             var subtable = subtables[j];
             var covIndex = this.getCoverageIndex(subtable.coverage, leftIndex);
-            if (covIndex < 0) { continue; }
+            if (covIndex < 0) {continue;}
             switch (subtable.posFormat) {
                 case 1:
                     // Search Pair Adjustment Positioning Format 1
@@ -7724,8 +7724,8 @@ Position.prototype.getKerningValue = function(kerningLookups, leftIndex, rightIn
                         var pair = pairSet[k];
                         if (pair.secondGlyph === rightIndex) {
                             return pair.value1 && pair.value1.xAdvance || 0;
-                        }
-                    }
+                       }
+                   }
                     break;      // left glyph found, not right glyph - try next subtable
                 case 2:
                     // Search Pair Adjustment Positioning Format 2
@@ -7733,9 +7733,9 @@ Position.prototype.getKerningValue = function(kerningLookups, leftIndex, rightIn
                     var class2 = this.getGlyphClass(subtable.classDef2, rightIndex);
                     var pair$1 = subtable.classRecords[class1][class2];
                     return pair$1.value1 && pair$1.value1.xAdvance || 0;
-            }
-        }
-    }
+           }
+       }
+   }
     return 0;
 };
 
@@ -7749,7 +7749,7 @@ Position.prototype.getKerningValue = function(kerningLookups, leftIndex, rightIn
 Position.prototype.getKerningTables = function(script, language) {
     if (this.font.tables.gpos) {
         return this.getLookupTables(script, language, 'kern', 2);
-    }
+   }
 };
 
 // The Substitution object provides utility methods to manipulate
@@ -7768,10 +7768,10 @@ function Substitution(font) {
 // Check if 2 arrays of primitives are equal.
 function arraysEqual(ar1, ar2) {
     var n = ar1.length;
-    if (n !== ar2.length) { return false; }
+    if (n !== ar2.length) {return false;}
     for (var i = 0; i < n; i++) {
-        if (ar1[i] !== ar2[i]) { return false; }
-    }
+        if (ar1[i] !== ar2[i]) {return false;}
+   }
     return true;
 }
 
@@ -7782,12 +7782,12 @@ function getSubstFormat(lookupTable, format, defaultSubtable) {
         var subtable = subtables[i];
         if (subtable.substFormat === format) {
             return subtable;
-        }
-    }
+       }
+   }
     if (defaultSubtable) {
         subtables.push(defaultSubtable);
         return defaultSubtable;
-    }
+   }
     return undefined;
 }
 
@@ -7804,13 +7804,13 @@ Substitution.prototype.createDefaultTable = function() {
         scripts: [{
             tag: 'DFLT',
             script: {
-                defaultLangSys: { reserved: 0, reqFeatureIndex: 0xffff, featureIndexes: [] },
+                defaultLangSys: {reserved: 0, reqFeatureIndex: 0xffff, featureIndexes: []},
                 langSysRecords: []
-            }
-        }],
+           }
+       }],
         features: [],
         lookups: []
-    };
+   };
 };
 
 /**
@@ -7833,16 +7833,16 @@ Substitution.prototype.getSingle = function(feature, script, language) {
                 var delta = subtable.deltaGlyphId;
                 for (j = 0; j < glyphs.length; j++) {
                     var glyph = glyphs[j];
-                    substitutions.push({ sub: glyph, by: glyph + delta });
-                }
-            } else {
+                    substitutions.push({sub: glyph, by: glyph + delta});
+               }
+           } else {
                 var substitute = subtable.substitute;
                 for (j = 0; j < glyphs.length; j++) {
-                    substitutions.push({ sub: glyphs[j], by: substitute[j] });
-                }
-            }
-        }
-    }
+                    substitutions.push({sub: glyphs[j], by: substitute[j]});
+               }
+           }
+       }
+   }
     return substitutions;
 };
 
@@ -7866,10 +7866,10 @@ Substitution.prototype.getMultiple = function(feature, script, language) {
             for (j = 0; j < glyphs.length; j++) {
                 var glyph = glyphs[j];
                 var replacements = subtable.sequences[j];
-                substitutions.push({ sub: glyph, by: replacements });
-            }
-        }
-    }
+                substitutions.push({sub: glyph, by: replacements});
+           }
+       }
+   }
     return substitutions;
 };
 
@@ -7890,16 +7890,16 @@ Substitution.prototype.getAlternates = function(feature, script, language) {
             var glyphs = this.expandCoverage(subtable.coverage);
             var alternateSets = subtable.alternateSets;
             for (var j = 0; j < glyphs.length; j++) {
-                alternates.push({ sub: glyphs[j], by: alternateSets[j] });
-            }
-        }
-    }
+                alternates.push({sub: glyphs[j], by: alternateSets[j]});
+           }
+       }
+   }
     return alternates;
 };
 
 /**
  * List all ligatures (lookup type 4) for a given script, language, and feature.
- * The result is an array of ligature objects like { sub: [ids], by: id }
+ * The result is an array of ligature objects like {sub: [ids], by: id}
  * @param {string} feature - 4-letter feature name ('liga', 'rlig', 'dlig'...)
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
@@ -7922,11 +7922,11 @@ Substitution.prototype.getLigatures = function(feature, script, language) {
                     ligatures.push({
                         sub: [startGlyph].concat(lig.components),
                         by: lig.ligGlyph
-                    });
-                }
-            }
-        }
-    }
+                   });
+               }
+           }
+       }
+   }
     return ligatures;
 };
 
@@ -7934,17 +7934,17 @@ Substitution.prototype.getLigatures = function(feature, script, language) {
  * Add or modify a single substitution (lookup type 1)
  * Format 2, more flexible, is always used.
  * @param {string} feature - 4-letter feature name ('liga', 'rlig', 'dlig'...)
- * @param {Object} substitution - { sub: id, by: id } (format 1 is not supported)
+ * @param {Object} substitution - {sub: id, by: id} (format 1 is not supported)
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
  */
 Substitution.prototype.addSingle = function(feature, substitution, script, language) {
     var lookupTable = this.getLookupTables(script, language, feature, 1, true)[0];
-    var subtable = getSubstFormat(lookupTable, 2, {                // lookup type 1 subtable, format 2, coverage format 1
+    var subtable = getSubstFormat(lookupTable, 2, {               // lookup type 1 subtable, format 2, coverage format 1
         substFormat: 2,
         coverage: {format: 1, glyphs: []},
         substitute: []
-    });
+   });
     check.assert(subtable.coverage.format === 1, 'Single: unable to modify coverage table format ' + subtable.coverage.format);
     var coverageGlyph = substitution.sub;
     var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
@@ -7952,25 +7952,25 @@ Substitution.prototype.addSingle = function(feature, substitution, script, langu
         pos = -1 - pos;
         subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
         subtable.substitute.splice(pos, 0, 0);
-    }
+   }
     subtable.substitute[pos] = substitution.by;
 };
 
 /**
  * Add or modify a multiple substitution (lookup type 2)
  * @param {string} feature - 4-letter feature name ('ccmp', 'stch')
- * @param {Object} substitution - { sub: id, by: [id] } for format 2.
+ * @param {Object} substitution - {sub: id, by: [id]} for format 2.
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
  */
 Substitution.prototype.addMultiple = function(feature, substitution, script, language) {
     check.assert(substitution.by instanceof Array && substitution.by.length > 1, 'Multiple: "by" must be an array of two or more ids');
     var lookupTable = this.getLookupTables(script, language, feature, 2, true)[0];
-    var subtable = getSubstFormat(lookupTable, 1, {                // lookup type 2 subtable, format 1, coverage format 1
+    var subtable = getSubstFormat(lookupTable, 1, {               // lookup type 2 subtable, format 1, coverage format 1
         substFormat: 1,
         coverage: {format: 1, glyphs: []},
         sequences: []
-    });
+   });
     check.assert(subtable.coverage.format === 1, 'Multiple: unable to modify coverage table format ' + subtable.coverage.format);
     var coverageGlyph = substitution.sub;
     var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
@@ -7978,24 +7978,24 @@ Substitution.prototype.addMultiple = function(feature, substitution, script, lan
         pos = -1 - pos;
         subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
         subtable.sequences.splice(pos, 0, 0);
-    }
+   }
     subtable.sequences[pos] = substitution.by;
 };
 
 /**
  * Add or modify an alternate substitution (lookup type 3)
  * @param {string} feature - 4-letter feature name ('liga', 'rlig', 'dlig'...)
- * @param {Object} substitution - { sub: id, by: [ids] }
+ * @param {Object} substitution - {sub: id, by: [ids]}
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
  */
 Substitution.prototype.addAlternate = function(feature, substitution, script, language) {
     var lookupTable = this.getLookupTables(script, language, feature, 3, true)[0];
-    var subtable = getSubstFormat(lookupTable, 1, {                // lookup type 3 subtable, format 1, coverage format 1
+    var subtable = getSubstFormat(lookupTable, 1, {               // lookup type 3 subtable, format 1, coverage format 1
         substFormat: 1,
         coverage: {format: 1, glyphs: []},
         alternateSets: []
-    });
+   });
     check.assert(subtable.coverage.format === 1, 'Alternate: unable to modify coverage table format ' + subtable.coverage.format);
     var coverageGlyph = substitution.sub;
     var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
@@ -8003,7 +8003,7 @@ Substitution.prototype.addAlternate = function(feature, substitution, script, la
         pos = -1 - pos;
         subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
         subtable.alternateSets.splice(pos, 0, 0);
-    }
+   }
     subtable.alternateSets[pos] = substitution.by;
 };
 
@@ -8011,7 +8011,7 @@ Substitution.prototype.addAlternate = function(feature, substitution, script, la
  * Add a ligature (lookup type 4)
  * Ligatures with more components must be stored ahead of those with fewer components in order to be found
  * @param {string} feature - 4-letter feature name ('liga', 'rlig', 'dlig'...)
- * @param {Object} ligature - { sub: [ids], by: id }
+ * @param {Object} ligature - {sub: [ids], by: id}
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
  */
@@ -8019,20 +8019,20 @@ Substitution.prototype.addLigature = function(feature, ligature, script, languag
     var lookupTable = this.getLookupTables(script, language, feature, 4, true)[0];
     var subtable = lookupTable.subtables[0];
     if (!subtable) {
-        subtable = {                // lookup type 4 subtable, format 1, coverage format 1
+        subtable = {               // lookup type 4 subtable, format 1, coverage format 1
             substFormat: 1,
-            coverage: { format: 1, glyphs: [] },
+            coverage: {format: 1, glyphs: []},
             ligatureSets: []
-        };
+       };
         lookupTable.subtables[0] = subtable;
-    }
+   }
     check.assert(subtable.coverage.format === 1, 'Ligature: unable to modify coverage table format ' + subtable.coverage.format);
     var coverageGlyph = ligature.sub[0];
     var ligComponents = ligature.sub.slice(1);
     var ligatureTable = {
         ligGlyph: ligature.by,
         components: ligComponents
-    };
+   };
     var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
     if (pos >= 0) {
         // ligatureSet already exists
@@ -8041,16 +8041,16 @@ Substitution.prototype.addLigature = function(feature, ligature, script, languag
             // If ligature already exists, return.
             if (arraysEqual(ligatureSet[i].components, ligComponents)) {
                 return;
-            }
-        }
+           }
+       }
         // ligature does not exist: add it.
         ligatureSet.push(ligatureTable);
-    } else {
+   } else {
         // Create a new ligatureSet and add coverage for the first glyph.
         pos = -1 - pos;
         subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
         subtable.ligatureSets.splice(pos, 0, [ligatureTable]);
-    }
+   }
 };
 
 /**
@@ -8064,7 +8064,7 @@ Substitution.prototype.getFeature = function(feature, script, language) {
     if (/ss\d\d/.test(feature)) {
         // ss01 - ss20
         return this.getSingle(feature, script, language);
-    }
+   }
     switch (feature) {
         case 'aalt':
         case 'salt':
@@ -8079,14 +8079,14 @@ Substitution.prototype.getFeature = function(feature, script, language) {
                 .concat(this.getLigatures(feature, script, language));
         case 'stch':
             return this.getMultiple(feature, script, language);
-    }
+   }
     return undefined;
 };
 
 /**
  * Add a substitution to a feature for a given script and language.
  * @param {string} feature - 4-letter feature name
- * @param {Object} sub - the substitution to add (an object like { sub: id or [ids], by: id or [ids] })
+ * @param {Object} sub - the substitution to add (an object like {sub: id or [ids], by: id or [ids]})
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
  */
@@ -8094,13 +8094,13 @@ Substitution.prototype.add = function(feature, sub, script, language) {
     if (/ss\d\d/.test(feature)) {
         // ss01 - ss20
         return this.addSingle(feature, sub, script, language);
-    }
+   }
     switch (feature) {
         case 'aalt':
         case 'salt':
             if (typeof sub.by === 'number') {
                 return this.addSingle(feature, sub, script, language);
-            }
+           }
             return this.addAlternate(feature, sub, script, language);
         case 'dlig':
         case 'liga':
@@ -8109,16 +8109,16 @@ Substitution.prototype.add = function(feature, sub, script, language) {
         case 'ccmp':
             if (sub.by instanceof Array) {
                 return this.addMultiple(feature, sub, script, language);
-            }
+           }
             return this.addLigature(feature, sub, script, language);
-    }
+   }
     return undefined;
 };
 
 function checkArgument(expression, message) {
     if (!expression) {
         throw message;
-    }
+   }
 }
 
 // The `glyf` table describes the glyphs in TrueType outline format.
@@ -8132,19 +8132,19 @@ function parseGlyphCoordinate(p, flag, previousValue, shortVectorBitMask, sameBi
         // The `same` bit is re-used for short values to signify the sign of the value.
         if ((flag & sameBitMask) === 0) {
             v = -v;
-        }
+       }
 
         v = previousValue + v;
-    } else {
+   } else {
         //  The coordinate is 2 bytes long.
         // If the `same` bit is set, the coordinate is the same as the previous coordinate.
         if ((flag & sameBitMask) > 0) {
             v = previousValue;
-        } else {
+       } else {
             // Parse the coordinate as a signed 16-bit delta value.
             v = previousValue + p.parseShort();
-        }
-    }
+       }
+   }
 
     return v;
 }
@@ -8165,13 +8165,13 @@ function parseGlyph(glyph, data, start) {
         var endPointIndices = glyph.endPointIndices = [];
         for (var i = 0; i < glyph.numberOfContours; i += 1) {
             endPointIndices.push(p.parseUShort());
-        }
+       }
 
         glyph.instructionLength = p.parseUShort();
         glyph.instructions = [];
         for (var i$1 = 0; i$1 < glyph.instructionLength; i$1 += 1) {
             glyph.instructions.push(p.parseByte());
-        }
+       }
 
         var numberOfCoordinates = endPointIndices[endPointIndices.length - 1] + 1;
         flags = [];
@@ -8184,9 +8184,9 @@ function parseGlyph(glyph, data, start) {
                 for (var j = 0; j < repeatCount; j += 1) {
                     flags.push(flag);
                     i$2 += 1;
-                }
-            }
-        }
+               }
+           }
+       }
 
         check.argument(flags.length === numberOfCoordinates, 'Bad flags.');
 
@@ -8201,7 +8201,7 @@ function parseGlyph(glyph, data, start) {
                     point.onCurve = !!(flag & 1);
                     point.lastPointOfContour = endPointIndices.indexOf(i$3) >= 0;
                     points.push(point);
-                }
+               }
 
                 var px = 0;
                 for (var i$4 = 0; i$4 < numberOfCoordinates; i$4 += 1) {
@@ -8209,7 +8209,7 @@ function parseGlyph(glyph, data, start) {
                     point = points[i$4];
                     point.x = parseGlyphCoordinate(p, flag, px, 2, 16);
                     px = point.x;
-                }
+               }
 
                 var py = 0;
                 for (var i$5 = 0; i$5 < numberOfCoordinates; i$5 += 1) {
@@ -8217,16 +8217,16 @@ function parseGlyph(glyph, data, start) {
                     point = points[i$5];
                     point.y = parseGlyphCoordinate(p, flag, py, 4, 32);
                     py = point.y;
-                }
-            }
+               }
+           }
 
             glyph.points = points;
-        } else {
+       } else {
             glyph.points = [];
-        }
-    } else if (glyph.numberOfContours === 0) {
+       }
+   } else if (glyph.numberOfContours === 0) {
         glyph.points = [];
-    } else {
+   } else {
         glyph.isComposite = true;
         glyph.points = [];
         glyph.components = [];
@@ -8241,57 +8241,57 @@ function parseGlyph(glyph, data, start) {
                 yScale: 1,
                 dx: 0,
                 dy: 0
-            };
+           };
             if ((flags & 1) > 0) {
                 // The arguments are words
                 if ((flags & 2) > 0) {
                     // values are offset
                     component.dx = p.parseShort();
                     component.dy = p.parseShort();
-                } else {
+               } else {
                     // values are matched points
                     component.matchedPoints = [p.parseUShort(), p.parseUShort()];
-                }
+               }
 
-            } else {
+           } else {
                 // The arguments are bytes
                 if ((flags & 2) > 0) {
                     // values are offset
                     component.dx = p.parseChar();
                     component.dy = p.parseChar();
-                } else {
+               } else {
                     // values are matched points
                     component.matchedPoints = [p.parseByte(), p.parseByte()];
-                }
-            }
+               }
+           }
 
             if ((flags & 8) > 0) {
                 // We have a scale
                 component.xScale = component.yScale = p.parseF2Dot14();
-            } else if ((flags & 64) > 0) {
+           } else if ((flags & 64) > 0) {
                 // We have an X / Y scale
                 component.xScale = p.parseF2Dot14();
                 component.yScale = p.parseF2Dot14();
-            } else if ((flags & 128) > 0) {
+           } else if ((flags & 128) > 0) {
                 // We have a 2x2 transformation
                 component.xScale = p.parseF2Dot14();
                 component.scale01 = p.parseF2Dot14();
                 component.scale10 = p.parseF2Dot14();
                 component.yScale = p.parseF2Dot14();
-            }
+           }
 
             glyph.components.push(component);
             moreComponents = !!(flags & 32);
-        }
+       }
         if (flags & 0x100) {
             // We have instructions
             glyph.instructionLength = p.parseUShort();
             glyph.instructions = [];
             for (var i$6 = 0; i$6 < glyph.instructionLength; i$6 += 1) {
                 glyph.instructions.push(p.parseByte());
-            }
-        }
-    }
+           }
+       }
+   }
 }
 
 // Transform an array of points and return a new array.
@@ -8304,9 +8304,9 @@ function transformPoints(points, transform) {
             y: transform.scale10 * pt.x + transform.yScale * pt.y + transform.dy,
             onCurve: pt.onCurve,
             lastPointOfContour: pt.lastPointOfContour
-        };
+       };
         newPoints.push(newPt);
-    }
+   }
 
     return newPoints;
 }
@@ -8320,8 +8320,8 @@ function getContours(points) {
         if (pt.lastPointOfContour) {
             contours.push(currentContour);
             currentContour = [];
-        }
-    }
+       }
+   }
 
     check.argument(currentContour.length === 0, 'There are still points left in the current contour.');
     return contours;
@@ -8332,7 +8332,7 @@ function getPath(points) {
     var p = new Path();
     if (!points) {
         return p;
-    }
+   }
 
     var contours = getContours(points);
 
@@ -8345,15 +8345,15 @@ function getPath(points) {
 
         if (curr.onCurve) {
             p.moveTo(curr.x, curr.y);
-        } else {
+       } else {
             if (next.onCurve) {
                 p.moveTo(next.x, next.y);
-            } else {
+           } else {
                 // If both first and last points are off-curve, start at their middle.
                 var start = {x: (curr.x + next.x) * 0.5, y: (curr.y + next.y) * 0.5};
                 p.moveTo(start.x, start.y);
-            }
-        }
+           }
+       }
 
         for (var i = 0; i < contour.length; ++i) {
             prev = curr;
@@ -8363,24 +8363,24 @@ function getPath(points) {
             if (curr.onCurve) {
                 // This is a straight line.
                 p.lineTo(curr.x, curr.y);
-            } else {
+           } else {
                 var prev2 = prev;
                 var next2 = next;
 
                 if (!prev.onCurve) {
-                    prev2 = { x: (curr.x + prev.x) * 0.5, y: (curr.y + prev.y) * 0.5 };
-                }
+                    prev2 = {x: (curr.x + prev.x) * 0.5, y: (curr.y + prev.y) * 0.5};
+               }
 
                 if (!next.onCurve) {
-                    next2 = { x: (curr.x + next.x) * 0.5, y: (curr.y + next.y) * 0.5 };
-                }
+                    next2 = {x: (curr.x + next.x) * 0.5, y: (curr.y + next.y) * 0.5};
+               }
 
                 p.quadraticCurveTo(curr.x, curr.y, next2.x, next2.y);
-            }
-        }
+           }
+       }
 
         p.closePath();
-    }
+   }
     return p;
 }
 
@@ -8396,28 +8396,28 @@ function buildPath(glyphs, glyph) {
                 if (component.matchedPoints === undefined) {
                     // component positioned by offset
                     transformedPoints = transformPoints(componentGlyph.points, component);
-                } else {
+               } else {
                     // component positioned by matched points
                     if ((component.matchedPoints[0] > glyph.points.length - 1) ||
                         (component.matchedPoints[1] > componentGlyph.points.length - 1)) {
                         throw Error('Matched points out of range in ' + glyph.name);
-                    }
+                   }
                     var firstPt = glyph.points[component.matchedPoints[0]];
                     var secondPt = componentGlyph.points[component.matchedPoints[1]];
                     var transform = {
                         xScale: component.xScale, scale01: component.scale01,
                         scale10: component.scale10, yScale: component.yScale,
                         dx: 0, dy: 0
-                    };
+                   };
                     secondPt = transformPoints([secondPt], transform)[0];
                     transform.dx = firstPt.x - secondPt.x;
                     transform.dy = firstPt.y - secondPt.y;
                     transformedPoints = transformPoints(componentGlyph.points, transform);
-                }
+               }
                 glyph.points = glyph.points.concat(transformedPoints);
-            }
-        }
-    }
+           }
+       }
+   }
 
     return getPath(glyph.points);
 }
@@ -8431,10 +8431,10 @@ function parseGlyfTableAll(data, start, loca, font) {
         var nextOffset = loca[i + 1];
         if (offset !== nextOffset) {
             glyphs.push(i, glyphset.ttfGlyphLoader(font, i, parseGlyph, data, start + offset, buildPath));
-        } else {
+       } else {
             glyphs.push(i, glyphset.glyphLoader(font, i));
-        }
-    }
+       }
+   }
 
     return glyphs;
 }
@@ -8447,10 +8447,10 @@ function parseGlyfTableOnLowMemory(data, start, loca, font) {
         var nextOffset = loca[i + 1];
         if (offset !== nextOffset) {
             glyphs.push(i, glyphset.ttfGlyphLoader(font, i, parseGlyph, data, start + offset, buildPath));
-        } else {
+       } else {
             glyphs.push(i, glyphset.glyphLoader(font, i));
-        }
-    };
+       }
+   };
 
     return glyphs;
 }
@@ -8458,12 +8458,12 @@ function parseGlyfTableOnLowMemory(data, start, loca, font) {
 // Parse all the glyphs according to the offsets from the `loca` table.
 function parseGlyfTable(data, start, loca, font, opt) {
     if (opt.lowMemory)
-        { return parseGlyfTableOnLowMemory(data, start, loca, font); }
+        {return parseGlyfTableOnLowMemory(data, start, loca, font);}
     else
-        { return parseGlyfTableAll(data, start, loca, font); }
+        {return parseGlyfTableAll(data, start, loca, font);}
 }
 
-var glyf = { getPath: getPath, parse: parseGlyfTable};
+var glyf = {getPath: getPath, parse: parseGlyfTable};
 
 /* A TrueType font hinting interpreter.
 *
@@ -8510,7 +8510,7 @@ function Hinting(font) {
 
     this.getCommands = function (hPoints) {
         return glyf.getPath(hPoints).commands;
-    };
+   };
 
     // cached states
     this._fpgmState  =
@@ -8582,7 +8582,7 @@ var roundSuper = function (v) {
     if (v < 0) {
         v = -v;
         sign = -1;
-    }
+   }
 
     v += threshold - phase;
 
@@ -8591,7 +8591,7 @@ var roundSuper = function (v) {
     v += phase;
 
     // according to http://xgridfit.sourceforge.net/round.html
-    if (v < 0) { return phase * sign; }
+    if (v < 0) {return phase * sign;}
 
     return v * sign;
 };
@@ -8610,7 +8610,7 @@ var xUnitVector = {
     // o1/o2 ... if true, respective original position is used.
     distance: function (p1, p2, o1, o2) {
         return (o1 ? p1.xo : p1.x) - (o2 ? p2.xo : p2.x);
-    },
+   },
 
     // Moves point p so the moved position has the same relative
     // position to the moved positions of rp1 and rp2 than the
@@ -8638,11 +8638,11 @@ var xUnitVector = {
             if (dt === 0) {
                 p.x = p.xo + (dm1 + dm2) / 2;
                 return;
-            }
+           }
 
             p.x = p.xo + (dm1 * doa2 + dm2 * doa1) / dt;
             return;
-        }
+       }
 
         do1 = pv.distance(p, rp1, true, true);
         do2 = pv.distance(p, rp2, true, true);
@@ -8655,10 +8655,10 @@ var xUnitVector = {
         if (dt === 0) {
             xUnitVector.setRelative(p, p, (dm1 + dm2) / 2, pv, true);
             return;
-        }
+       }
 
         xUnitVector.setRelative(p, p, (dm1 * doa2 + dm2 * doa1) / dt, pv, true);
-    },
+   },
 
     // Slope of line normal to this
     normalSlope: Number.NEGATIVE_INFINITY,
@@ -8677,7 +8677,7 @@ var xUnitVector = {
         if (!pv || pv === this) {
             p.x = (org ? rp.xo : rp.x) + d;
             return;
-        }
+       }
 
         var rpx = org ? rp.xo : rp.x;
         var rpy = org ? rp.yo : rp.y;
@@ -8685,7 +8685,7 @@ var xUnitVector = {
         var rpdy = rpy + d * pv.y;
 
         p.x = rpdx + (p.y - rpdy) / pv.normalSlope;
-    },
+   },
 
     // Slope of vector line.
     slope: 0,
@@ -8693,17 +8693,17 @@ var xUnitVector = {
     // Touches the point p.
     touch: function (p) {
         p.xTouched = true;
-    },
+   },
 
     // Tests if a point p is touched.
     touched: function (p) {
         return p.xTouched;
-    },
+   },
 
     // Untouches the point p.
     untouch: function (p) {
         p.xTouched = false;
-    }
+   }
 };
 
 /*
@@ -8720,7 +8720,7 @@ var yUnitVector = {
     // o1/o2 ... if true, respective original position is used.
     distance: function (p1, p2, o1, o2) {
         return (o1 ? p1.yo : p1.y) - (o2 ? p2.yo : p2.y);
-    },
+   },
 
     // Moves point p so the moved position has the same relative
     // position to the moved positions of rp1 and rp2 than the
@@ -8748,11 +8748,11 @@ var yUnitVector = {
             if (dt === 0) {
                 p.y = p.yo + (dm1 + dm2) / 2;
                 return;
-            }
+           }
 
             p.y = p.yo + (dm1 * doa2 + dm2 * doa1) / dt;
             return;
-        }
+       }
 
         do1 = pv.distance(p, rp1, true, true);
         do2 = pv.distance(p, rp2, true, true);
@@ -8765,10 +8765,10 @@ var yUnitVector = {
         if (dt === 0) {
             yUnitVector.setRelative(p, p, (dm1 + dm2) / 2, pv, true);
             return;
-        }
+       }
 
         yUnitVector.setRelative(p, p, (dm1 * doa2 + dm2 * doa1) / dt, pv, true);
-    },
+   },
 
     // Slope of line normal to this.
     normalSlope: 0,
@@ -8787,7 +8787,7 @@ var yUnitVector = {
         if (!pv || pv === this) {
             p.y = (org ? rp.yo : rp.y) + d;
             return;
-        }
+       }
 
         var rpx = org ? rp.xo : rp.x;
         var rpy = org ? rp.yo : rp.y;
@@ -8795,7 +8795,7 @@ var yUnitVector = {
         var rpdy = rpy + d * pv.y;
 
         p.y = rpdy + pv.normalSlope * (p.x - rpdx);
-    },
+   },
 
     // Slope of vector line.
     slope: Number.POSITIVE_INFINITY,
@@ -8803,17 +8803,17 @@ var yUnitVector = {
     // Touches the point p.
     touch: function (p) {
         p.yTouched = true;
-    },
+   },
 
     // Tests if a point p is touched.
     touched: function (p) {
         return p.yTouched;
-    },
+   },
 
     // Untouches the point p.
     untouch: function (p) {
         p.yTouched = false;
-    }
+   }
 };
 
 Object.freeze(xUnitVector);
@@ -8839,7 +8839,7 @@ UnitVector.prototype.distance = function(p1, p2, o1, o2) {
     return (
         this.x * xUnitVector.distance(p1, p2, o1, o2) +
         this.y * yUnitVector.distance(p1, p2, o1, o2)
-    );
+   );
 };
 
 /*
@@ -8869,7 +8869,7 @@ UnitVector.prototype.interpolate = function(p, rp1, rp2, pv) {
     if (dt === 0) {
         this.setRelative(p, p, (dm1 + dm2) / 2, pv, true);
         return;
-    }
+   }
 
     this.setRelative(p, p, (dm1 * doa2 + dm2 * doa1) / dt, pv, true);
 };
@@ -8921,9 +8921,9 @@ function getUnitVector(x, y) {
     x /= d;
     y /= d;
 
-    if (x === 1 && y === 0) { return xUnitVector; }
-    else if (x === 0 && y === 1) { return yUnitVector; }
-    else { return new UnitVector(x, y); }
+    if (x === 1 && y === 0) {return xUnitVector;}
+    else if (x === 0 && y === 1) {return yUnitVector;}
+    else {return new UnitVector(x, y);}
 }
 
 /*
@@ -8956,7 +8956,7 @@ function HPoint(
 HPoint.prototype.nextTouched = function(v) {
     var p = this.nextPointOnContour;
 
-    while (!v.touched(p) && p !== this) { p = p.nextPointOnContour; }
+    while (!v.touched(p) && p !== this) {p = p.nextPointOnContour;}
 
     return p;
 };
@@ -8969,7 +8969,7 @@ HPoint.prototype.nextTouched = function(v) {
 HPoint.prototype.prevTouched = function(v) {
     var p = this.prevPointOnContour;
 
-    while (!v.touched(p) && p !== this) { p = p.prevPointOnContour; }
+    while (!v.touched(p) && p !== this) {p = p.prevPointOnContour;}
 
     return p;
 };
@@ -9015,7 +9015,7 @@ function State(env, prog) {
         case 'prep' :
             this.fv = this.pv = this.dpv = xUnitVector;
             this.round = roundToGrid;
-    }
+   }
 }
 
 /*
@@ -9031,10 +9031,10 @@ function State(env, prog) {
 Hinting.prototype.exec = function(glyph, ppem) {
     if (typeof ppem !== 'number') {
         throw new Error('Point size is not a number!');
-    }
+   }
 
     // Received a fatal error, don't do any hinting anymore.
-    if (this._errorState > 2) { return; }
+    if (this._errorState > 2) {return;}
 
     var font = this.font;
     var prepState = this._prepState;
@@ -9057,16 +9057,16 @@ Hinting.prototype.exec = function(glyph, ppem) {
             if (exports.DEBUG) {
                 console.log('---EXEC FPGM---');
                 fpgmState.step = -1;
-            }
+           }
 
             try {
                 exec(fpgmState);
-            } catch (e) {
+           } catch (e) {
                 console.log('Hinting error in FPGM:' + e);
                 this._errorState = 3;
                 return;
-            }
-        }
+           }
+       }
 
         // Executes the prep program for this ppem setting.
         // This is used by fonts to set cvt values
@@ -9087,38 +9087,38 @@ Hinting.prototype.exec = function(glyph, ppem) {
             var scale = ppem / font.unitsPerEm;
             for (var c = 0; c < oCvt.length; c++) {
                 cvt[c] = oCvt[c] * scale;
-            }
-        } else {
+           }
+       } else {
             prepState.cvt = [];
-        }
+       }
 
         if (exports.DEBUG) {
             console.log('---EXEC PREP---');
             prepState.step = -1;
-        }
+       }
 
         try {
             exec(prepState);
-        } catch (e) {
+       } catch (e) {
             if (this._errorState < 2) {
                 console.log('Hinting error in PREP:' + e);
-            }
+           }
             this._errorState = 2;
-        }
-    }
+       }
+   }
 
-    if (this._errorState > 1) { return; }
+    if (this._errorState > 1) {return;}
 
     try {
         return execGlyph(glyph, prepState);
-    } catch (e) {
+   } catch (e) {
         if (this._errorState < 1) {
             console.log('Hinting error:' + e);
             console.log('Note: further hinting errors are silenced');
-        }
+       }
         this._errorState = 1;
         return undefined;
-    }
+   }
 };
 
 /*
@@ -9139,10 +9139,10 @@ execGlyph = function(glyph, prepState) {
         if (exports.DEBUG) {
             console.log('---EXEC GLYPH---');
             state.step = -1;
-        }
+       }
         execComponent(glyph, state, xScale, yScale);
         gZone = state.gZone;
-    } else {
+   } else {
         var font = prepState.font;
         gZone = [];
         contours = [];
@@ -9155,7 +9155,7 @@ execGlyph = function(glyph, prepState) {
             if (exports.DEBUG) {
                 console.log('---EXEC COMP ' + i + '---');
                 state.step = -1;
-            }
+           }
 
             execComponent(cg, state, xScale, yScale);
             // appends the computed points to the result array
@@ -9169,14 +9169,14 @@ execGlyph = function(glyph, prepState) {
                 p.xTouched = p.yTouched = false;
                 p.xo = p.x = p.x + dx;
                 p.yo = p.y = p.y + dy;
-            }
+           }
 
             var gLen = gZone.length;
             gZone.push.apply(gZone, gz);
             for (var j = 0; j < cc.length; j++) {
                 contours.push(cc[j] + gLen);
-            }
-        }
+           }
+       }
 
         if (glyph.instructions && !state.inhibitGridFit) {
             // the composite has instructions on its own
@@ -9191,18 +9191,18 @@ execGlyph = function(glyph, prepState) {
             gZone.push(
                 new HPoint(0, 0),
                 new HPoint(Math.round(glyph.advanceWidth * xScale), 0)
-            );
+           );
 
             if (exports.DEBUG) {
                 console.log('---EXEC COMPOSITE---');
                 state.step = -1;
-            }
+           }
 
             exec(state);
 
             gZone.length -= 2;
-        }
-    }
+       }
+   }
 
     return gZone;
 };
@@ -9229,8 +9229,8 @@ execComponent = function(glyph, state, xScale, yScale)
             cp.y * yScale,
             cp.lastPointOfContour,
             cp.onCurve
-        );
-    }
+       );
+   }
 
     // Chain links the contours.
     var sp; // start point
@@ -9242,32 +9242,32 @@ execComponent = function(glyph, state, xScale, yScale)
         if (!sp) {
             sp = cp;
             contours.push(i$1);
-        }
+       }
 
         if (cp.lastPointOfContour) {
             cp.nextPointOnContour = sp;
             sp.prevPointOnContour = cp;
             sp = undefined;
-        } else {
+       } else {
             np = gZone[i$1 + 1];
             cp.nextPointOnContour = np;
             np.prevPointOnContour = cp;
-        }
-    }
+       }
+   }
 
-    if (state.inhibitGridFit) { return; }
+    if (state.inhibitGridFit) {return;}
 
     if (exports.DEBUG) {
         console.log('PROCESSING GLYPH', state.stack);
         for (var i$2 = 0; i$2 < pLen; i$2++) {
             console.log(i$2, gZone[i$2].x, gZone[i$2].y);
-        }
-    }
+       }
+   }
 
     gZone.push(
         new HPoint(0, 0),
         new HPoint(Math.round(glyph.advanceWidth * xScale), 0)
-    );
+   );
 
     exec(state);
 
@@ -9278,8 +9278,8 @@ execComponent = function(glyph, state, xScale, yScale)
         console.log('FINISHED GLYPH', state.stack);
         for (var i$3 = 0; i$3 < pLen; i$3++) {
             console.log(i$3, gZone[i$3].x, gZone[i$3].y);
-        }
-    }
+       }
+   }
 };
 
 /*
@@ -9288,21 +9288,21 @@ execComponent = function(glyph, state, xScale, yScale)
 exec = function(state) {
     var prog = state.prog;
 
-    if (!prog) { return; }
+    if (!prog) {return;}
 
     var pLen = prog.length;
     var ins;
 
     for (state.ip = 0; state.ip < pLen; state.ip++) {
-        if (exports.DEBUG) { state.step++; }
+        if (exports.DEBUG) {state.step++;}
         ins = instructionTable[prog[state.ip]];
 
         if (!ins) {
             throw new Error(
                 'unknown instruction: 0x' +
                 Number(prog[state.ip]).toString(16)
-            );
-        }
+           );
+       }
 
         ins(state);
 
@@ -9319,10 +9319,10 @@ exec = function(state) {
                         state.gZone[i].y * 64 + ' ' +
                         (state.gZone[i].xTouched ? 'x' : '') +
                         (state.gZone[i].yTouched ? 'y' : '')
-                    );
-                }
+                   );
+               }
                 console.log('GZ', da);
-            }
+           }
 
             if (state.tZone) {
                 da = [];
@@ -9332,22 +9332,22 @@ exec = function(state) {
                         state.tZone[i].y * 64 + ' ' +
                         (state.tZone[i].xTouched ? 'x' : '') +
                         (state.tZone[i].yTouched ? 'y' : '')
-                    );
-                }
+                   );
+               }
                 console.log('TZ', da);
-            }
+           }
 
             if (state.stack.length > 10) {
                 console.log(
                     state.stack.length,
                     '...', state.stack.slice(state.stack.length - 10)
-                );
-            } else {
+               );
+           } else {
                 console.log(state.stack.length, state.stack);
-            }
-        }
+           }
+       }
         */
-    }
+   }
 };
 
 /*
@@ -9364,7 +9364,7 @@ function initTZone(state)
     for (var i = 0; i < tZone.length; i++)
     {
         tZone[i] = new HPoint(0, 0);
-    }
+   }
 }
 
 /*
@@ -9381,20 +9381,20 @@ function skip(state, handleElse)
     do {
         ins = prog[++ip];
         if (ins === 0x58) // IF
-            { nesting++; }
+            {nesting++;}
         else if (ins === 0x59) // EIF
-            { nesting--; }
+            {nesting--;}
         else if (ins === 0x40) // NPUSHB
-            { ip += prog[ip + 1] + 1; }
+            {ip += prog[ip + 1] + 1;}
         else if (ins === 0x41) // NPUSHW
-            { ip += 2 * prog[ip + 1] + 1; }
+            {ip += 2 * prog[ip + 1] + 1;}
         else if (ins >= 0xB0 && ins <= 0xB7) // PUSHB
-            { ip += ins - 0xB0 + 1; }
+            {ip += ins - 0xB0 + 1;}
         else if (ins >= 0xB8 && ins <= 0xBF) // PUSHW
-            { ip += (ins - 0xB8 + 1) * 2; }
+            {ip += (ins - 0xB8 + 1) * 2;}
         else if (handleElse && nesting === 1 && ins === 0x1B) // ELSE
-            { break; }
-    } while (nesting > 0);
+            {break;}
+   } while (nesting > 0);
 
     state.ip = ip;
 }
@@ -9406,7 +9406,7 @@ function skip(state, handleElse)
 // SVTCA[a] Set freedom and projection Vectors To Coordinate Axis
 // 0x00-0x01
 function SVTCA(v, state) {
-    if (exports.DEBUG) { console.log(state.step, 'SVTCA[' + v.axis + ']'); }
+    if (exports.DEBUG) {console.log(state.step, 'SVTCA[' + v.axis + ']');}
 
     state.fv = state.pv = state.dpv = v;
 }
@@ -9414,7 +9414,7 @@ function SVTCA(v, state) {
 // SPVTCA[a] Set Projection Vector to Coordinate Axis
 // 0x02-0x03
 function SPVTCA(v, state) {
-    if (exports.DEBUG) { console.log(state.step, 'SPVTCA[' + v.axis + ']'); }
+    if (exports.DEBUG) {console.log(state.step, 'SPVTCA[' + v.axis + ']');}
 
     state.pv = state.dpv = v;
 }
@@ -9422,7 +9422,7 @@ function SPVTCA(v, state) {
 // SFVTCA[a] Set Freedom Vector to Coordinate Axis
 // 0x04-0x05
 function SFVTCA(v, state) {
-    if (exports.DEBUG) { console.log(state.step, 'SFVTCA[' + v.axis + ']'); }
+    if (exports.DEBUG) {console.log(state.step, 'SFVTCA[' + v.axis + ']');}
 
     state.fv = v;
 }
@@ -9436,7 +9436,7 @@ function SPVTL(a, state) {
     var p2 = state.z2[p2i];
     var p1 = state.z1[p1i];
 
-    if (exports.DEBUG) { console.log('SPVTL[' + a + ']', p2i, p1i); }
+    if (exports.DEBUG) {console.log('SPVTL[' + a + ']', p2i, p1i);}
 
     var dx;
     var dy;
@@ -9444,10 +9444,10 @@ function SPVTL(a, state) {
     if (!a) {
         dx = p1.x - p2.x;
         dy = p1.y - p2.y;
-    } else {
+   } else {
         dx = p2.y - p1.y;
         dy = p1.x - p2.x;
-    }
+   }
 
     state.pv = state.dpv = getUnitVector(dx, dy);
 }
@@ -9461,7 +9461,7 @@ function SFVTL(a, state) {
     var p2 = state.z2[p2i];
     var p1 = state.z1[p1i];
 
-    if (exports.DEBUG) { console.log('SFVTL[' + a + ']', p2i, p1i); }
+    if (exports.DEBUG) {console.log('SFVTL[' + a + ']', p2i, p1i);}
 
     var dx;
     var dy;
@@ -9469,10 +9469,10 @@ function SFVTL(a, state) {
     if (!a) {
         dx = p1.x - p2.x;
         dy = p1.y - p2.y;
-    } else {
+   } else {
         dx = p2.y - p1.y;
         dy = p1.x - p2.x;
-    }
+   }
 
     state.fv = getUnitVector(dx, dy);
 }
@@ -9484,7 +9484,7 @@ function SPVFS(state) {
     var y = stack.pop();
     var x = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SPVFS[]', y, x); }
+    if (exports.DEBUG) {console.log(state.step, 'SPVFS[]', y, x);}
 
     state.pv = state.dpv = getUnitVector(x, y);
 }
@@ -9496,7 +9496,7 @@ function SFVFS(state) {
     var y = stack.pop();
     var x = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SPVFS[]', y, x); }
+    if (exports.DEBUG) {console.log(state.step, 'SPVFS[]', y, x);}
 
     state.fv = getUnitVector(x, y);
 }
@@ -9507,7 +9507,7 @@ function GPV(state) {
     var stack = state.stack;
     var pv = state.pv;
 
-    if (exports.DEBUG) { console.log(state.step, 'GPV[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'GPV[]');}
 
     stack.push(pv.x * 0x4000);
     stack.push(pv.y * 0x4000);
@@ -9519,7 +9519,7 @@ function GFV(state) {
     var stack = state.stack;
     var fv = state.fv;
 
-    if (exports.DEBUG) { console.log(state.step, 'GFV[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'GFV[]');}
 
     stack.push(fv.x * 0x4000);
     stack.push(fv.y * 0x4000);
@@ -9530,7 +9530,7 @@ function GFV(state) {
 function SFVTPV(state) {
     state.fv = state.pv;
 
-    if (exports.DEBUG) { console.log(state.step, 'SFVTPV[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'SFVTPV[]');}
 }
 
 // ISECT[] moves point p to the InterSECTion of two lines
@@ -9551,7 +9551,7 @@ function ISECT(state)
     var pb1 = z1[pb1i];
     var p = state.z2[pi];
 
-    if (exports.DEBUG) { console.log('ISECT[], ', pa0i, pa1i, pb0i, pb1i, pi); }
+    if (exports.DEBUG) {console.log('ISECT[], ', pa0i, pa1i, pb0i, pb1i, pi);}
 
     // math from
     // en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line
@@ -9578,7 +9578,7 @@ function ISECT(state)
 function SRP0(state) {
     state.rp0 = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SRP0[]', state.rp0); }
+    if (exports.DEBUG) {console.log(state.step, 'SRP0[]', state.rp0);}
 }
 
 // SRP1[] Set Reference Point 1
@@ -9586,7 +9586,7 @@ function SRP0(state) {
 function SRP1(state) {
     state.rp1 = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SRP1[]', state.rp1); }
+    if (exports.DEBUG) {console.log(state.step, 'SRP1[]', state.rp1);}
 }
 
 // SRP1[] Set Reference Point 2
@@ -9594,7 +9594,7 @@ function SRP1(state) {
 function SRP2(state) {
     state.rp2 = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SRP2[]', state.rp2); }
+    if (exports.DEBUG) {console.log(state.step, 'SRP2[]', state.rp2);}
 }
 
 // SZP0[] Set Zone Pointer 0
@@ -9602,13 +9602,13 @@ function SRP2(state) {
 function SZP0(state) {
     var n = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SZP0[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SZP0[]', n);}
 
     state.zp0 = n;
 
     switch (n) {
         case 0:
-            if (!state.tZone) { initTZone(state); }
+            if (!state.tZone) {initTZone(state);}
             state.z0 = state.tZone;
             break;
         case 1 :
@@ -9616,7 +9616,7 @@ function SZP0(state) {
             break;
         default :
             throw new Error('Invalid zone pointer');
-    }
+   }
 }
 
 // SZP1[] Set Zone Pointer 1
@@ -9624,13 +9624,13 @@ function SZP0(state) {
 function SZP1(state) {
     var n = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SZP1[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SZP1[]', n);}
 
     state.zp1 = n;
 
     switch (n) {
         case 0:
-            if (!state.tZone) { initTZone(state); }
+            if (!state.tZone) {initTZone(state);}
             state.z1 = state.tZone;
             break;
         case 1 :
@@ -9638,7 +9638,7 @@ function SZP1(state) {
             break;
         default :
             throw new Error('Invalid zone pointer');
-    }
+   }
 }
 
 // SZP2[] Set Zone Pointer 2
@@ -9646,13 +9646,13 @@ function SZP1(state) {
 function SZP2(state) {
     var n = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SZP2[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SZP2[]', n);}
 
     state.zp2 = n;
 
     switch (n) {
         case 0:
-            if (!state.tZone) { initTZone(state); }
+            if (!state.tZone) {initTZone(state);}
             state.z2 = state.tZone;
             break;
         case 1 :
@@ -9660,7 +9660,7 @@ function SZP2(state) {
             break;
         default :
             throw new Error('Invalid zone pointer');
-    }
+   }
 }
 
 // SZPS[] Set Zone PointerS
@@ -9668,13 +9668,13 @@ function SZP2(state) {
 function SZPS(state) {
     var n = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SZPS[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SZPS[]', n);}
 
     state.zp0 = state.zp1 = state.zp2 = n;
 
     switch (n) {
         case 0:
-            if (!state.tZone) { initTZone(state); }
+            if (!state.tZone) {initTZone(state);}
             state.z0 = state.z1 = state.z2 = state.tZone;
             break;
         case 1 :
@@ -9682,7 +9682,7 @@ function SZPS(state) {
             break;
         default :
             throw new Error('Invalid zone pointer');
-    }
+   }
 }
 
 // SLOOP[] Set LOOP variable
@@ -9690,13 +9690,13 @@ function SZPS(state) {
 function SLOOP(state) {
     state.loop = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SLOOP[]', state.loop); }
+    if (exports.DEBUG) {console.log(state.step, 'SLOOP[]', state.loop);}
 }
 
 // RTG[] Round To Grid
 // 0x18
 function RTG(state) {
-    if (exports.DEBUG) { console.log(state.step, 'RTG[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'RTG[]');}
 
     state.round = roundToGrid;
 }
@@ -9704,7 +9704,7 @@ function RTG(state) {
 // RTHG[] Round To Half Grid
 // 0x19
 function RTHG(state) {
-    if (exports.DEBUG) { console.log(state.step, 'RTHG[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'RTHG[]');}
 
     state.round = roundToHalfGrid;
 }
@@ -9714,7 +9714,7 @@ function RTHG(state) {
 function SMD(state) {
     var d = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SMD[]', d); }
+    if (exports.DEBUG) {console.log(state.step, 'SMD[]', d);}
 
     state.minDis = d / 0x40;
 }
@@ -9728,7 +9728,7 @@ function ELSE(state) {
     // In case the IF was negative the IF[] instruction already
     // skipped forward over the ELSE[]
 
-    if (exports.DEBUG) { console.log(state.step, 'ELSE[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'ELSE[]');}
 
     skip(state, false);
 }
@@ -9738,7 +9738,7 @@ function ELSE(state) {
 function JMPR(state) {
     var o = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'JMPR[]', o); }
+    if (exports.DEBUG) {console.log(state.step, 'JMPR[]', o);}
 
     // A jump by 1 would do nothing.
     state.ip += o - 1;
@@ -9749,7 +9749,7 @@ function JMPR(state) {
 function SCVTCI(state) {
     var n = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SCVTCI[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SCVTCI[]', n);}
 
     state.cvCutIn = n / 0x40;
 }
@@ -9759,7 +9759,7 @@ function SCVTCI(state) {
 function DUP(state) {
     var stack = state.stack;
 
-    if (exports.DEBUG) { console.log(state.step, 'DUP[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'DUP[]');}
 
     stack.push(stack[stack.length - 1]);
 }
@@ -9767,7 +9767,7 @@ function DUP(state) {
 // POP[] POP top stack element
 // 0x21
 function POP(state) {
-    if (exports.DEBUG) { console.log(state.step, 'POP[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'POP[]');}
 
     state.stack.pop();
 }
@@ -9775,7 +9775,7 @@ function POP(state) {
 // CLEAR[] CLEAR the stack
 // 0x22
 function CLEAR(state) {
-    if (exports.DEBUG) { console.log(state.step, 'CLEAR[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'CLEAR[]');}
 
     state.stack.length = 0;
 }
@@ -9788,7 +9788,7 @@ function SWAP(state) {
     var a = stack.pop();
     var b = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SWAP[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'SWAP[]');}
 
     stack.push(a);
     stack.push(b);
@@ -9799,7 +9799,7 @@ function SWAP(state) {
 function DEPTH(state) {
     var stack = state.stack;
 
-    if (exports.DEBUG) { console.log(state.step, 'DEPTH[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'DEPTH[]');}
 
     stack.push(stack.length);
 }
@@ -9811,7 +9811,7 @@ function LOOPCALL(state) {
     var fn = stack.pop();
     var c = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'LOOPCALL[]', fn, c); }
+    if (exports.DEBUG) {console.log(state.step, 'LOOPCALL[]', fn, c);}
 
     // saves callers program
     var cip = state.ip;
@@ -9823,12 +9823,12 @@ function LOOPCALL(state) {
     for (var i = 0; i < c; i++) {
         exec(state);
 
-        if (exports.DEBUG) { console.log(
+        if (exports.DEBUG) {console.log(
             ++state.step,
             i + 1 < c ? 'next loopcall' : 'done loopcall',
             i
-        ); }
-    }
+       );}
+   }
 
     // restores the callers program
     state.ip = cip;
@@ -9840,7 +9840,7 @@ function LOOPCALL(state) {
 function CALL(state) {
     var fn = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'CALL[]', fn); }
+    if (exports.DEBUG) {console.log(state.step, 'CALL[]', fn);}
 
     // saves callers program
     var cip = state.ip;
@@ -9855,7 +9855,7 @@ function CALL(state) {
     state.ip = cip;
     state.prog = cprog;
 
-    if (exports.DEBUG) { console.log(++state.step, 'returning from', fn); }
+    if (exports.DEBUG) {console.log(++state.step, 'returning from', fn);}
 }
 
 // CINDEX[] Copy the INDEXed element to the top of the stack
@@ -9864,7 +9864,7 @@ function CINDEX(state) {
     var stack = state.stack;
     var k = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'CINDEX[]', k); }
+    if (exports.DEBUG) {console.log(state.step, 'CINDEX[]', k);}
 
     // In case of k == 1, it copies the last element after popping
     // thus stack.length - k.
@@ -9877,7 +9877,7 @@ function MINDEX(state) {
     var stack = state.stack;
     var k = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'MINDEX[]', k); }
+    if (exports.DEBUG) {console.log(state.step, 'MINDEX[]', k);}
 
     stack.push(stack.splice(stack.length - k, 1)[0]);
 }
@@ -9885,7 +9885,7 @@ function MINDEX(state) {
 // FDEF[] Function DEFinition
 // 0x2C
 function FDEF(state) {
-    if (state.env !== 'fpgm') { throw new Error('FDEF not allowed here'); }
+    if (state.env !== 'fpgm') {throw new Error('FDEF not allowed here');}
     var stack = state.stack;
     var prog = state.prog;
     var ip = state.ip;
@@ -9893,9 +9893,9 @@ function FDEF(state) {
     var fn = stack.pop();
     var ipBegin = ip;
 
-    if (exports.DEBUG) { console.log(state.step, 'FDEF[]', fn); }
+    if (exports.DEBUG) {console.log(state.step, 'FDEF[]', fn);}
 
-    while (prog[++ip] !== 0x2D){ }
+    while (prog[++ip] !== 0x2D){}
 
     state.ip = ip;
     state.funcs[fn] = prog.slice(ipBegin + 1, ip);
@@ -9909,11 +9909,11 @@ function MDAP(round, state) {
     var fv = state.fv;
     var pv = state.pv;
 
-    if (exports.DEBUG) { console.log(state.step, 'MDAP[' + round + ']', pi); }
+    if (exports.DEBUG) {console.log(state.step, 'MDAP[' + round + ']', pi);}
 
     var d = pv.distance(p, HPZero);
 
-    if (round) { d = state.round(d); }
+    if (round) {d = state.round(d);}
 
     fv.setRelative(p, HPZero, d, pv);
     fv.touch(p);
@@ -9930,18 +9930,18 @@ function IUP(v, state) {
     var pp;
     var np;
 
-    if (exports.DEBUG) { console.log(state.step, 'IUP[' + v.axis + ']'); }
+    if (exports.DEBUG) {console.log(state.step, 'IUP[' + v.axis + ']');}
 
     for (var i = 0; i < pLen; i++) {
         cp = z2[i]; // current point
 
         // if this point has been touched go on
-        if (v.touched(cp)) { continue; }
+        if (v.touched(cp)) {continue;}
 
         pp = cp.prevTouched(v);
 
         // no point on the contour has been touched?
-        if (pp === cp) { continue; }
+        if (pp === cp) {continue;}
 
         np = cp.nextTouched(v);
 
@@ -9950,10 +9950,10 @@ function IUP(v, state) {
             // so simply moves the point like that
 
             v.setRelative(cp, cp, v.distance(pp, pp, false, true), v, true);
-        }
+       }
 
         v.interpolate(cp, pp, np, v);
-    }
+   }
 }
 
 // SHP[] SHift Point using reference point
@@ -9982,11 +9982,11 @@ function SHP(a, state) {
                 (state.loop > 1 ?
                    'loop ' + (state.loop - loop) + ': ' :
                    ''
-                ) +
+               ) +
                 'SHP[' + (a ? 'rp1' : 'rp2') + ']', pi
-            );
-        }
-    }
+           );
+       }
+   }
 
     state.loop = 1;
 }
@@ -10003,14 +10003,14 @@ function SHC(a, state) {
     var sp = state.z2[state.contours[ci]];
     var p = sp;
 
-    if (exports.DEBUG) { console.log(state.step, 'SHC[' + a + ']', ci); }
+    if (exports.DEBUG) {console.log(state.step, 'SHC[' + a + ']', ci);}
 
     var d = pv.distance(rp, rp, false, true);
 
     do {
-        if (p !== rp) { fv.setRelative(p, p, d, pv); }
+        if (p !== rp) {fv.setRelative(p, p, d, pv);}
         p = p.nextPointOnContour;
-    } while (p !== sp);
+   } while (p !== sp);
 }
 
 // SHZ[] SHift Zone using reference point
@@ -10024,14 +10024,14 @@ function SHZ(a, state) {
 
     var e = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SHZ[' + a + ']', e); }
+    if (exports.DEBUG) {console.log(state.step, 'SHZ[' + a + ']', e);}
 
     var z;
     switch (e) {
         case 0 : z = state.tZone; break;
         case 1 : z = state.gZone; break;
         default : throw new Error('Invalid zone');
-    }
+   }
 
     var p;
     var d = pv.distance(rp, rp, false, true);
@@ -10041,7 +10041,7 @@ function SHZ(a, state) {
         p = z[i];
         fv.setRelative(p, p, d, pv);
         //if (p !== rp) fv.setRelative(p, p, d, pv);
-    }
+   }
 }
 
 // SHPIX[] SHift point by a PIXel amount
@@ -10062,12 +10062,12 @@ function SHPIX(state) {
                 state.step,
                 (state.loop > 1 ? 'loop ' + (state.loop - loop) + ': ' : '') +
                 'SHPIX[]', pi, d
-            );
-        }
+           );
+       }
 
         fv.setRelative(p, p, d);
         fv.touch(p);
-    }
+   }
 
     state.loop = 1;
 }
@@ -10094,13 +10094,13 @@ function IP(state) {
                 state.step,
                 (state.loop > 1 ? 'loop ' + (state.loop - loop) + ': ' : '') +
                 'IP[]', pi, rp1i, '<->', rp2i
-            );
-        }
+           );
+       }
 
         fv.interpolate(p, rp1, rp2, pv);
 
         fv.touch(p);
-    }
+   }
 
     state.loop = 1;
 }
@@ -10119,11 +10119,11 @@ function MSIRP(a, state) {
     fv.setRelative(p, rp0, d, pv);
     fv.touch(p);
 
-    if (exports.DEBUG) { console.log(state.step, 'MSIRP[' + a + ']', d, pi); }
+    if (exports.DEBUG) {console.log(state.step, 'MSIRP[' + a + ']', d, pi);}
 
     state.rp1 = state.rp0;
     state.rp2 = pi;
-    if (a) { state.rp0 = pi; }
+    if (a) {state.rp0 = pi;}
 }
 
 // ALIGNRP[] Align to reference point.
@@ -10146,12 +10146,12 @@ function ALIGNRP(state) {
                 state.step,
                 (state.loop > 1 ? 'loop ' + (state.loop - loop) + ': ' : '') +
                 'ALIGNRP[]', pi
-            );
-        }
+           );
+       }
 
         fv.setRelative(p, rp0, 0, pv);
         fv.touch(p);
-    }
+   }
 
     state.loop = 1;
 }
@@ -10159,7 +10159,7 @@ function ALIGNRP(state) {
 // RTG[] Round To Double Grid
 // 0x3D
 function RTDG(state) {
-    if (exports.DEBUG) { console.log(state.step, 'RTDG[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'RTDG[]');}
 
     state.round = roundToDoubleGrid;
 }
@@ -10180,23 +10180,23 @@ function MIAP(round, state) {
             state.step,
             'MIAP[' + round + ']',
             n, '(', cv, ')', pi
-        );
-    }
+       );
+   }
 
     var d = pv.distance(p, HPZero);
 
     if (round) {
-        if (Math.abs(d - cv) < state.cvCutIn) { d = cv; }
+        if (Math.abs(d - cv) < state.cvCutIn) {d = cv;}
 
         d = state.round(d);
-    }
+   }
 
     fv.setRelative(p, HPZero, d, pv);
 
     if (state.zp0 === 0) {
         p.xo = p.x;
         p.yo = p.y;
-    }
+   }
 
     fv.touch(p);
 
@@ -10212,9 +10212,9 @@ function NPUSHB(state) {
 
     var n = prog[++ip];
 
-    if (exports.DEBUG) { console.log(state.step, 'NPUSHB[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'NPUSHB[]', n);}
 
-    for (var i = 0; i < n; i++) { stack.push(prog[++ip]); }
+    for (var i = 0; i < n; i++) {stack.push(prog[++ip]);}
 
     state.ip = ip;
 }
@@ -10227,13 +10227,13 @@ function NPUSHW(state) {
     var stack = state.stack;
     var n = prog[++ip];
 
-    if (exports.DEBUG) { console.log(state.step, 'NPUSHW[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'NPUSHW[]', n);}
 
     for (var i = 0; i < n; i++) {
         var w = (prog[++ip] << 8) | prog[++ip];
-        if (w & 0x8000) { w = -((w ^ 0xffff) + 1); }
+        if (w & 0x8000) {w = -((w ^ 0xffff) + 1);}
         stack.push(w);
-    }
+   }
 
     state.ip = ip;
 }
@@ -10244,12 +10244,12 @@ function WS(state) {
     var stack = state.stack;
     var store = state.store;
 
-    if (!store) { store = state.store = []; }
+    if (!store) {store = state.store = [];}
 
     var v = stack.pop();
     var l = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'WS', v, l); }
+    if (exports.DEBUG) {console.log(state.step, 'WS', v, l);}
 
     store[l] = v;
 }
@@ -10262,7 +10262,7 @@ function RS(state) {
 
     var l = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'RS', l); }
+    if (exports.DEBUG) {console.log(state.step, 'RS', l);}
 
     var v = (store && store[l]) || 0;
 
@@ -10277,7 +10277,7 @@ function WCVTP(state) {
     var v = stack.pop();
     var l = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'WCVTP', v, l); }
+    if (exports.DEBUG) {console.log(state.step, 'WCVTP', v, l);}
 
     state.cvt[l] = v / 0x40;
 }
@@ -10288,7 +10288,7 @@ function RCVT(state) {
     var stack = state.stack;
     var cvte = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'RCVT', cvte); }
+    if (exports.DEBUG) {console.log(state.step, 'RCVT', cvte);}
 
     stack.push(state.cvt[cvte] * 0x40);
 }
@@ -10300,7 +10300,7 @@ function GC(a, state) {
     var pi = stack.pop();
     var p = state.z2[pi];
 
-    if (exports.DEBUG) { console.log(state.step, 'GC[' + a + ']', pi); }
+    if (exports.DEBUG) {console.log(state.step, 'GC[' + a + ']', pi);}
 
     stack.push(state.dpv.distance(p, HPZero, a, false) * 0x40);
 }
@@ -10315,7 +10315,7 @@ function MD(a, state) {
     var p1 = state.z0[pi1];
     var d = state.dpv.distance(p1, p2, a, a);
 
-    if (exports.DEBUG) { console.log(state.step, 'MD[' + a + ']', pi2, pi1, '->', d); }
+    if (exports.DEBUG) {console.log(state.step, 'MD[' + a + ']', pi2, pi1, '->', d);}
 
     state.stack.push(Math.round(d * 64));
 }
@@ -10323,14 +10323,14 @@ function MD(a, state) {
 // MPPEM[] Measure Pixels Per EM
 // 0x4B
 function MPPEM(state) {
-    if (exports.DEBUG) { console.log(state.step, 'MPPEM[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'MPPEM[]');}
     state.stack.push(state.ppem);
 }
 
 // FLIPON[] set the auto FLIP Boolean to ON
 // 0x4D
 function FLIPON(state) {
-    if (exports.DEBUG) { console.log(state.step, 'FLIPON[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'FLIPON[]');}
     state.autoFlip = true;
 }
 
@@ -10341,7 +10341,7 @@ function LT(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'LT[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'LT[]', e2, e1);}
 
     stack.push(e1 < e2 ? 1 : 0);
 }
@@ -10353,7 +10353,7 @@ function LTEQ(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'LTEQ[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'LTEQ[]', e2, e1);}
 
     stack.push(e1 <= e2 ? 1 : 0);
 }
@@ -10365,7 +10365,7 @@ function GT(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'GT[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'GT[]', e2, e1);}
 
     stack.push(e1 > e2 ? 1 : 0);
 }
@@ -10377,7 +10377,7 @@ function GTEQ(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'GTEQ[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'GTEQ[]', e2, e1);}
 
     stack.push(e1 >= e2 ? 1 : 0);
 }
@@ -10389,7 +10389,7 @@ function EQ(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'EQ[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'EQ[]', e2, e1);}
 
     stack.push(e2 === e1 ? 1 : 0);
 }
@@ -10401,7 +10401,7 @@ function NEQ(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'NEQ[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'NEQ[]', e2, e1);}
 
     stack.push(e2 !== e1 ? 1 : 0);
 }
@@ -10412,7 +10412,7 @@ function ODD(state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'ODD[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'ODD[]', n);}
 
     stack.push(Math.trunc(n) % 2 ? 1 : 0);
 }
@@ -10423,7 +10423,7 @@ function EVEN(state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'EVEN[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'EVEN[]', n);}
 
     stack.push(Math.trunc(n) % 2 ? 0 : 1);
 }
@@ -10433,15 +10433,15 @@ function EVEN(state) {
 function IF(state) {
     var test = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'IF[]', test); }
+    if (exports.DEBUG) {console.log(state.step, 'IF[]', test);}
 
     // if test is true it just continues
     // if not the ip is skipped until matching ELSE or EIF
     if (!test) {
         skip(state, true);
 
-        if (exports.DEBUG) { console.log(state.step,  'EIF[]'); }
-    }
+        if (exports.DEBUG) {console.log(state.step,  'EIF[]');}
+   }
 }
 
 // EIF[] End IF
@@ -10451,7 +10451,7 @@ function EIF(state) {
     // executing an else branch.
     // -> just ignore it
 
-    if (exports.DEBUG) { console.log(state.step, 'EIF[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'EIF[]');}
 }
 
 // AND[] logical AND
@@ -10461,7 +10461,7 @@ function AND(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'AND[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'AND[]', e2, e1);}
 
     stack.push(e2 && e1 ? 1 : 0);
 }
@@ -10473,7 +10473,7 @@ function OR(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'OR[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'OR[]', e2, e1);}
 
     stack.push(e2 || e1 ? 1 : 0);
 }
@@ -10484,7 +10484,7 @@ function NOT(state) {
     var stack = state.stack;
     var e = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'NOT[]', e); }
+    if (exports.DEBUG) {console.log(state.step, 'NOT[]', e);}
 
     stack.push(e ? 0 : 1);
 }
@@ -10503,21 +10503,21 @@ function DELTAP123(b, state) {
     var ds = state.deltaShift;
     var z0 = state.z0;
 
-    if (exports.DEBUG) { console.log(state.step, 'DELTAP[' + b + ']', n, stack); }
+    if (exports.DEBUG) {console.log(state.step, 'DELTAP[' + b + ']', n, stack);}
 
     for (var i = 0; i < n; i++) {
         var pi = stack.pop();
         var arg = stack.pop();
         var appem = base + ((arg & 0xF0) >> 4);
-        if (appem !== ppem) { continue; }
+        if (appem !== ppem) {continue;}
 
         var mag = (arg & 0x0F) - 8;
-        if (mag >= 0) { mag++; }
-        if (exports.DEBUG) { console.log(state.step, 'DELTAPFIX', pi, 'by', mag * ds); }
+        if (mag >= 0) {mag++;}
+        if (exports.DEBUG) {console.log(state.step, 'DELTAPFIX', pi, 'by', mag * ds);}
 
         var p = z0[pi];
         fv.setRelative(p, p, mag * ds, pv);
-    }
+   }
 }
 
 // SDB[] Set Delta Base in the graphics state
@@ -10526,7 +10526,7 @@ function SDB(state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SDB[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SDB[]', n);}
 
     state.deltaBase = n;
 }
@@ -10537,7 +10537,7 @@ function SDS(state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SDS[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SDS[]', n);}
 
     state.deltaShift = Math.pow(0.5, n);
 }
@@ -10549,7 +10549,7 @@ function ADD(state) {
     var n2 = stack.pop();
     var n1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'ADD[]', n2, n1); }
+    if (exports.DEBUG) {console.log(state.step, 'ADD[]', n2, n1);}
 
     stack.push(n1 + n2);
 }
@@ -10561,7 +10561,7 @@ function SUB(state) {
     var n2 = stack.pop();
     var n1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SUB[]', n2, n1); }
+    if (exports.DEBUG) {console.log(state.step, 'SUB[]', n2, n1);}
 
     stack.push(n1 - n2);
 }
@@ -10573,7 +10573,7 @@ function DIV(state) {
     var n2 = stack.pop();
     var n1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'DIV[]', n2, n1); }
+    if (exports.DEBUG) {console.log(state.step, 'DIV[]', n2, n1);}
 
     stack.push(n1 * 64 / n2);
 }
@@ -10585,7 +10585,7 @@ function MUL(state) {
     var n2 = stack.pop();
     var n1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'MUL[]', n2, n1); }
+    if (exports.DEBUG) {console.log(state.step, 'MUL[]', n2, n1);}
 
     stack.push(n1 * n2 / 64);
 }
@@ -10596,7 +10596,7 @@ function ABS(state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'ABS[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'ABS[]', n);}
 
     stack.push(Math.abs(n));
 }
@@ -10607,7 +10607,7 @@ function NEG(state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'NEG[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'NEG[]', n);}
 
     stack.push(-n);
 }
@@ -10618,7 +10618,7 @@ function FLOOR(state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'FLOOR[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'FLOOR[]', n);}
 
     stack.push(Math.floor(n / 0x40) * 0x40);
 }
@@ -10629,7 +10629,7 @@ function CEILING(state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'CEILING[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'CEILING[]', n);}
 
     stack.push(Math.ceil(n / 0x40) * 0x40);
 }
@@ -10640,7 +10640,7 @@ function ROUND(dt, state) {
     var stack = state.stack;
     var n = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'ROUND[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'ROUND[]');}
 
     stack.push(state.round(n / 0x40) * 0x40);
 }
@@ -10652,7 +10652,7 @@ function WCVTF(state) {
     var v = stack.pop();
     var l = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'WCVTF[]', v, l); }
+    if (exports.DEBUG) {console.log(state.step, 'WCVTF[]', v, l);}
 
     state.cvt[l] = v * state.ppem / state.font.unitsPerEm;
 }
@@ -10668,23 +10668,23 @@ function DELTAC123(b, state) {
     var base = state.deltaBase + (b - 1) * 16;
     var ds = state.deltaShift;
 
-    if (exports.DEBUG) { console.log(state.step, 'DELTAC[' + b + ']', n, stack); }
+    if (exports.DEBUG) {console.log(state.step, 'DELTAC[' + b + ']', n, stack);}
 
     for (var i = 0; i < n; i++) {
         var c = stack.pop();
         var arg = stack.pop();
         var appem = base + ((arg & 0xF0) >> 4);
-        if (appem !== ppem) { continue; }
+        if (appem !== ppem) {continue;}
 
         var mag = (arg & 0x0F) - 8;
-        if (mag >= 0) { mag++; }
+        if (mag >= 0) {mag++;}
 
         var delta = mag * ds;
 
-        if (exports.DEBUG) { console.log(state.step, 'DELTACFIX', c, 'by', delta); }
+        if (exports.DEBUG) {console.log(state.step, 'DELTACFIX', c, 'by', delta);}
 
         state.cvt[c] += delta;
-    }
+   }
 }
 
 // SROUND[] Super ROUND
@@ -10692,7 +10692,7 @@ function DELTAC123(b, state) {
 function SROUND(state) {
     var n = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'SROUND[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SROUND[]', n);}
 
     state.round = roundSuper;
 
@@ -10710,7 +10710,7 @@ function SROUND(state) {
             break;
         default:
             throw new Error('invalid SROUND value');
-    }
+   }
 
     state.srPeriod = period;
 
@@ -10728,12 +10728,12 @@ function SROUND(state) {
             state.srPhase = 0.75 * period;
             break;
         default: throw new Error('invalid SROUND value');
-    }
+   }
 
     n &= 0x0F;
 
-    if (n === 0) { state.srThreshold = 0; }
-    else { state.srThreshold = (n / 8 - 0.5) * period; }
+    if (n === 0) {state.srThreshold = 0;}
+    else {state.srThreshold = (n / 8 - 0.5) * period;}
 }
 
 // S45ROUND[] Super ROUND 45 degrees
@@ -10741,7 +10741,7 @@ function SROUND(state) {
 function S45ROUND(state) {
     var n = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'S45ROUND[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'S45ROUND[]', n);}
 
     state.round = roundSuper;
 
@@ -10759,7 +10759,7 @@ function S45ROUND(state) {
             break;
         default:
             throw new Error('invalid S45ROUND value');
-    }
+   }
 
     state.srPeriod = period;
 
@@ -10778,18 +10778,18 @@ function S45ROUND(state) {
             break;
         default:
             throw new Error('invalid S45ROUND value');
-    }
+   }
 
     n &= 0x0F;
 
-    if (n === 0) { state.srThreshold = 0; }
-    else { state.srThreshold = (n / 8 - 0.5) * period; }
+    if (n === 0) {state.srThreshold = 0;}
+    else {state.srThreshold = (n / 8 - 0.5) * period;}
 }
 
 // ROFF[] Round Off
 // 0x7A
 function ROFF(state) {
-    if (exports.DEBUG) { console.log(state.step, 'ROFF[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'ROFF[]');}
 
     state.round = roundOff;
 }
@@ -10797,7 +10797,7 @@ function ROFF(state) {
 // RUTG[] Round Up To Grid
 // 0x7C
 function RUTG(state) {
-    if (exports.DEBUG) { console.log(state.step, 'RUTG[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'RUTG[]');}
 
     state.round = roundUpToGrid;
 }
@@ -10805,7 +10805,7 @@ function RUTG(state) {
 // RDTG[] Round Down To Grid
 // 0x7D
 function RDTG(state) {
-    if (exports.DEBUG) { console.log(state.step, 'RDTG[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'RDTG[]');}
 
     state.round = roundDownToGrid;
 }
@@ -10817,7 +10817,7 @@ function SCANCTRL(state) {
 
     // ignored by opentype.js
 
-    if (exports.DEBUG) { console.log(state.step, 'SCANCTRL[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SCANCTRL[]', n);}
 }
 
 // SDPVTL[a] Set Dual Projection Vector To Line
@@ -10829,7 +10829,7 @@ function SDPVTL(a, state) {
     var p2 = state.z2[p2i];
     var p1 = state.z1[p1i];
 
-    if (exports.DEBUG) { console.log(state.step, 'SDPVTL[' + a + ']', p2i, p1i); }
+    if (exports.DEBUG) {console.log(state.step, 'SDPVTL[' + a + ']', p2i, p1i);}
 
     var dx;
     var dy;
@@ -10837,10 +10837,10 @@ function SDPVTL(a, state) {
     if (!a) {
         dx = p1.x - p2.x;
         dy = p1.y - p2.y;
-    } else {
+   } else {
         dx = p2.y - p1.y;
         dy = p1.x - p2.x;
-    }
+   }
 
     state.dpv = getUnitVector(dx, dy);
 }
@@ -10852,16 +10852,16 @@ function GETINFO(state) {
     var sel = stack.pop();
     var r = 0;
 
-    if (exports.DEBUG) { console.log(state.step, 'GETINFO[]', sel); }
+    if (exports.DEBUG) {console.log(state.step, 'GETINFO[]', sel);}
 
     // v35 as in no subpixel hinting
-    if (sel & 0x01) { r = 35; }
+    if (sel & 0x01) {r = 35;}
 
     // TODO rotation and stretch currently not supported
     // and thus those GETINFO are always 0.
 
     // opentype.js is always gray scaling
-    if (sel & 0x20) { r |= 0x1000; }
+    if (sel & 0x20) {r |= 0x1000;}
 
     stack.push(r);
 }
@@ -10874,7 +10874,7 @@ function ROLL(state) {
     var b = stack.pop();
     var c = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'ROLL[]'); }
+    if (exports.DEBUG) {console.log(state.step, 'ROLL[]');}
 
     stack.push(b);
     stack.push(a);
@@ -10888,7 +10888,7 @@ function MAX(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'MAX[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'MAX[]', e2, e1);}
 
     stack.push(Math.max(e1, e2));
 }
@@ -10900,7 +10900,7 @@ function MIN(state) {
     var e2 = stack.pop();
     var e1 = stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'MIN[]', e2, e1); }
+    if (exports.DEBUG) {console.log(state.step, 'MIN[]', e2, e1);}
 
     stack.push(Math.min(e1, e2));
 }
@@ -10910,7 +10910,7 @@ function MIN(state) {
 function SCANTYPE(state) {
     var n = state.stack.pop();
     // ignored by opentype.js
-    if (exports.DEBUG) { console.log(state.step, 'SCANTYPE[]', n); }
+    if (exports.DEBUG) {console.log(state.step, 'SCANTYPE[]', n);}
 }
 
 // INSTCTRL[] INSTCTRL
@@ -10919,13 +10919,13 @@ function INSTCTRL(state) {
     var s = state.stack.pop();
     var v = state.stack.pop();
 
-    if (exports.DEBUG) { console.log(state.step, 'INSTCTRL[]', s, v); }
+    if (exports.DEBUG) {console.log(state.step, 'INSTCTRL[]', s, v);}
 
     switch (s) {
         case 1 : state.inhibitGridFit = !!v; return;
         case 2 : state.ignoreCvt = !!v; return;
         default: throw new Error('invalid INSTCTRL[] selector');
-    }
+   }
 }
 
 // PUSHB[abc] PUSH Bytes
@@ -10935,9 +10935,9 @@ function PUSHB(n, state) {
     var prog = state.prog;
     var ip = state.ip;
 
-    if (exports.DEBUG) { console.log(state.step, 'PUSHB[' + n + ']'); }
+    if (exports.DEBUG) {console.log(state.step, 'PUSHB[' + n + ']');}
 
-    for (var i = 0; i < n; i++) { stack.push(prog[++ip]); }
+    for (var i = 0; i < n; i++) {stack.push(prog[++ip]);}
 
     state.ip = ip;
 }
@@ -10949,13 +10949,13 @@ function PUSHW(n, state) {
     var prog = state.prog;
     var stack = state.stack;
 
-    if (exports.DEBUG) { console.log(state.ip, 'PUSHW[' + n + ']'); }
+    if (exports.DEBUG) {console.log(state.ip, 'PUSHW[' + n + ']');}
 
     for (var i = 0; i < n; i++) {
         var w = (prog[++ip] << 8) | prog[++ip];
-        if (w & 0x8000) { w = -((w ^ 0xffff) + 1); }
+        if (w & 0x8000) {w = -((w ^ 0xffff) + 1);}
         stack.push(w);
-    }
+   }
 
     state.ip = ip;
 }
@@ -10995,12 +10995,12 @@ function MDRP_MIRP(indirect, setRp0, keepD, ro, dt, state) {
     if (indirect) {
         cv = state.cvt[cvte];
 
-        if (ro && Math.abs(d - cv) < state.cvCutIn) { d = cv; }
-    }
+        if (ro && Math.abs(d - cv) < state.cvCutIn) {d = cv;}
+   }
 
-    if (keepD && d < md) { d = md; }
+    if (keepD && d < md) {d = md;}
 
-    if (ro) { d = state.round(d); }
+    if (ro) {d = state.round(d);}
 
     fv.setRelative(p, rp, sign * d, pv);
     fv.touch(p);
@@ -11019,12 +11019,12 @@ function MDRP_MIRP(indirect, setRp0, keepD, ro, dt, state) {
                 '',
             pi,
             '(d =', od, '->', sign * d, ')'
-        );
-    }
+       );
+   }
 
     state.rp1 = state.rp0;
     state.rp2 = pi;
-    if (setRp0) { state.rp0 = pi; }
+    if (setRp0) {state.rp0 = pi;}
 }
 
 /*
@@ -11328,7 +11328,7 @@ case freedom vector == x-axis:
 
    y = p.y
 
-   x = rpdx + ( p.y - rpdy ) / pvns
+   x = rpdx + (p.y - rpdy) / pvns
 
 
 case freedom vector == y-axis:
@@ -11608,17 +11608,17 @@ function initializeCoreEvents(events) {
     coreEvents.forEach(function (eventId) {
         Object.defineProperty(this$1.events, eventId, {
             value: new Event(eventId)
-        });
-    });
+       });
+   });
 
     if (!!events) {
         coreEvents.forEach(function (eventId) {
             var event = events[eventId];
             if (typeof event === 'function') {
                 this$1.events[eventId].subscribe(event);
-            }
-        });
-    }
+           }
+       });
+   }
     var requiresContextUpdate = [
         'insertToken', 'removeToken', 'removeRange',
         'replaceToken', 'replaceRange', 'composeRUD'
@@ -11626,8 +11626,8 @@ function initializeCoreEvents(events) {
     requiresContextUpdate.forEach(function (eventId) {
         this$1.events[eventId].subscribe(
             this$1.updateContextsRanges
-        );
-    });
+       );
+   });
 }
 
 /**
@@ -11651,7 +11651,7 @@ function Tokenizer(events) {
  */
 Token.prototype.setState = function(key, value) {
     this.state[key] = value;
-    this.activeState = { key: key, value: this.state[key] };
+    this.activeState = {key: key, value: this.state[key]};
     return this.activeState;
 };
 
@@ -11676,20 +11676,20 @@ Tokenizer.prototype.composeRUD = function (RUDs) {
     var this$1 = this;
 
     var silent = true;
-    var state = RUDs.map(function (RUD) { return (
+    var state = RUDs.map(function (RUD) {return (
         this$1[RUD[0]].apply(this$1, RUD.slice(1).concat(silent))
-    ); });
-    var hasFAILObject = function (obj) { return (
+   );});
+    var hasFAILObject = function (obj) {return (
         typeof obj === 'object' &&
         obj.hasOwnProperty('FAIL')
-    ); };
+   );};
     if (state.every(hasFAILObject)) {
         return {
             FAIL: "composeRUD: one or more operations hasn't completed successfully",
             report: state.filter(hasFAILObject)
-        };
-    }
-    this.dispatch('composeRUD', [state.filter(function (op) { return !hasFAILObject(op); })]);
+       };
+   }
+    this.dispatch('composeRUD', [state.filter(function (op) {return !hasFAILObject(op);})]);
 };
 
 /**
@@ -11701,16 +11701,16 @@ Tokenizer.prototype.composeRUD = function (RUDs) {
  */
 Tokenizer.prototype.replaceRange = function (startIndex, offset, tokens, silent) {
     offset = offset !== null ? offset : this.tokens.length;
-    var isTokenType = tokens.every(function (token) { return token instanceof Token; });
+    var isTokenType = tokens.every(function (token) {return token instanceof Token;});
     if (!isNaN(startIndex) && this.inboundIndex(startIndex) && isTokenType) {
         var replaced = this.tokens.splice.apply(
             this.tokens, [startIndex, offset].concat(tokens)
-        );
-        if (!silent) { this.dispatch('replaceToken', [startIndex, offset, tokens]); }
+       );
+        if (!silent) {this.dispatch('replaceToken', [startIndex, offset, tokens]);}
         return [replaced, tokens];
-    } else {
-        return { FAIL: 'replaceRange: invalid tokens or startIndex.' };
-    }
+   } else {
+        return {FAIL: 'replaceRange: invalid tokens or startIndex.'};
+   }
 };
 
 /**
@@ -11722,11 +11722,11 @@ Tokenizer.prototype.replaceRange = function (startIndex, offset, tokens, silent)
 Tokenizer.prototype.replaceToken = function (index, token, silent) {
     if (!isNaN(index) && this.inboundIndex(index) && token instanceof Token) {
         var replaced = this.tokens.splice(index, 1, token);
-        if (!silent) { this.dispatch('replaceToken', [index, token]); }
+        if (!silent) {this.dispatch('replaceToken', [index, token]);}
         return [replaced[0], token];
-    } else {
-        return { FAIL: 'replaceToken: invalid token or index.' };
-    }
+   } else {
+        return {FAIL: 'replaceToken: invalid token or index.'};
+   }
 };
 
 /**
@@ -11738,7 +11738,7 @@ Tokenizer.prototype.replaceToken = function (index, token, silent) {
 Tokenizer.prototype.removeRange = function(startIndex, offset, silent) {
     offset = !isNaN(offset) ? offset : this.tokens.length;
     var tokens = this.tokens.splice(startIndex, offset);
-    if (!silent) { this.dispatch('removeRange', [tokens, startIndex, offset]); }
+    if (!silent) {this.dispatch('removeRange', [tokens, startIndex, offset]);}
     return tokens;
 };
 
@@ -11750,11 +11750,11 @@ Tokenizer.prototype.removeRange = function(startIndex, offset, silent) {
 Tokenizer.prototype.removeToken = function(index, silent) {
     if (!isNaN(index) && this.inboundIndex(index)) {
         var token = this.tokens.splice(index, 1);
-        if (!silent) { this.dispatch('removeToken', [token, index]); }
+        if (!silent) {this.dispatch('removeToken', [token, index]);}
         return token;
-    } else {
-        return { FAIL: 'removeToken: invalid token index.' };
-    }
+   } else {
+        return {FAIL: 'removeToken: invalid token index.'};
+   }
 };
 
 /**
@@ -11765,17 +11765,17 @@ Tokenizer.prototype.removeToken = function(index, silent) {
  */
 Tokenizer.prototype.insertToken = function (tokens, index, silent) {
     var tokenType = tokens.every(
-        function (token) { return token instanceof Token; }
-    );
+        function (token) {return token instanceof Token;}
+   );
     if (tokenType) {
         this.tokens.splice.apply(
             this.tokens, [index, 0].concat(tokens)
-        );
-        if (!silent) { this.dispatch('insertToken', [tokens, index]); }
+       );
+        if (!silent) {this.dispatch('insertToken', [tokens, index]);}
         return tokens;
-    } else {
-        return { FAIL: 'insertToken: invalid token(s).' };
-    }
+   } else {
+        return {FAIL: 'insertToken: invalid token(s).'};
+   }
 };
 
 /**
@@ -11790,13 +11790,13 @@ Tokenizer.prototype.registerModifier = function(modifierId, condition, modifier)
         var canApplyModifier = (
             condition === null ||
             condition.apply(this, conditionParams) === true
-        );
+       );
         var modifierParams = [token, contextParams];
         if (canApplyModifier) {
             var newStateValue = modifier.apply(this, modifierParams);
             token.setState(modifierId, newStateValue);
-        }
-    });
+       }
+   });
     this.registeredModifiers.push(modifierId);
 };
 
@@ -11807,9 +11807,9 @@ Tokenizer.prototype.registerModifier = function(modifierId, condition, modifier)
 Event.prototype.subscribe = function (eventHandler) {
     if (typeof eventHandler === 'function') {
         return ((this.subscribers.push(eventHandler)) - 1);
-    } else {
-        return { FAIL: ("invalid '" + (this.eventId) + "' event handler")};
-    }
+   } else {
+        return {FAIL: ("invalid '" + (this.eventId) + "' event handler")};
+   }
 };
 
 /**
@@ -11848,7 +11848,7 @@ ContextParams.prototype.get = function (offset) {
             return this.lookahead[offset - 1];
         default:
             return null;
-    }
+   }
 };
 
 /**
@@ -11859,16 +11859,16 @@ Tokenizer.prototype.rangeToText = function (range) {
     if (range instanceof ContextRange) {
         return (
             this.getRangeTokens(range)
-                .map(function (token) { return token.char; }).join('')
-        );
-    }
+                .map(function (token) {return token.char;}).join('')
+       );
+   }
 };
 
 /**
  * Converts all tokens into a string
  */
 Tokenizer.prototype.getText = function () {
-    return this.tokens.map(function (token) { return token.char; }).join('');
+    return this.tokens.map(function (token) {return token.char;}).join('');
 };
 
 /**
@@ -11889,9 +11889,9 @@ Tokenizer.prototype.on = function(eventName, eventHandler) {
     var event = this.events[eventName];
     if (!!event) {
         return event.subscribe(eventHandler);
-    } else {
+   } else {
         return null;
-    }
+   }
 };
 
 /**
@@ -11906,8 +11906,8 @@ Tokenizer.prototype.dispatch = function(eventName, args) {
     if (event instanceof Event) {
         event.subscribers.forEach(function (subscriber) {
             subscriber.apply(this$1, args || []);
-        });
-    }
+       });
+   }
 };
 
 /**
@@ -11918,21 +11918,21 @@ Tokenizer.prototype.dispatch = function(eventName, args) {
  * TODO: call tokenize on registration to update context ranges with the new context.
  */
 Tokenizer.prototype.registerContextChecker = function(contextName, contextStartCheck, contextEndCheck) {
-    if (!!this.getContext(contextName)) { return {
+    if (!!this.getContext(contextName)) {return {
         FAIL:
         ("context name '" + contextName + "' is already registered.")
-    }; }
-    if (typeof contextStartCheck !== 'function') { return {
+   };}
+    if (typeof contextStartCheck !== 'function') {return {
         FAIL:
         "missing context start check."
-    }; }
-    if (typeof contextEndCheck !== 'function') { return {
+   };}
+    if (typeof contextEndCheck !== 'function') {return {
         FAIL:
         "missing context end check."
-    }; }
+   };}
     var contextCheckers = new ContextChecker(
         contextName, contextStartCheck, contextEndCheck
-    );
+   );
     this.registeredContexts[contextName] = contextCheckers;
     this.contextCheckers.push(contextCheckers);
     return contextCheckers;
@@ -11947,7 +11947,7 @@ Tokenizer.prototype.getRangeTokens = function(range) {
     return [].concat(
         this.tokens
             .slice(range.startIndex, endIndex)
-    );
+   );
 };
 
 /**
@@ -11958,9 +11958,9 @@ Tokenizer.prototype.getContextRanges = function(contextName) {
     var context = this.getContext(contextName);
     if (!!context) {
         return context.ranges;
-    } else {
-        return { FAIL: ("context checker '" + contextName + "' is not registered.") };
-    }
+   } else {
+        return {FAIL: ("context checker '" + contextName + "' is not registered.")};
+   }
 };
 
 /**
@@ -11972,8 +11972,8 @@ Tokenizer.prototype.resetContextsRanges = function () {
         if (registeredContexts.hasOwnProperty(contextName)) {
             var context = registeredContexts[contextName];
             context.ranges = [];
-        }
-    }
+       }
+   }
 };
 
 /**
@@ -11981,11 +11981,11 @@ Tokenizer.prototype.resetContextsRanges = function () {
  */
 Tokenizer.prototype.updateContextsRanges = function () {
     this.resetContextsRanges();
-    var chars = this.tokens.map(function (token) { return token.char; });
+    var chars = this.tokens.map(function (token) {return token.char;});
     for (var i = 0; i < chars.length; i++) {
         var contextParams = new ContextParams(chars, i);
         this.runContextCheck(contextParams);
-    }
+   }
     this.dispatch('updateContextsRanges', [this.registeredContexts]);
 };
 
@@ -12019,13 +12019,13 @@ Tokenizer.prototype.runContextCheck = function(contextParams) {
             openRange = new ContextRange(index, null, contextName);
             this$1.getContext(contextName).openRange = openRange;
             this$1.dispatch('contextStart', [contextName, index]);
-        }
+       }
         if (!!openRange && contextChecker.checkEnd(contextParams)) {
             var offset = (index - openRange.startIndex) + 1;
             var range = this$1.setEndOffset(offset, contextName);
             this$1.dispatch('contextEnd', [contextName, range]);
-        }
-    });
+       }
+   });
 };
 
 /**
@@ -12045,7 +12045,7 @@ Tokenizer.prototype.tokenize = function (text) {
         var token = new Token(char);
         this.tokens.push(token);
         this.dispatch('newToken', [token, contextParams]);
-    }
+   }
     this.dispatch('end', [this.tokens]);
     return this.tokens;
 };
@@ -12131,7 +12131,7 @@ function SubstitutionAction(action) {
  * @param {CoverageTable} coverage coverage table
  */
 function lookupCoverage(glyphIndex, coverage) {
-    if (!glyphIndex) { return -1; }
+    if (!glyphIndex) {return -1;}
     switch (coverage.format) {
         case 1:
             return coverage.glyphs.indexOf(glyphIndex);
@@ -12143,12 +12143,12 @@ function lookupCoverage(glyphIndex, coverage) {
                 if (glyphIndex >= range.start && glyphIndex <= range.end) {
                     var offset = glyphIndex - range.start;
                     return range.index + offset;
-                }
-            }
+               }
+           }
             break;
         default:
             return -1; // not found
-    }
+   }
     return -1;
 }
 
@@ -12158,7 +12158,7 @@ function lookupCoverage(glyphIndex, coverage) {
  */
 function singleSubstitutionFormat1(glyphIndex, subtable) {
     var substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
-    if (substituteIndex === -1) { return null; }
+    if (substituteIndex === -1) {return null;}
     return glyphIndex + subtable.deltaGlyphId;
 }
 
@@ -12168,7 +12168,7 @@ function singleSubstitutionFormat1(glyphIndex, subtable) {
  */
 function singleSubstitutionFormat2(glyphIndex, subtable) {
     var substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
-    if (substituteIndex === -1) { return null; }
+    if (substituteIndex === -1) {return null;}
     return subtable.substitute[substituteIndex];
 }
 
@@ -12186,9 +12186,9 @@ function lookupCoverageList(coverageList, contextParams) {
         var lookupIndex = lookupCoverage(glyphIndex, coverage);
         if (lookupIndex !== -1) {
             lookupList.push(lookupIndex);
-        }
-    }
-    if (lookupList.length !== coverageList.length) { return -1; }
+       }
+   }
+    if (lookupList.length !== coverageList.length) {return -1;}
     return lookupList;
 }
 
@@ -12201,40 +12201,40 @@ function chainingSubstitutionFormat3(contextParams, subtable) {
         subtable.inputCoverage.length +
         subtable.lookaheadCoverage.length +
         subtable.backtrackCoverage.length
-    );
-    if (contextParams.context.length < lookupsCount) { return []; }
+   );
+    if (contextParams.context.length < lookupsCount) {return [];}
     // INPUT LOOKUP //
     var inputLookups = lookupCoverageList(
         subtable.inputCoverage, contextParams
-    );
-    if (inputLookups === -1) { return []; }
+   );
+    if (inputLookups === -1) {return [];}
     // LOOKAHEAD LOOKUP //
     var lookaheadOffset = subtable.inputCoverage.length - 1;
-    if (contextParams.lookahead.length < subtable.lookaheadCoverage.length) { return []; }
+    if (contextParams.lookahead.length < subtable.lookaheadCoverage.length) {return [];}
     var lookaheadContext = contextParams.lookahead.slice(lookaheadOffset);
     while (lookaheadContext.length && isTashkeelArabicChar(lookaheadContext[0].char)) {
         lookaheadContext.shift();
-    }
+   }
     var lookaheadParams = new ContextParams(lookaheadContext, 0);
     var lookaheadLookups = lookupCoverageList(
         subtable.lookaheadCoverage, lookaheadParams
-    );
+   );
     // BACKTRACK LOOKUP //
     var backtrackContext = [].concat(contextParams.backtrack);
     backtrackContext.reverse();
     while (backtrackContext.length && isTashkeelArabicChar(backtrackContext[0].char)) {
         backtrackContext.shift();
-    }
-    if (backtrackContext.length < subtable.backtrackCoverage.length) { return []; }
+   }
+    if (backtrackContext.length < subtable.backtrackCoverage.length) {return [];}
     var backtrackParams = new ContextParams(backtrackContext, 0);
     var backtrackLookups = lookupCoverageList(
         subtable.backtrackCoverage, backtrackParams
-    );
+   );
     var contextRulesMatch = (
         inputLookups.length === subtable.inputCoverage.length &&
         lookaheadLookups.length === subtable.lookaheadCoverage.length &&
         backtrackLookups.length === subtable.backtrackCoverage.length
-    );
+   );
     var substitutions = [];
     if (contextRulesMatch) {
         for (var i = 0; i < subtable.lookupRecords.length; i++) {
@@ -12249,12 +12249,12 @@ function chainingSubstitutionFormat3(contextParams, subtable) {
                     for (var n = 0; n < inputLookups.length; n++) {
                         var glyphIndex = contextParams.get(n);
                         var substitution = lookup(glyphIndex);
-                        if (substitution) { substitutions.push(substitution); }
-                    }
-                }
-            }
-        }
-    }
+                        if (substitution) {substitutions.push(substitution);}
+                   }
+               }
+           }
+       }
+   }
     return substitutions;
 }
 
@@ -12266,7 +12266,7 @@ function ligatureSubstitutionFormat1(contextParams, subtable) {
     // COVERAGE LOOKUP //
     var glyphIndex = contextParams.current;
     var ligSetIndex = lookupCoverage(glyphIndex, subtable.coverage);
-    if (ligSetIndex === -1) { return null; }
+    if (ligSetIndex === -1) {return null;}
     // COMPONENTS LOOKUP
     // (!) note, components are ordered in the written direction.
     var ligature;
@@ -12276,10 +12276,10 @@ function ligatureSubstitutionFormat1(contextParams, subtable) {
         for (var l = 0; l < ligature.components.length; l++) {
             var lookaheadItem = contextParams.lookahead[l];
             var component = ligature.components[l];
-            if (lookaheadItem !== component) { break; }
-            if (l === ligature.components.length - 1) { return ligature; }
-        }
-    }
+            if (lookaheadItem !== component) {break;}
+            if (l === ligature.components.length - 1) {return ligature;}
+       }
+   }
     return null;
 }
 
@@ -12290,7 +12290,7 @@ function ligatureSubstitutionFormat1(contextParams, subtable) {
  */
 function decompositionSubstitutionFormat1(glyphIndex, subtable) {
     var substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
-    if (substituteIndex === -1) { return null; }
+    if (substituteIndex === -1) {return null;}
     return subtable.sequences[substituteIndex];
 }
 
@@ -12301,10 +12301,10 @@ FeatureQuery.prototype.getDefaultScriptFeaturesIndexes = function () {
     var scripts = this.font.tables.gsub.scripts;
     for (var s = 0; s < scripts.length; s++) {
         var script = scripts[s];
-        if (script.tag === 'DFLT') { return (
+        if (script.tag === 'DFLT') {return (
             script.script.defaultLangSys.featureIndexes
-        ); }
-    }
+       );}
+   }
     return [];
 };
 
@@ -12314,14 +12314,14 @@ FeatureQuery.prototype.getDefaultScriptFeaturesIndexes = function () {
  */
 FeatureQuery.prototype.getScriptFeaturesIndexes = function(scriptTag) {
     var tables = this.font.tables;
-    if (!tables.gsub) { return []; }
-    if (!scriptTag) { return this.getDefaultScriptFeaturesIndexes(); }
+    if (!tables.gsub) {return [];}
+    if (!scriptTag) {return this.getDefaultScriptFeaturesIndexes();}
     var scripts = this.font.tables.gsub.scripts;
     for (var i = 0; i < scripts.length; i++) {
         var script = scripts[i];
         if (script.tag === scriptTag && script.script.defaultLangSys) {
             return script.script.defaultLangSys.featureIndexes;
-        } else {
+       } else {
             var langSysRecords = script.langSysRecords;
             if (!!langSysRecords) {
                 for (var j = 0; j < langSysRecords.length; j++) {
@@ -12329,11 +12329,11 @@ FeatureQuery.prototype.getScriptFeaturesIndexes = function(scriptTag) {
                     if (langSysRecord.tag === scriptTag) {
                         var langSys = langSysRecord.langSys;
                         return langSys.featureIndexes;
-                    }
-                }
-            }
-        }
-    }
+                   }
+               }
+           }
+       }
+   }
     return this.getDefaultScriptFeaturesIndexes();
 };
 
@@ -12348,7 +12348,7 @@ FeatureQuery.prototype.mapTagsToFeatures = function (features, scriptTag) {
         var tag = features[i].tag;
         var feature = features[i].feature;
         tags[tag] = feature;
-    }
+   }
     this.features[scriptTag].tags = tags;
 };
 
@@ -12358,11 +12358,11 @@ FeatureQuery.prototype.mapTagsToFeatures = function (features, scriptTag) {
  */
 FeatureQuery.prototype.getScriptFeatures = function (scriptTag) {
     var features = this.features[scriptTag];
-    if (this.features.hasOwnProperty(scriptTag)) { return features; }
+    if (this.features.hasOwnProperty(scriptTag)) {return features;}
     var featuresIndexes = this.getScriptFeaturesIndexes(scriptTag);
-    if (!featuresIndexes) { return null; }
+    if (!featuresIndexes) {return null;}
     var gsub = this.font.tables.gsub;
-    features = featuresIndexes.map(function (index) { return gsub.features[index]; });
+    features = featuresIndexes.map(function (index) {return gsub.features[index];});
     this.features[scriptTag] = features;
     this.mapTagsToFeatures(features, scriptTag);
     return features;
@@ -12390,32 +12390,32 @@ FeatureQuery.prototype.getLookupMethod = function(lookupTable, subtable) {
     var substitutionType = this.getSubstitutionType(lookupTable, subtable);
     switch (substitutionType) {
         case '11':
-            return function (glyphIndex) { return singleSubstitutionFormat1.apply(
+            return function (glyphIndex) {return singleSubstitutionFormat1.apply(
                 this$1, [glyphIndex, subtable]
-            ); };
+           );};
         case '12':
-            return function (glyphIndex) { return singleSubstitutionFormat2.apply(
+            return function (glyphIndex) {return singleSubstitutionFormat2.apply(
                 this$1, [glyphIndex, subtable]
-            ); };
+           );};
         case '63':
-            return function (contextParams) { return chainingSubstitutionFormat3.apply(
+            return function (contextParams) {return chainingSubstitutionFormat3.apply(
                 this$1, [contextParams, subtable]
-            ); };
+           );};
         case '41':
-            return function (contextParams) { return ligatureSubstitutionFormat1.apply(
+            return function (contextParams) {return ligatureSubstitutionFormat1.apply(
                 this$1, [contextParams, subtable]
-            ); };
+           );};
         case '21':
-            return function (glyphIndex) { return decompositionSubstitutionFormat1.apply(
+            return function (glyphIndex) {return decompositionSubstitutionFormat1.apply(
                 this$1, [glyphIndex, subtable]
-            ); };
+           );};
         default:
             throw new Error(
                 "lookupType: " + (lookupTable.lookupType) + " - " +
                 "substFormat: " + (subtable.substFormat) + " " +
                 "is not yet supported"
-            );
-    }
+           );
+   }
 };
 
 /**
@@ -12450,12 +12450,12 @@ FeatureQuery.prototype.lookupFeature = function (query) {
     var currentIndex = contextParams.index;
     var feature = this.getFeature({
         tag: query.tag, script: query.script
-    });
-    if (!feature) { return new Error(
+   });
+    if (!feature) {return new Error(
         "font '" + (this.font.names.fullName.en) + "' " +
         "doesn't support feature '" + (query.tag) + "' " +
         "for script '" + (query.script) + "'."
-    ); }
+   );}
     var lookups = this.getFeatureLookups(feature);
     var substitutions = [].concat(contextParams.context);
     for (var l = 0; l < lookups.length; l++) {
@@ -12472,47 +12472,47 @@ FeatureQuery.prototype.lookupFeature = function (query) {
                     if (substitution) {
                         substitutions.splice(currentIndex, 1, new SubstitutionAction({
                             id: 11, tag: query.tag, substitution: substitution
-                        }));
-                    }
+                       }));
+                   }
                     break;
                 case '12':
                     substitution = lookup(contextParams.current);
                     if (substitution) {
                         substitutions.splice(currentIndex, 1, new SubstitutionAction({
                             id: 12, tag: query.tag, substitution: substitution
-                        }));
-                    }
+                       }));
+                   }
                     break;
                 case '63':
                     substitution = lookup(contextParams);
                     if (Array.isArray(substitution) && substitution.length) {
                         substitutions.splice(currentIndex, 1, new SubstitutionAction({
                             id: 63, tag: query.tag, substitution: substitution
-                        }));
-                    }
+                       }));
+                   }
                     break;
                 case '41':
                     substitution = lookup(contextParams);
                     if (substitution) {
                         substitutions.splice(currentIndex, 1, new SubstitutionAction({
                             id: 41, tag: query.tag, substitution: substitution
-                        }));
-                    }
+                       }));
+                   }
                     break;
                 case '21':
                     substitution = lookup(contextParams.current);
                     if (substitution) {
                         substitutions.splice(currentIndex, 1, new SubstitutionAction({
                             id: 21, tag: query.tag, substitution: substitution
-                        }));
-                    }
+                       }));
+                   }
                     break;
-            }
+           }
             contextParams = new ContextParams(substitutions, currentIndex);
-            if (Array.isArray(substitution) && !substitution.length) { continue; }
+            if (Array.isArray(substitution) && !substitution.length) {continue;}
             substitution = null;
-        }
-    }
+       }
+   }
     return substitutions.length ? substitutions : null;
 };
 
@@ -12521,13 +12521,13 @@ FeatureQuery.prototype.lookupFeature = function (query) {
  * @param {FQuery} query feature query object
  */
 FeatureQuery.prototype.supports = function (query) {
-    if (!query.script) { return false; }
+    if (!query.script) {return false;}
     this.getScriptFeatures(query.script);
     var supportedScript = this.features.hasOwnProperty(query.script);
-    if (!query.tag) { return supportedScript; }
+    if (!query.tag) {return supportedScript;}
     var supportedFeature = (
-        this.features[query.script].some(function (feature) { return feature.tag === query.tag; })
-    );
+        this.features[query.script].some(function (feature) {return feature.tag === query.tag;})
+   );
     return supportedScript && supportedFeature;
 };
 
@@ -12562,15 +12562,15 @@ FeatureQuery.prototype.getFeatureLookups = function (feature) {
  * @param {any} query an object that describes the properties of a query
  */
 FeatureQuery.prototype.getFeature = function getFeature(query) {
-    if (!this.font) { return { FAIL: "No font was found"}; }
+    if (!this.font) {return {FAIL: "No font was found"};}
     if (!this.features.hasOwnProperty(query.script)) {
         this.getScriptFeatures(query.script);
-    }
+   }
     var scriptFeatures = this.features[query.script];
-    if (!scriptFeatures) { return (
-        { FAIL: ("No feature for script " + (query.script))}
-    ); }
-    if (!scriptFeatures.tags[query.tag]) { return null; }
+    if (!scriptFeatures) {return (
+        {FAIL: ("No feature for script " + (query.script))}
+   );}
+    if (!scriptFeatures.tags[query.tag]) {return null;}
     return this.features[query.script].tags[query.tag];
 };
 
@@ -12586,7 +12586,7 @@ function arabicWordStartCheck(contextParams) {
         (prevChar === null && isArabicChar(char)) ||
         // ? arabic char preceded with a non arabic char
         (!isArabicChar(prevChar) && isArabicChar(char))
-    );
+   );
 }
 
 function arabicWordEndCheck(contextParams) {
@@ -12596,7 +12596,7 @@ function arabicWordEndCheck(contextParams) {
         (nextChar === null) ||
         // ? next char is not arabic
         (!isArabicChar(nextChar))
-    );
+   );
 }
 
 var arabicWordCheck = {
@@ -12615,7 +12615,7 @@ function arabicSentenceStartCheck(contextParams) {
         // ? an arabic char preceded with a non arabic char
         (isArabicChar(char) || isTashkeelArabicChar(char)) &&
         !isArabicChar(prevChar)
-    );
+   );
 }
 
 function arabicSentenceEndCheck(contextParams) {
@@ -12625,20 +12625,20 @@ function arabicSentenceEndCheck(contextParams) {
             return true;
         case (!isArabicChar(nextChar) && !isTashkeelArabicChar(nextChar)):
             var nextIsWhitespace = isWhiteSpace(nextChar);
-            if (!nextIsWhitespace) { return true; }
+            if (!nextIsWhitespace) {return true;}
             if (nextIsWhitespace) {
                 var arabicCharAhead = false;
                 arabicCharAhead = (
                     contextParams.lookahead.some(
-                        function (c) { return isArabicChar(c) || isTashkeelArabicChar(c); }
-                    )
-                );
-                if (!arabicCharAhead) { return true; }
-            }
+                        function (c) {return isArabicChar(c) || isTashkeelArabicChar(c);}
+                   )
+               );
+                if (!arabicCharAhead) {return true;}
+           }
             break;
         default:
             return false;
-    }
+   }
 }
 
 var arabicSentenceCheck = {
@@ -12676,7 +12676,7 @@ function chainingSubstitutionFormat3$1(action, tokens, index) {
     action.substitution.forEach(function (subst, offset) {
         var token = tokens[index + offset];
         token.setState(action.tag, subst);
-    });
+   });
 }
 
 /**
@@ -12692,7 +12692,7 @@ function ligatureSubstitutionFormat1$1(action, tokens, index) {
     for (var i = 0; i < compsCount; i++) {
         token = tokens[index + i + 1];
         token.setState('deleted', true);
-    }
+   }
 }
 
 /**
@@ -12714,7 +12714,7 @@ var SUBSTITUTIONS = {
 function applySubstitution(action, tokens, index) {
     if (action instanceof SubstitutionAction && SUBSTITUTIONS[action.id]) {
         SUBSTITUTIONS[action.id](action, tokens, index);
-    }
+   }
 }
 
 /**
@@ -12731,9 +12731,9 @@ function willConnectPrev(charContextParams) {
         var prevChar = backtrack[i];
         var isolated = isIsolatedArabicChar(prevChar);
         var tashkeel = isTashkeelArabicChar(prevChar);
-        if (!isolated && !tashkeel) { return true; }
-        if (isolated) { return false; }
-    }
+        if (!isolated && !tashkeel) {return true;}
+        if (isolated) {return false;}
+   }
     return false;
 }
 
@@ -12742,12 +12742,12 @@ function willConnectPrev(charContextParams) {
  * @param {ContextParams} charContextParams context params of a char
  */
 function willConnectNext(charContextParams) {
-    if (isIsolatedArabicChar(charContextParams.current)) { return false; }
+    if (isIsolatedArabicChar(charContextParams.current)) {return false;}
     for (var i = 0; i < charContextParams.lookahead.length; i++) {
         var nextChar = charContextParams.lookahead[i];
         var tashkeel = isTashkeelArabicChar(nextChar);
-        if (!tashkeel) { return true; }
-    }
+        if (!tashkeel) {return true;}
+   }
     return false;
 }
 
@@ -12761,38 +12761,38 @@ function arabicPresentationForms(range) {
     var script = 'arab';
     var tags = this.featuresTags[script];
     var tokens = this.tokenizer.getRangeTokens(range);
-    if (tokens.length === 1) { return; }
+    if (tokens.length === 1) {return;}
     var contextParams = new ContextParams(
-        tokens.map(function (token) { return token.getState('glyphIndex'); }
-    ), 0);
+        tokens.map(function (token) {return token.getState('glyphIndex');}
+   ), 0);
     var charContextParams = new ContextParams(
-        tokens.map(function (token) { return token.char; }
-    ), 0);
+        tokens.map(function (token) {return token.char;}
+   ), 0);
     tokens.forEach(function (token, index) {
-        if (isTashkeelArabicChar(token.char)) { return; }
+        if (isTashkeelArabicChar(token.char)) {return;}
         contextParams.setCurrentIndex(index);
         charContextParams.setCurrentIndex(index);
         var CONNECT = 0; // 2 bits 00 (10: can connect next) (01: can connect prev)
-        if (willConnectPrev(charContextParams)) { CONNECT |= 1; }
-        if (willConnectNext(charContextParams)) { CONNECT |= 2; }
+        if (willConnectPrev(charContextParams)) {CONNECT |= 1;}
+        if (willConnectNext(charContextParams)) {CONNECT |= 2;}
         var tag;
         switch (CONNECT) {
             case 1: (tag = 'fina'); break;
             case 2: (tag = 'init'); break;
             case 3: (tag = 'medi'); break;
-        }
-        if (tags.indexOf(tag) === -1) { return; }
+       }
+        if (tags.indexOf(tag) === -1) {return;}
         var substitutions = this$1.query.lookupFeature({
             tag: tag, script: script, contextParams: contextParams
-        });
-        if (substitutions instanceof Error) { return console.info(substitutions.message); }
+       });
+        if (substitutions instanceof Error) {return console.info(substitutions.message);}
         substitutions.forEach(function (action, index) {
             if (action instanceof SubstitutionAction) {
                 applySubstitution(action, tokens, index);
                 contextParams.context[index] = action.substitution;
-            }
-        });
-    });
+           }
+       });
+   });
 }
 
 /**
@@ -12805,7 +12805,7 @@ function arabicPresentationForms(range) {
  * @param {number} index current item index
  */
 function getContextParams(tokens, index) {
-    var context = tokens.map(function (token) { return token.activeState.value; });
+    var context = tokens.map(function (token) {return token.activeState.value;});
     return new ContextParams(context, index || 0);
 }
 
@@ -12823,14 +12823,14 @@ function arabicRequiredLigatures(range) {
         contextParams.setCurrentIndex(index);
         var substitutions = this$1.query.lookupFeature({
             tag: 'rlig', script: script, contextParams: contextParams
-        });
+       });
         if (substitutions.length) {
             substitutions.forEach(
-                function (action) { return applySubstitution(action, tokens, index); }
-            );
+                function (action) {return applySubstitution(action, tokens, index);}
+           );
             contextParams = getContextParams(tokens);
-        }
-    });
+       }
+   });
 }
 
 /**
@@ -12845,7 +12845,7 @@ function latinWordStartCheck(contextParams) {
         (prevChar === null && isLatinChar(char)) ||
         // ? latin char preceded with a non latin char
         (!isLatinChar(prevChar) && isLatinChar(char))
-    );
+   );
 }
 
 function latinWordEndCheck(contextParams) {
@@ -12855,7 +12855,7 @@ function latinWordEndCheck(contextParams) {
         (nextChar === null) ||
         // ? next char is not latin
         (!isLatinChar(nextChar))
-    );
+   );
 }
 
 var latinWordCheck = {
@@ -12873,7 +12873,7 @@ var latinWordCheck = {
  * @param {number} index current item index
  */
 function getContextParams$1(tokens, index) {
-    var context = tokens.map(function (token) { return token.activeState.value; });
+    var context = tokens.map(function (token) {return token.activeState.value;});
     return new ContextParams(context, index || 0);
 }
 
@@ -12891,14 +12891,14 @@ function latinLigature(range) {
         contextParams.setCurrentIndex(index);
         var substitutions = this$1.query.lookupFeature({
             tag: 'liga', script: script, contextParams: contextParams
-        });
+       });
         if (substitutions.length) {
             substitutions.forEach(
-                function (action) { return applySubstitution(action, tokens, index); }
-            );
+                function (action) {return applySubstitution(action, tokens, index);}
+           );
             contextParams = getContextParams$1(tokens);
-        }
-    });
+       }
+   });
 }
 
 /**
@@ -12942,7 +12942,7 @@ function registerContextChecker(checkId) {
     var check = this.contextChecks[(checkId + "Check")];
     return this.tokenizer.registerContextChecker(
         checkId, check.startCheck, check.endCheck
-    );
+   );
 }
 
 /**
@@ -12970,8 +12970,8 @@ function reverseArabicSentences() {
             range.startIndex,
             range.endOffset,
             rangeTokens.reverse()
-        );
-    });
+       );
+   });
 }
 
 /**
@@ -12983,14 +12983,14 @@ Bidi.prototype.registerFeatures = function (script, tags) {
     var this$1 = this;
 
     var supportedTags = tags.filter(
-        function (tag) { return this$1.query.supports({script: script, tag: tag}); }
-    );
+        function (tag) {return this$1.query.supports({script: script, tag: tag});}
+   );
     if (!this.featuresTags.hasOwnProperty(script)) {
         this.featuresTags[script] = supportedTags;
-    } else {
+   } else {
         this.featuresTags[script] =
         this.featuresTags[script].concat(supportedTags);
-    }
+   }
 };
 
 /**
@@ -13000,15 +13000,15 @@ Bidi.prototype.registerFeatures = function (script, tags) {
  * @param {Font} font opentype font instance
  */
 Bidi.prototype.applyFeatures = function (font, features) {
-    if (!font) { throw new Error(
+    if (!font) {throw new Error(
         'No valid font was provided to apply features'
-    ); }
-    if (!this.query) { this.query = new FeatureQuery(font); }
+   );}
+    if (!this.query) {this.query = new FeatureQuery(font);}
     for (var f = 0; f < features.length; f++) {
         var feature = features[f];
-        if (!this.query.supports({script: feature.script})) { continue; }
+        if (!this.query.supports({script: feature.script})) {continue;}
         this.registerFeatures(feature.script, feature.tags);
-    }
+   }
 };
 
 /**
@@ -13029,8 +13029,8 @@ function checkGlyphIndexStatus() {
         throw new Error(
             'glyphIndex modifier is required to apply ' +
             'arabic presentation features.'
-        );
-    }
+       );
+   }
 }
 
 /**
@@ -13040,12 +13040,12 @@ function applyArabicPresentationForms() {
     var this$1 = this;
 
     var script = 'arab';
-    if (!this.featuresTags.hasOwnProperty(script)) { return; }
+    if (!this.featuresTags.hasOwnProperty(script)) {return;}
     checkGlyphIndexStatus.call(this);
     var ranges = this.tokenizer.getContextRanges('arabicWord');
     ranges.forEach(function (range) {
         arabicPresentationForms.call(this$1, range);
-    });
+   });
 }
 
 /**
@@ -13055,14 +13055,14 @@ function applyArabicRequireLigatures() {
     var this$1 = this;
 
     var script = 'arab';
-    if (!this.featuresTags.hasOwnProperty(script)) { return; }
+    if (!this.featuresTags.hasOwnProperty(script)) {return;}
     var tags = this.featuresTags[script];
-    if (tags.indexOf('rlig') === -1) { return; }
+    if (tags.indexOf('rlig') === -1) {return;}
     checkGlyphIndexStatus.call(this);
     var ranges = this.tokenizer.getContextRanges('arabicWord');
     ranges.forEach(function (range) {
         arabicRequiredLigatures.call(this$1, range);
-    });
+   });
 }
 
 /**
@@ -13072,14 +13072,14 @@ function applyLatinLigatures() {
     var this$1 = this;
 
     var script = 'latn';
-    if (!this.featuresTags.hasOwnProperty(script)) { return; }
+    if (!this.featuresTags.hasOwnProperty(script)) {return;}
     var tags = this.featuresTags[script];
-    if (tags.indexOf('liga') === -1) { return; }
+    if (tags.indexOf('liga') === -1) {return;}
     checkGlyphIndexStatus.call(this);
     var ranges = this.tokenizer.getContextRanges('latinWord');
     ranges.forEach(function (range) {
         latinLigature.call(this$1, range);
-    });
+   });
 }
 
 /**
@@ -13097,13 +13097,13 @@ Bidi.prototype.applyFeaturesToContexts = function () {
     if (this.checkContextReady('arabicWord')) {
         applyArabicPresentationForms.call(this);
         applyArabicRequireLigatures.call(this);
-    }
+   }
     if (this.checkContextReady('latinWord')) {
         applyLatinLigatures.call(this);
-    }
+   }
     if (this.checkContextReady('arabicSentence')) {
         reverseArabicSentences.call(this);
-    }
+   }
 };
 
 /**
@@ -13115,7 +13115,7 @@ Bidi.prototype.processText = function(text) {
         this.setText(text);
         tokenizeText.call(this);
         this.applyFeaturesToContexts();
-    }
+   }
 };
 
 /**
@@ -13137,10 +13137,10 @@ Bidi.prototype.getTextGlyphs = function (text) {
     var indexes = [];
     for (var i = 0; i < this.tokenizer.tokens.length; i++) {
         var token = this.tokenizer.tokens[i];
-        if (token.state.deleted) { continue; }
+        if (token.state.deleted) {continue;}
         var index = token.activeState.value;
         indexes.push(Array.isArray(index) ? index[0] : index);
-    }
+   }
     return indexes;
 };
 
@@ -13211,7 +13211,7 @@ function Font(options) {
             description: {en: options.description || ' '},
             copyright: {en: options.copyright || ' '},
             trademark: {en: options.trademark || ' '}
-        };
+       };
         this.unitsPerEm = options.unitsPerEm || 1000;
         this.ascender = options.ascender;
         this.descender = options.descender;
@@ -13221,9 +13221,9 @@ function Font(options) {
                 usWeightClass: options.weightClass || this.usWeightClasses.MEDIUM,
                 usWidthClass: options.widthClass || this.usWidthClasses.MEDIUM,
                 fsSelection: options.fsSelection || this.fsSelectionValues.REGULAR,
-            }, options.tables.os2)
-        });
-    }
+           }, options.tables.os2)
+       });
+   }
 
     this.supported = true; // Deprecated: parseBuffer will throw an error if font is not supported.
     this.glyphs = new glyphset.GlyphSet(this, options.glyphs || []);
@@ -13238,12 +13238,12 @@ function Font(options) {
 
     Object.defineProperty(this, 'hinting', {
         get: function() {
-            if (this._hinting) { return this._hinting; }
+            if (this._hinting) {return this._hinting;}
             if (this.outlinesFormat === 'truetype') {
                 return (this._hinting = new Hinting(this));
-            }
-        }
-    });
+           }
+       }
+   });
 }
 
 /**
@@ -13279,7 +13279,7 @@ Font.prototype.charToGlyph = function(c) {
     if (!glyph) {
         // .notdef
         glyph = this.glyphs.get(0);
-    }
+   }
 
     return glyph;
 };
@@ -13294,12 +13294,12 @@ Font.prototype.updateFeatures = function (options) {
         if (feature.script === 'latn') {
             return {
                 script: 'latn',
-                tags: feature.tags.filter(function (tag) { return options[tag]; })
-            };
-        } else {
+                tags: feature.tags.filter(function (tag) {return options[tag];})
+           };
+       } else {
             return feature;
-        }
-    });
+       }
+   });
 };
 
 /**
@@ -13318,7 +13318,7 @@ Font.prototype.stringToGlyphs = function(s, options) {
     var bidi = new Bidi();
 
     // Create and register 'glyphIndex' state modifier
-    var charToGlyphIndexMod = function (token) { return this$1.charToGlyphIndex(token.char); };
+    var charToGlyphIndexMod = function (token) {return this$1.charToGlyphIndex(token.char);};
     bidi.registerModifier('glyphIndex', null, charToGlyphIndexMod);
 
     // roll-back to default features
@@ -13337,7 +13337,7 @@ Font.prototype.stringToGlyphs = function(s, options) {
     var notdef = this.glyphs.get(0);
     for (var i = 0; i < length; i += 1) {
         glyphs[i] = this.glyphs.get(indexes[i]) || notdef;
-    }
+   }
     return glyphs;
 };
 
@@ -13359,7 +13359,7 @@ Font.prototype.nameToGlyph = function(name) {
     if (!glyph) {
         // .notdef
         glyph = this.glyphs.get(0);
-    }
+   }
 
     return glyph;
 };
@@ -13371,7 +13371,7 @@ Font.prototype.nameToGlyph = function(name) {
 Font.prototype.glyphIndexToName = function(gid) {
     if (!this.glyphNames.glyphIndexToName) {
         return '';
-    }
+   }
 
     return this.glyphNames.glyphIndexToName(gid);
 };
@@ -13393,7 +13393,7 @@ Font.prototype.getKerningValue = function(leftGlyph, rightGlyph) {
     var gposKerning = this.position.defaultKerningTables;
     if (gposKerning) {
         return this.position.getKerningValue(gposKerning, leftGlyph, rightGlyph);
-    }
+   }
     // "kern" table
     return this.kerningPairs[leftGlyph + ',' + rightGlyph] || 0;
 };
@@ -13416,8 +13416,8 @@ Font.prototype.defaultRenderOptions = {
          * these 4 features are required to render Arabic text properly
          * and shouldn't be turned off when rendering arabic text.
          */
-        { script: 'arab', tags: ['init', 'medi', 'fina', 'rlig'] },
-        { script: 'latn', tags: ['liga', 'rlig'] }
+        {script: 'arab', tags: ['init', 'medi', 'fina', 'rlig']},
+        {script: 'latn', tags: ['liga', 'rlig']}
     ]
 };
 
@@ -13442,13 +13442,13 @@ Font.prototype.forEachGlyph = function(text, x, y, fontSize, options, callback) 
     if (options.kerning) {
         var script = options.script || this.position.getDefaultScriptName();
         kerningLookups = this.position.getKerningTables(script, options.language);
-    }
+   }
     for (var i = 0; i < glyphs.length; i += 1) {
         var glyph = glyphs[i];
         callback.call(this, glyph, x, y, fontSize, options);
         if (glyph.advanceWidth) {
             x += glyph.advanceWidth * fontScale;
-        }
+       }
 
         if (options.kerning && i < glyphs.length - 1) {
             // We should apply position adjustment lookups in a more generic way.
@@ -13457,14 +13457,14 @@ Font.prototype.forEachGlyph = function(text, x, y, fontSize, options, callback) 
                   this.position.getKerningValue(kerningLookups, glyph.index, glyphs[i + 1].index) :
                   this.getKerningValue(glyph, glyphs[i + 1]);
             x += kerningValue * fontScale;
-        }
+       }
 
         if (options.letterSpacing) {
             x += options.letterSpacing * fontSize;
-        } else if (options.tracking) {
+       } else if (options.tracking) {
             x += (options.tracking / 1000) * fontSize;
-        }
-    }
+       }
+   }
     return x;
 };
 
@@ -13482,7 +13482,7 @@ Font.prototype.getPath = function(text, x, y, fontSize, options) {
     this.forEachGlyph(text, x, y, fontSize, options, function(glyph, gX, gY, gFontSize) {
         var glyphPath = glyph.getPath(gX, gY, gFontSize, options, this);
         fullPath.extend(glyphPath);
-    });
+   });
     return fullPath;
 };
 
@@ -13500,7 +13500,7 @@ Font.prototype.getPaths = function(text, x, y, fontSize, options) {
     this.forEachGlyph(text, x, y, fontSize, options, function(glyph, gX, gY, gFontSize) {
         var glyphPath = glyph.getPath(gX, gY, gFontSize, options, this);
         glyphPaths.push(glyphPath);
-    });
+   });
 
     return glyphPaths;
 };
@@ -13550,7 +13550,7 @@ Font.prototype.draw = function(ctx, text, x, y, fontSize, options) {
 Font.prototype.drawPoints = function(ctx, text, x, y, fontSize, options) {
     this.forEachGlyph(text, x, y, fontSize, options, function(glyph, gX, gY, gFontSize) {
         glyph.drawPoints(ctx, gX, gY, gFontSize);
-    });
+   });
 };
 
 /**
@@ -13568,7 +13568,7 @@ Font.prototype.drawPoints = function(ctx, text, x, y, fontSize, options) {
 Font.prototype.drawMetrics = function(ctx, text, x, y, fontSize, options) {
     this.forEachGlyph(text, x, y, fontSize, options, function(glyph, gX, gY, gFontSize) {
         glyph.drawMetrics(ctx, gX, gY, gFontSize);
-    });
+   });
 };
 
 /**
@@ -13579,7 +13579,7 @@ Font.prototype.getEnglishName = function(name) {
     var translations = this.names[name];
     if (translations) {
         return translations.en;
-    }
+   }
 };
 
 /**
@@ -13589,12 +13589,12 @@ Font.prototype.validate = function() {
     var _this = this;
 
     function assert(predicate, message) {
-    }
+   }
 
     function assertNamePresent(name) {
         var englishName = _this.getEnglishName(name);
         assert(englishName && englishName.trim().length > 0);
-    }
+   }
 
     // Identification information
     assertNamePresent('fontFamily');
@@ -13633,7 +13633,7 @@ Font.prototype.toArrayBuffer = function() {
     var intArray = new Uint8Array(buffer);
     for (var i = 0; i < bytes.length; i++) {
         intArray[i] = bytes[i];
-    }
+   }
 
     return buffer;
 };
@@ -13660,9 +13660,9 @@ Font.prototype.download = function(fileName) {
         var event = document.createEvent('MouseEvents');
         event.initEvent('click', true, false);
         link.dispatchEvent(event);
-    } else {
+   } else {
         console.warn('Font file could not be downloaded. Try using a different browser.');
-    }
+   }
 };
 /**
  * @private
@@ -13719,16 +13719,16 @@ function addName(name, names) {
         var n = parseInt(nameKey);
         if (!n || n < 256) {
             continue;
-        }
+       }
 
         if (JSON.stringify(names[nameKey]) === nameString) {
             return n;
-        }
+       }
 
         if (nameID <= n) {
             nameID = n + 1;
-        }
-    }
+       }
+   }
 
     names[nameID] = name;
     return nameID;
@@ -13771,8 +13771,8 @@ function makeFvarInstance(n, inst, axes, names) {
             name: 'axis_' + n + ' ' + axisTag,
             type: 'FIXED',
             value: inst.coordinates[axisTag] << 16
-        });
-    }
+       });
+   }
 
     return fields;
 }
@@ -13786,7 +13786,7 @@ function parseFvarInstance(data, start, axes, names) {
     inst.coordinates = {};
     for (var i = 0; i < axes.length; ++i) {
         inst.coordinates[axes[i].tag] = p.parseFixed();
-    }
+   }
 
     return inst;
 }
@@ -13805,11 +13805,11 @@ function makeFvarTable(fvar, names) {
 
     for (var i = 0; i < fvar.axes.length; i++) {
         result.fields = result.fields.concat(makeFvarAxis(i, fvar.axes[i], names));
-    }
+   }
 
     for (var j = 0; j < fvar.instances.length; j++) {
         result.fields = result.fields.concat(makeFvarInstance(j, fvar.instances[j], fvar.axes, names));
-    }
+   }
 
     return result;
 }
@@ -13829,18 +13829,18 @@ function parseFvarTable(data, start, names) {
     var axes = [];
     for (var i = 0; i < axisCount; i++) {
         axes.push(parseFvarAxis(data, start + offsetToData + i * axisSize, names));
-    }
+   }
 
     var instances = [];
     var instanceStart = start + offsetToData + axisCount * axisSize;
     for (var j = 0; j < instanceCount; j++) {
         instances.push(parseFvarInstance(data, instanceStart + j * instanceSize, axes, names));
-    }
+   }
 
     return {axes: axes, instances: instances};
 }
 
-var fvar = { make: makeFvarTable, parse: parseFvarTable };
+var fvar = {make: makeFvarTable, parse: parseFvarTable};
 
 // The `GDEF` table contains various glyph properties
 
@@ -13848,7 +13848,7 @@ var attachList = function() {
     return {
         coverage: this.parsePointer(Parser.coverage),
         attachPoints: this.parseList(Parser.pointer(Parser.uShortList))
-    };
+   };
 };
 
 var caretValue = function() {
@@ -13856,13 +13856,13 @@ var caretValue = function() {
     check.argument(format === 1 || format === 2 || format === 3,
         'Unsupported CaretValue table version.');
     if (format === 1) {
-        return { coordinate: this.parseShort() };
-    } else if (format === 2) {
-        return { pointindex: this.parseShort() };
-    } else if (format === 3) {
+        return {coordinate: this.parseShort()};
+   } else if (format === 2) {
+        return {pointindex: this.parseShort()};
+   } else if (format === 3) {
         // Device / Variation Index tables unsupported
-        return { coordinate: this.parseShort() };
-    }
+        return {coordinate: this.parseShort()};
+   }
 };
 
 var ligGlyph = function() {
@@ -13873,7 +13873,7 @@ var ligCaretList = function() {
     return {
         coverage: this.parsePointer(Parser.coverage),
         ligGlyphs: this.parseList(Parser.pointer(ligGlyph))
-    };
+   };
 };
 
 var markGlyphSets = function() {
@@ -13893,13 +13893,13 @@ function parseGDEFTable(data, start) {
         attachList: p.parsePointer(attachList),
         ligCaretList: p.parsePointer(ligCaretList),
         markAttachClassDef: p.parsePointer(Parser.classDef)
-    };
+   };
     if (tableVersion >= 1.2) {
         gdef.markGlyphSets = p.parsePointer(markGlyphSets);
-    }
+   }
     return gdef;
 }
-var gdef = { parse: parseGDEFTable };
+var gdef = {parse: parseGDEFTable};
 
 // The `GPOS` table contains kerning pairs, among other things.
 
@@ -13915,14 +13915,14 @@ subtableParsers$1[1] = function parseLookup1() {
             posFormat: 1,
             coverage: this.parsePointer(Parser.coverage),
             value: this.parseValueRecord()
-        };
-    } else if (posformat === 2) {
+       };
+   } else if (posformat === 2) {
         return {
             posFormat: 2,
             coverage: this.parsePointer(Parser.coverage),
             values: this.parseValueRecordList()
-        };
-    }
+       };
+   }
     check.assert(false, '0x' + start.toString(16) + ': GPOS lookup type 1 format must be 1 or 2.');
 };
 
@@ -13942,14 +13942,14 @@ subtableParsers$1[2] = function parseLookup2() {
             valueFormat1: valueFormat1,
             valueFormat2: valueFormat2,
             pairSets: this.parseList(Parser.pointer(Parser.list(function() {
-                return {        // pairValueRecord
+                return {       // pairValueRecord
                     secondGlyph: this.parseUShort(),
                     value1: this.parseValueRecord(valueFormat1),
                     value2: this.parseValueRecord(valueFormat2)
-                };
-            })))
-        };
-    } else if (posFormat === 2) {
+               };
+           })))
+       };
+   } else if (posFormat === 2) {
         var classDef1 = this.parsePointer(Parser.classDef);
         var classDef2 = this.parsePointer(Parser.classDef);
         var class1Count = this.parseUShort();
@@ -13968,19 +13968,19 @@ subtableParsers$1[2] = function parseLookup2() {
                 return {
                     value1: this.parseValueRecord(valueFormat1),
                     value2: this.parseValueRecord(valueFormat2)
-                };
-            }))
-        };
-    }
+               };
+           }))
+       };
+   }
 };
 
-subtableParsers$1[3] = function parseLookup3() { return { error: 'GPOS Lookup 3 not supported' }; };
-subtableParsers$1[4] = function parseLookup4() { return { error: 'GPOS Lookup 4 not supported' }; };
-subtableParsers$1[5] = function parseLookup5() { return { error: 'GPOS Lookup 5 not supported' }; };
-subtableParsers$1[6] = function parseLookup6() { return { error: 'GPOS Lookup 6 not supported' }; };
-subtableParsers$1[7] = function parseLookup7() { return { error: 'GPOS Lookup 7 not supported' }; };
-subtableParsers$1[8] = function parseLookup8() { return { error: 'GPOS Lookup 8 not supported' }; };
-subtableParsers$1[9] = function parseLookup9() { return { error: 'GPOS Lookup 9 not supported' }; };
+subtableParsers$1[3] = function parseLookup3() {return {error: 'GPOS Lookup 3 not supported'};};
+subtableParsers$1[4] = function parseLookup4() {return {error: 'GPOS Lookup 4 not supported'};};
+subtableParsers$1[5] = function parseLookup5() {return {error: 'GPOS Lookup 5 not supported'};};
+subtableParsers$1[6] = function parseLookup6() {return {error: 'GPOS Lookup 6 not supported'};};
+subtableParsers$1[7] = function parseLookup7() {return {error: 'GPOS Lookup 7 not supported'};};
+subtableParsers$1[8] = function parseLookup8() {return {error: 'GPOS Lookup 8 not supported'};};
+subtableParsers$1[9] = function parseLookup9() {return {error: 'GPOS Lookup 9 not supported'};};
 
 // https://docs.microsoft.com/en-us/typography/opentype/spec/gpos
 function parseGposTable(data, start) {
@@ -13995,16 +13995,16 @@ function parseGposTable(data, start) {
             scripts: p.parseScriptList(),
             features: p.parseFeatureList(),
             lookups: p.parseLookupList(subtableParsers$1)
-        };
-    } else {
+       };
+   } else {
         return {
             version: tableVersion,
             scripts: p.parseScriptList(),
             features: p.parseFeatureList(),
             lookups: p.parseLookupList(subtableParsers$1),
             variations: p.parseFeatureVariationsList()
-        };
-    }
+       };
+   }
 
 }
 
@@ -14021,7 +14021,7 @@ function makeGposTable(gpos) {
     ]);
 }
 
-var gpos = { parse: parseGposTable, make: makeGposTable };
+var gpos = {parse: parseGposTable, make: makeGposTable};
 
 // The `kern` table contains kerning pairs.
 
@@ -14041,7 +14041,7 @@ function parseWindowsKernTable(p) {
         var rightIndex = p.parseUShort();
         var value = p.parseShort();
         pairs[leftIndex + ',' + rightIndex] = value;
-    }
+   }
     return pairs;
 }
 
@@ -14054,7 +14054,7 @@ function parseMacKernTable(p) {
     //check.argument(nTables === 1, 'Only 1 subtable is supported (got ' + nTables + ').');
     if (nTables > 1) {
         console.warn('Only the first kern subtable is supported.');
-    }
+   }
     p.skip('uLong');
     var coverage = p.parseUShort();
     var subtableVersion = coverage & 0xFF;
@@ -14068,8 +14068,8 @@ function parseMacKernTable(p) {
             var rightIndex = p.parseUShort();
             var value = p.parseShort();
             pairs[leftIndex + ',' + rightIndex] = value;
-        }
-    }
+       }
+   }
     return pairs;
 }
 
@@ -14079,14 +14079,14 @@ function parseKernTable(data, start) {
     var tableVersion = p.parseUShort();
     if (tableVersion === 0) {
         return parseWindowsKernTable(p);
-    } else if (tableVersion === 1) {
+   } else if (tableVersion === 1) {
         return parseMacKernTable(p);
-    } else {
+   } else {
         throw new Error('Unsupported kern table version (' + tableVersion + ').');
-    }
+   }
 }
 
-var kern = { parse: parseKernTable };
+var kern = {parse: parseKernTable};
 
 // The `loca` table stores the offsets to the locations of the glyphs in the font.
 
@@ -14107,15 +14107,15 @@ function parseLocaTable(data, start, numGlyphs, shortVersion) {
         if (shortVersion) {
             // The short table version stores the actual offset divided by 2.
             glyphOffset *= 2;
-        }
+       }
 
         glyphOffsets.push(glyphOffset);
-    }
+   }
 
     return glyphOffsets;
 }
 
-var loca = { parse: parseLocaTable };
+var loca = {parse: parseLocaTable};
 
 // opentype.js
 
@@ -14139,14 +14139,14 @@ function loadFromUrl(url, callback) {
     request.onload = function() {
         if (request.response) {
             return callback(null, request.response);
-        } else {
+       } else {
             return callback('Font could not be loaded: ' + request.statusText);
-        }
-    };
+       }
+   };
 
     request.onerror = function () {
         callback('Font could not be loaded');
-    };
+   };
 
     request.send();
 }
@@ -14168,7 +14168,7 @@ function parseOpenTypeTableEntries(data, numTables) {
         var length = parse.getULong(data, p + 12);
         tableEntries.push({tag: tag, checksum: checksum, offset: offset, length: length, compression: false});
         p += 16;
-    }
+   }
 
     return tableEntries;
 }
@@ -14190,14 +14190,14 @@ function parseWOFFTableEntries(data, numTables) {
         var compression = (void 0);
         if (compLength < origLength) {
             compression = 'WOFF';
-        } else {
+       } else {
             compression = false;
-        }
+       }
 
         tableEntries.push({tag: tag, offset: offset, compression: compression,
             compressedLength: compLength, length: origLength});
         p += 20;
-    }
+   }
 
     return tableEntries;
 }
@@ -14221,13 +14221,13 @@ function uncompressTable(data, tableEntry) {
         tinyInflate(inBuffer, outBuffer);
         if (outBuffer.byteLength !== tableEntry.length) {
             throw new Error('Decompression error: ' + tableEntry.tag + ' decompressed length doesn\'t match recorded length');
-        }
+       }
 
         var view = new DataView(outBuffer.buffer, 0);
         return {data: view, offset: 0};
-    } else {
+   } else {
         return {data: data, offset: tableEntry.offset};
-    }
+   }
 }
 
 // Public API ///////////////////////////////////////////////////////////
@@ -14260,25 +14260,25 @@ function parseBuffer(buffer, opt) {
         font.outlinesFormat = 'truetype';
         numTables = parse.getUShort(data, 4);
         tableEntries = parseOpenTypeTableEntries(data, numTables);
-    } else if (signature === 'OTTO') {
+   } else if (signature === 'OTTO') {
         font.outlinesFormat = 'cff';
         numTables = parse.getUShort(data, 4);
         tableEntries = parseOpenTypeTableEntries(data, numTables);
-    } else if (signature === 'wOFF') {
+   } else if (signature === 'wOFF') {
         var flavor = parse.getTag(data, 4);
         if (flavor === String.fromCharCode(0, 1, 0, 0)) {
             font.outlinesFormat = 'truetype';
-        } else if (flavor === 'OTTO') {
+       } else if (flavor === 'OTTO') {
             font.outlinesFormat = 'cff';
-        } else {
+       } else {
             throw new Error('Unsupported OpenType flavor ' + signature);
-        }
+       }
 
         numTables = parse.getUShort(data, 12);
         tableEntries = parseWOFFTableEntries(data, numTables);
-    } else {
+   } else {
         throw new Error('Unsupported OpenType signature ' + signature);
-    }
+   }
 
     var cffTableEntry;
     var fvarTableEntry;
@@ -14389,8 +14389,8 @@ function parseBuffer(buffer, opt) {
             case 'meta':
                 metaTableEntry = tableEntry;
                 break;
-        }
-    }
+       }
+   }
 
     var nameTable = uncompressTable(data, nameTableEntry);
     font.tables.name = _name.parse(nameTable.data, nameTable.offset, ltagTable);
@@ -14402,12 +14402,12 @@ function parseBuffer(buffer, opt) {
         var locaOffsets = loca.parse(locaTable.data, locaTable.offset, font.numGlyphs, shortVersion);
         var glyfTable = uncompressTable(data, glyfTableEntry);
         font.glyphs = glyf.parse(glyfTable.data, glyfTable.offset, locaOffsets, font, opt);
-    } else if (cffTableEntry) {
+   } else if (cffTableEntry) {
         var cffTable = uncompressTable(data, cffTableEntry);
         cff.parse(cffTable.data, cffTable.offset, font, opt);
-    } else {
+   } else {
         throw new Error('Font doesn\'t contain TrueType or CFF outlines.');
-    }
+   }
 
     var hmtxTable = uncompressTable(data, hmtxTableEntry);
     hmtx.parse(font, hmtxTable.data, hmtxTable.offset, font.numberOfHMetrics, font.numGlyphs, font.glyphs, opt);
@@ -14416,36 +14416,36 @@ function parseBuffer(buffer, opt) {
     if (kernTableEntry) {
         var kernTable = uncompressTable(data, kernTableEntry);
         font.kerningPairs = kern.parse(kernTable.data, kernTable.offset);
-    } else {
+   } else {
         font.kerningPairs = {};
-    }
+   }
 
     if (gdefTableEntry) {
         var gdefTable = uncompressTable(data, gdefTableEntry);
         font.tables.gdef = gdef.parse(gdefTable.data, gdefTable.offset);
-    }
+   }
 
     if (gposTableEntry) {
         var gposTable = uncompressTable(data, gposTableEntry);
         font.tables.gpos = gpos.parse(gposTable.data, gposTable.offset);
         font.position.init();
-    }
+   }
 
     if (gsubTableEntry) {
         var gsubTable = uncompressTable(data, gsubTableEntry);
         font.tables.gsub = gsub.parse(gsubTable.data, gsubTable.offset);
-    }
+   }
 
     if (fvarTableEntry) {
         var fvarTable = uncompressTable(data, fvarTableEntry);
         font.tables.fvar = fvar.parse(fvarTable.data, fvarTable.offset, font.names);
-    }
+   }
 
     if (metaTableEntry) {
         var metaTable = uncompressTable(data, metaTableEntry);
         font.tables.meta = meta.parse(metaTable.data, metaTable.offset);
         font.metas = font.tables.meta;
-    }
+   }
 
     return font;
 }
@@ -14468,27 +14468,27 @@ function load(url, callback, opt) {
             if (err) {
                 if (callback) {
                     return callback(err);
-                } else {
+               } else {
                     reject(err);
-                }
-            }
+               }
+           }
             var font;
             try {
                 font = parseBuffer(arrayBuffer, opt);
-            } catch (e) {
+           } catch (e) {
                 if (callback) {
                     return callback(e, null);
-                } else {
+               } else {
                     reject(e);
-                }
-            }
+               }
+           }
             if (callback) {
                 return callback(null, font);
-            } else {
+           } else {
                 resolve(font);
-            }
-        });
-    });
+           }
+       });
+   });
 }
 
 var opentype = /*#__PURE__*/Object.freeze({
@@ -14503,4 +14503,4 @@ var opentype = /*#__PURE__*/Object.freeze({
 });
 
 export default opentype;
-export { BoundingBox, Font, Glyph, Path, parse as _parse, load, parseBuffer as parse };
+export {BoundingBox, Font, Glyph, Path, parse as _parse, load, parseBuffer as parse};

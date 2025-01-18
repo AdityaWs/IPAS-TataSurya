@@ -1,6 +1,6 @@
 const lTextDecoder = typeof TextDecoder === 'undefined' ? (0, module.require)('util').TextDecoder : TextDecoder;
 
-let cachedTextDecoder = new lTextDecoder('utf-8', { ignoreBOM: true, fatal: true });
+let cachedTextDecoder = new lTextDecoder('utf-8', {ignoreBOM: true, fatal: true});
 
 cachedTextDecoder.decode();
 
@@ -8,7 +8,7 @@ let cachegetUint8Memory0 = null;
 function getUint8Memory0() {
     if (cachegetUint8Memory0 === null || cachegetUint8Memory0.buffer !== wasm.memory.buffer) {
         cachegetUint8Memory0 = new Uint8Array(wasm.memory.buffer);
-    }
+   }
     return cachegetUint8Memory0;
 }
 
@@ -31,7 +31,7 @@ function addHeapObject(obj) {
     return idx;
 }
 
-function getObject(idx) { return heap[idx]; }
+function getObject(idx) {return heap[idx];}
 
 function dropObject(idx) {
     if (idx < 36) return;
@@ -49,7 +49,7 @@ let cachegetFloat32Memory0 = null;
 function getFloat32Memory0() {
     if (cachegetFloat32Memory0 === null || cachegetFloat32Memory0.buffer !== wasm.memory.buffer) {
         cachegetFloat32Memory0 = new Float32Array(wasm.memory.buffer);
-    }
+   }
     return cachegetFloat32Memory0;
 }
 
@@ -66,7 +66,7 @@ let cachegetInt32Memory0 = null;
 function getInt32Memory0() {
     if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
         cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
-    }
+   }
     return cachegetInt32Memory0;
 }
 
@@ -95,9 +95,9 @@ export function generateTangents(position, normal, texcoord) {
         var v3 = getArrayF32FromWasm0(r0, r1).slice();
         wasm.__wbindgen_free(r0, r1 * 4);
         return v3;
-    } finally {
+   } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
-    }
+   }
 }
 
 export const __wbindgen_string_new = function(arg0, arg1) {
@@ -121,8 +121,8 @@ export const ready = fetch(wasmDataURI)
     .then((res) => res.arrayBuffer())
     .then((buffer) => WebAssembly.instantiate(buffer, {
         './mikktspace_module_bg.js': {__wbindgen_string_new, __wbindgen_rethrow}
-    }))
+   }))
     .then((result) => {
         wasm = result.instance.exports;
         isReady = true;
-    });
+   });

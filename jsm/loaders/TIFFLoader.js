@@ -8,17 +8,17 @@ import UTIF from '../libs/utif.module.js';
 
 class TIFFLoader extends DataTextureLoader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 	}
 
-	parse( buffer ) {
+	parse(buffer) {
 
-		const ifds = UTIF.decode( buffer );
-		UTIF.decodeImage( buffer, ifds[ 0 ] );
-		const rgba = UTIF.toRGBA8( ifds[ 0 ] );
+		const ifds = UTIF.decode(buffer);
+		UTIF.decodeImage(buffer, ifds[ 0 ]);
+		const rgba = UTIF.toRGBA8(ifds[ 0 ]);
 
 		return {
 			width: ifds[ 0 ].width,
@@ -33,4 +33,4 @@ class TIFFLoader extends DataTextureLoader {
 
 }
 
-export { TIFFLoader };
+export {TIFFLoader};

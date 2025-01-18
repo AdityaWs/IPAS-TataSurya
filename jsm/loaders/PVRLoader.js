@@ -14,16 +14,16 @@ import {
 
 class PVRLoader extends CompressedTextureLoader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 	}
 
-	parse( buffer, loadMipmaps ) {
+	parse(buffer, loadMipmaps) {
 
 		const headerLengthInt = 13;
-		const header = new Uint32Array( buffer, 0, headerLengthInt );
+		const header = new Uint32Array(buffer, 0, headerLengthInt);
 
 		const pvrDatas = {
 			buffer: buffer,
@@ -31,21 +31,21 @@ class PVRLoader extends CompressedTextureLoader {
 			loadMipmaps: loadMipmaps
 		};
 
-		if ( header[ 0 ] === 0x03525650 ) {
+		if (header[ 0 ] === 0x03525650) {
 
 			// PVR v3
 
-			return _parseV3( pvrDatas );
+			return _parseV3(pvrDatas);
 
-		} else if ( header[ 11 ] === 0x21525650 ) {
+		} else if (header[ 11 ] === 0x21525650) {
 
 			// PVR v2
 
-			return _parseV2( pvrDatas );
+			return _parseV2(pvrDatas);
 
 		} else {
 
-			console.error( 'THREE.PVRLoader: Unknown PVR format.' );
+			console.error('THREE.PVRLoader: Unknown PVR format.');
 
 		}
 
@@ -53,7 +53,7 @@ class PVRLoader extends CompressedTextureLoader {
 
 }
 
-function _parseV3( pvrDatas ) {
+function _parseV3(pvrDatas) {
 
 	const header = pvrDatas.header;
 	let bpp, format;
@@ -67,7 +67,7 @@ function _parseV3( pvrDatas ) {
 		numFaces = header[ 10 ],
 		numMipmaps = header[ 11 ];
 
-	switch ( pixelFormat ) {
+	switch (pixelFormat) {
 
 		case 0 : // PVRTC 2bpp RGB
 			bpp = 2;
@@ -90,7 +90,7 @@ function _parseV3( pvrDatas ) {
 			break;
 
 		default :
-			console.error( 'THREE.PVRLoader: Unsupported PVR format:', pixelFormat );
+			console.error('THREE.PVRLoader: Unsupported PVR format:', pixelFormat);
 
 	}
 
@@ -101,13 +101,13 @@ function _parseV3( pvrDatas ) {
 	pvrDatas.height = height;
 	pvrDatas.numSurfaces = numFaces;
 	pvrDatas.numMipmaps = numMipmaps;
-	pvrDatas.isCubemap 	= ( numFaces === 6 );
+	pvrDatas.isCubemap 	= (numFaces === 6);
 
-	return _extract( pvrDatas );
+	return _extract(pvrDatas);
 
 }
 
-function _parseV2( pvrDatas ) {
+function _parseV2(pvrDatas) {
 
 	const header = pvrDatas.header;
 
@@ -135,19 +135,19 @@ function _parseV2( pvrDatas ) {
 	let bpp, format;
 	const _hasAlpha = bitmaskAlpha > 0;
 
-	if ( formatFlags === PVRTC_4 ) {
+	if (formatFlags === PVRTC_4) {
 
 		format = _hasAlpha ? RGBA_PVRTC_4BPPV1_Format : RGB_PVRTC_4BPPV1_Format;
 		bpp = 4;
 
-	} else if ( formatFlags === PVRTC_2 ) {
+	} else if (formatFlags === PVRTC_2) {
 
 		format = _hasAlpha ? RGBA_PVRTC_2BPPV1_Format : RGB_PVRTC_2BPPV1_Format;
 		bpp = 2;
 
 	} else {
 
-		console.error( 'THREE.PVRLoader: Unknown PVR format:', formatFlags );
+		console.error('THREE.PVRLoader: Unknown PVR format:', formatFlags);
 
 	}
 
@@ -161,14 +161,14 @@ function _parseV2( pvrDatas ) {
 
 	// guess cubemap type seems tricky in v2
 	// it's just a pvr containing 6 surface (no explicit cubemap type)
-	pvrDatas.isCubemap 	= ( numSurfs === 6 );
+	pvrDatas.isCubemap 	= (numSurfs === 6);
 
-	return _extract( pvrDatas );
+	return _extract(pvrDatas);
 
 }
 
 
-function _extract( pvrDatas ) {
+function _extract(pvrDatas) {
 
 	const pvr = {
 		mipmaps: [],
@@ -192,7 +192,7 @@ function _extract( pvrDatas ) {
 	const bpp = pvrDatas.bpp,
 		numSurfs = pvrDatas.numSurfaces;
 
-	if ( bpp === 2 ) {
+	if (bpp === 2) {
 
 		blockWidth = 8;
 		blockHeight = 4;
@@ -204,13 +204,13 @@ function _extract( pvrDatas ) {
 
 	}
 
-	blockSize = ( blockWidth * blockHeight ) * bpp / 8;
+	blockSize = (blockWidth * blockHeight) * bpp / 8;
 
 	pvr.mipmaps.length = pvrDatas.numMipmaps * numSurfs;
 
 	let mipLevel = 0;
 
-	while ( mipLevel < pvrDatas.numMipmaps ) {
+	while (mipLevel < pvrDatas.numMipmaps) {
 
 		const sWidth = pvrDatas.width >> mipLevel,
 			sHeight = pvrDatas.height >> mipLevel;
@@ -219,14 +219,14 @@ function _extract( pvrDatas ) {
 		heightBlocks = sHeight / blockHeight;
 
 		// Clamp to minimum number of blocks
-		if ( widthBlocks < 2 ) widthBlocks = 2;
-		if ( heightBlocks < 2 ) heightBlocks = 2;
+		if (widthBlocks < 2) widthBlocks = 2;
+		if (heightBlocks < 2) heightBlocks = 2;
 
 		dataSize = widthBlocks * heightBlocks * blockSize;
 
-		for ( let surfIndex = 0; surfIndex < numSurfs; surfIndex ++ ) {
+		for (let surfIndex = 0; surfIndex < numSurfs; surfIndex ++) {
 
-			const byteArray = new Uint8Array( buffer, dataOffset, dataSize );
+			const byteArray = new Uint8Array(buffer, dataOffset, dataSize);
 
 			const mipmap = {
 				data: byteArray,
@@ -248,4 +248,4 @@ function _extract( pvrDatas ) {
 
 }
 
-export { PVRLoader };
+export {PVRLoader};

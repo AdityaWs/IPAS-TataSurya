@@ -1,203 +1,202 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>Uranus</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link rel="stylesheet" href="./../css/style.css">
-	</head>
-	<body>
+<html lang="id">
+    <head>
+        <title>Uranus</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="./../css/style.css">
+    </head>
+    <body>
 
-		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Uranus</button>
+        <button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Uranus</button>
 
-		<div class="info-blur"></div>
-		<div class="info">
-			<button class="info-close">X</button>
-			<div class="info-list">
-				<h1>Uranus</h1>
+        <div class="info-blur"></div>
+        <div class="info">
+            <button class="info-close">X</button>
+            <div class="info-list">
+                <h1>Uranus</h1>
                 <p>Uranus adalah planet ketujuh dari Matahari dan salah satu dari dua planet es raksasa dalam tata surya, bersama dengan Neptunus. Planet ini dikenal karena warna biru-hijaunya yang khas, yang disebabkan oleh metana dalam atmosfernya. Uranus berada pada jarak rata-rata sekitar 2,9 miliar kilometer dari Matahari dan membutuhkan waktu 84 tahun Bumi untuk menyelesaikan satu orbit. Rotasinya unik karena kemiringan sumbu rotasinya mencapai 98 derajat, sehingga planet ini "mengguling" di sepanjang orbitnya.</p>
                 <p>Ciri-ciri Uranus sangat menarik dan berbeda dari planet lain. Kemiringan ekstrem membuat kutubnya bergantian menghadap langsung ke Matahari selama setengah orbit, menyebabkan musim yang berlangsung hingga 21 tahun. Atmosfer Uranus terdiri dari hidrogen, helium, dan metana, yang menyerap cahaya merah dan memantulkan warna biru-hijau. Uranus memiliki sistem cincin yang tipis dan gelap, tidak seindah cincin Saturnus, serta memiliki 27 bulan yang dinamai dari tokoh-tokoh dalam karya sastra William Shakespeare dan Alexander Pope, seperti Titania, Oberon, dan Miranda.</p>
                 <p>Secara data, Uranus memiliki diameter sekitar 50.724 kilometer, sekitar 4 kali diameter Bumi, dan massanya 14,5 kali lebih besar dari Bumi. Jarak orbitnya dari Matahari adalah sekitar 19,2 AU (Astronomical Unit). Komposisi Uranus sebagian besar terdiri dari es seperti air, amonia, dan metana, dengan inti berbatu kecil di pusatnya. Suhu di atmosfer Uranus sangat dingin, mencapai -224°C, menjadikannya planet terdingin di tata surya.</p>
                 <p>Dalam sejarah, Uranus adalah planet pertama yang ditemukan menggunakan teleskop, oleh William Herschel pada tahun 1781. Namanya diambil dari dewa langit dalam mitologi Yunani, Uranus, yang merupakan kakek dari Zeus (Jupiter). Fakta unik tentang Uranus adalah badai-badai besar sering terjadi di atmosfernya, meskipun terlihat tenang dari kejauhan. Selain itu, medan magnetnya sangat tidak biasa, dengan sumbu magnet yang tidak sejajar dengan sumbu rotasi, menciptakan medan magnet yang asimetris dan berantakan dibandingkan planet lain.</p>
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<script src="./../css/style.js"></script>
+        <script src="./../css/style.js"></script>
 
-		<script type="importmap">
-			{
-				"imports": {
-					"three": "../js/three.webgpu.js",
-					"three/webgpu": "../js/three.webgpu.js",
-					"three/tsl": "../js/three.tsl.js",
-					"three/addons/": "../jsm/"
-				}
-			}
-		</script>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "../js/three.webgpu.js",
+                    "three/webgpu": "../js/three.webgpu.js",
+                    "three/tsl": "../js/three.tsl.js",
+                    "three/addons/": "../jsm/"
+                }
+            }
+        </script>
 
-		<script type="module">
+        <script type="module">
 
-			import * as THREE from 'three';
-			import { step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max } from 'three/tsl';
-			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+            import * as THREE from "three";
+            import {step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max} from "three/tsl";
+            import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+            import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+            import {GUI} from "three/addons/libs/lil-gui.module.min.js";
 
-			let camera, scene, renderer, controls, globe, sphereSkybox, clock;
+            let camera, scene, renderer, controls, globe, sphereSkybox, clock;
 
-			init();
+            init();
 
-			function init() {
+            function init() {
 
-				clock = new THREE.Clock();
+                clock = new THREE.Clock();
 
-				camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 0.1, 100 );
-				camera.position.set( 4.5, 2, 3 );
+                camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera.position.set(4.5, 2, 3);
 
-				scene = new THREE.Scene();
+                scene = new THREE.Scene();
 
-				// sun
+                // sun
 
-				const sun = new THREE.DirectionalLight( '#ffffff', 2 );
-				sun.position.set( 0, 0, 3 );
-				scene.add( sun );
+                const sun = new THREE.DirectionalLight("#ffffff", 2);
+                sun.position.set(0, 0, 3);
+                scene.add(sun);
 
-				// uniforms
+                // uniforms
 
-				const atmosphereDayColor = uniform( color( '#eeeeff' ) );
-				const atmosphereTwilightColor = uniform( color( '#ccccff' ) );
-				const roughnessLow = uniform( 0.25 );
-				const roughnessHigh = uniform( 0.35 );
+                const atmosphereDayColor = uniform(color("#eeeeff"));
+                const atmosphereTwilightColor = uniform(color("#ccccff"));
+                const roughnessLow = uniform(0.25);
+                const roughnessHigh = uniform(0.35);
 
-				// textures
+                // textures
 
-				const textureLoader = new THREE.TextureLoader();
+                const textureLoader = new THREE.TextureLoader();
 
-				const dayTexture = textureLoader.load( './textures/uranus_day_2048.jpg' );
-				dayTexture.colorSpace = THREE.SRGBColorSpace;
-				dayTexture.anisotropy = 8;
+                const dayTexture = textureLoader.load("./textures/uranus_day_2048.jpg");
+                dayTexture.colorSpace = THREE.SRGBColorSpace;
+                dayTexture.anisotropy = 8;
 
-				const nightTexture = textureLoader.load( './textures/uranus_night_2048.jpg' );
-				nightTexture.colorSpace = THREE.SRGBColorSpace;
-				nightTexture.anisotropy = 8;
+                const nightTexture = textureLoader.load("./textures/uranus_night_2048.jpg");
+                nightTexture.colorSpace = THREE.SRGBColorSpace;
+                nightTexture.anisotropy = 8;
 
-				const spaceTexture = textureLoader.load( './../hdri_space.jpg');
-				spaceTexture.colorSpace = THREE.SRGBColorSpace;
-				spaceTexture.anisotropy = 8;
-
-
-				// fresnel
-				const viewDirection = positionWorld.sub( cameraPosition ).normalize();
-				const fresnel = viewDirection.dot( normalWorld ).abs().oneMinus().toVar();
-				// sun orientation
-				const sunOrientation = normalWorld.dot( normalize( sun.position ) ).toVar();
-				// atmosphere color
-				const atmosphereColor = mix( atmosphereTwilightColor, atmosphereDayColor, sunOrientation.smoothstep( - 0.25, 0.75 ) );
+                const spaceTexture = textureLoader.load("./../hdri_space.jpg");
+                spaceTexture.colorSpace = THREE.SRGBColorSpace;
+                spaceTexture.anisotropy = 8;
 
 
-				// globe
+                // fresnel
+                const viewDirection = positionWorld.sub(cameraPosition).normalize();
+                const fresnel = viewDirection.dot(normalWorld).abs().oneMinus().toVar();
+                // sun orientation
+                const sunOrientation = normalWorld.dot(normalize(sun.position)).toVar();
+                // atmosphere color
+                const atmosphereColor = mix(atmosphereTwilightColor, atmosphereDayColor, sunOrientation.smoothstep(- 0.25, 0.75));
 
-				const globeMaterial = new THREE.MeshStandardNodeMaterial();
 
-				globeMaterial.colorNode = mix( texture( dayTexture ), vec3( 1 ), 0.0);
+                // globe
 
-				const night = texture( nightTexture );
-				const dayStrength = sunOrientation.smoothstep( - 0.25, 0.5 );
+                const globeMaterial = new THREE.MeshStandardNodeMaterial();
 
-				const atmosphereDayStrength = sunOrientation.smoothstep( - 0.5, 1 );
-				const atmosphereMix = atmosphereDayStrength.mul( fresnel.pow( 2 ) ).clamp( 0, 0.05 );
+                globeMaterial.colorNode = mix(texture(dayTexture), vec3(1), 0.0);
 
-				let finalOutput = mix( night.rgb, output.rgb, dayStrength );
-				finalOutput = mix( finalOutput, atmosphereColor, atmosphereMix );
+                const night = texture(nightTexture);
+                const dayStrength = sunOrientation.smoothstep(- 0.25, 0.5);
 
-				globeMaterial.outputNode = vec4( finalOutput, output.a );
+                const atmosphereDayStrength = sunOrientation.smoothstep(- 0.5, 1);
+                const atmosphereMix = atmosphereDayStrength.mul(fresnel.pow(2)).clamp(0, 0.05);
 
-				const sphereGeometry = new THREE.SphereGeometry( 1, 64, 64 );
-				globe = new THREE.Mesh( sphereGeometry, globeMaterial );
-				scene.add( globe );
+                let finalOutput = mix(night.rgb, output.rgb, dayStrength);
+                finalOutput = mix(finalOutput, atmosphereColor, atmosphereMix);
+
+                globeMaterial.outputNode = vec4(finalOutput, output.a);
+
+                const sphereGeometry = new THREE.SphereGeometry(1, 64, 64);
+                globe = new THREE.Mesh(sphereGeometry, globeMaterial);
+                scene.add(globe);
 
 
                 // ring
 
                 const loader = new GLTFLoader().setPath("./model/");
 
-                loader.load( './uranus_ring.glb', function ( gltf ) {
-                    scene.add( gltf.scene );
-                }, undefined, function ( error ) {
-                    console.error( error );
-                } );
+                loader.load("./uranus_ring.glb", function (gltf) {
+                    scene.add(gltf.scene);
+                }, undefined, function (error) {
+                    console.error(error);
+                });
 
                 let light = new THREE.AmbientLight(0xffffff);
                 scene.add(light);
 
 
-				// atmosphere
+                // atmosphere
 
-				const atmosphereMaterial = new THREE.MeshBasicNodeMaterial( { side: THREE.BackSide, transparent: true } );
-				let alpha = fresnel.remap( 0.53, 1, 1, 0 );
-				alpha = alpha.mul( sunOrientation.smoothstep( - 0.5, 1 ) );
-				atmosphereMaterial.outputNode = vec4( atmosphereColor, alpha );
+                const atmosphereMaterial = new THREE.MeshBasicNodeMaterial({side: THREE.BackSide, transparent: true});
+                let alpha = fresnel.remap(0.53, 1, 1, 0);
+                alpha = alpha.mul(sunOrientation.smoothstep(- 0.5, 1));
+                atmosphereMaterial.outputNode = vec4(atmosphereColor, alpha);
 
-				const atmosphere = new THREE.Mesh( sphereGeometry, atmosphereMaterial );
-				atmosphere.scale.setScalar( 1.02 );
-				scene.add( atmosphere );
-
-
-				// skybox
-
-				const sphereSkyboxGeometry = new THREE.SphereGeometry(10, 32, 16);
-				const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
-
-				let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
-				sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
-
-				sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
-				scene.add(sphereSkybox)
-				console.log("sphere")
+                const atmosphere = new THREE.Mesh(sphereGeometry, atmosphereMaterial);
+                atmosphere.scale.setScalar(1.02);
+                scene.add(atmosphere);
 
 
-				// renderer
+                // skybox
 
-				renderer = new THREE.WebGPURenderer();
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.setAnimationLoop( animate );
-				document.body.appendChild( renderer.domElement );
+                const sphereSkyboxGeometry = new THREE.SphereGeometry(50, 32, 16);
+                const sphereSkyboxMaterial = new THREE.MeshStandardNodeMaterial({color: 0x000, side: THREE.BackSide, roughness: 1.0});
+
+                let skyboxOutput = mix(texture(spaceTexture).rgb, output.rgb, 0.9);
+                sphereSkyboxMaterial.outputNode = vec4(skyboxOutput, output.a);
+
+                sphereSkybox = new THREE.Mesh(sphereSkyboxGeometry, sphereSkyboxMaterial);
+                scene.add(sphereSkybox)
 
 
-				// controls
+                // renderer
 
-				controls = new OrbitControls( camera, renderer.domElement );
-				controls.enableDamping = true;
-				controls.minDistance = 0.1;
-				controls.maxDistance = 50;
+                renderer = new THREE.WebGPURenderer();
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setAnimationLoop(animate);
+                document.body.appendChild(renderer.domElement);
 
-				window.addEventListener( 'resize', onWindowResize );
 
-			}
+                // controls
 
-			function onWindowResize() {
+                controls = new OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.minDistance = 0.1;
+                controls.maxDistance = 50;
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+                window.addEventListener("resize", onWindowResize);
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+            }
 
-			}
+            function onWindowResize() {
 
-			async function animate() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
 
-				const delta = clock.getDelta();
-				globe.rotation.z += delta * 0.025;
-				sphereSkybox.rotation.z += delta * 0.025;
-			
-				controls.update();
+                renderer.setSize(window.innerWidth, window.innerHeight);
 
-				renderer.render( scene, camera );
+            }
 
-			}
+            async function animate() {
 
-		</script>
+                const delta = clock.getDelta();
+                globe.rotation.z += delta * 0.025;
+                sphereSkybox.rotation.z += delta * 0.025;
+            
+                controls.update();
 
-	</body>
+                renderer.render(scene, camera);
+
+            }
+
+        </script>
+
+    </body>
 </html>

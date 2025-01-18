@@ -13,19 +13,19 @@ import {
 
 export class LUTCubeLoader extends Loader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 		this.type = UnsignedByteType;
 
 	}
 
-	setType( type ) {
+	setType(type) {
 
-		if ( type !== UnsignedByteType && type !== FloatType ) {
+		if (type !== UnsignedByteType && type !== FloatType) {
 
-			throw new Error( 'LUTCubeLoader: Unsupported type' );
+			throw new Error('LUTCubeLoader: Unsupported type');
 
 		}
 
@@ -35,38 +35,38 @@ export class LUTCubeLoader extends Loader {
 
 	}
 
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
 
-		const loader = new FileLoader( this.manager );
-		loader.setPath( this.path );
-		loader.setResponseType( 'text' );
-		loader.load( url, text => {
+		const loader = new FileLoader(this.manager);
+		loader.setPath(this.path);
+		loader.setResponseType('text');
+		loader.load(url, text => {
 
 			try {
 
-				onLoad( this.parse( text ) );
+				onLoad(this.parse(text));
 
-			} catch ( e ) {
+			} catch (e) {
 
-				if ( onError ) {
+				if (onError) {
 
-					onError( e );
+					onError(e);
 
 				} else {
 
-					console.error( e );
+					console.error(e);
 
 				}
 
-				this.manager.itemError( url );
+				this.manager.itemError(url);
 
 			}
 
-		}, onProgress, onError );
+		}, onProgress, onError);
 
 	}
 
-	parse( input ) {
+	parse(input) {
 
 		const regExpTitle = /TITLE +"([^"]*)"/;
 		const regExpSize = /LUT_3D_SIZE +(\d+)/;
@@ -74,54 +74,54 @@ export class LUTCubeLoader extends Loader {
 		const regExpDomainMax = /DOMAIN_MAX +([\d.]+) +([\d.]+) +([\d.]+)/;
 		const regExpDataPoints = /^([\d.e+-]+) +([\d.e+-]+) +([\d.e+-]+) *$/gm;
 
-		let result = regExpTitle.exec( input );
-		const title = ( result !== null ) ? result[ 1 ] : null;
+		let result = regExpTitle.exec(input);
+		const title = (result !== null) ? result[ 1 ] : null;
 
-		result = regExpSize.exec( input );
+		result = regExpSize.exec(input);
 
-		if ( result === null ) {
+		if (result === null) {
 
-			throw new Error( 'LUTCubeLoader: Missing LUT_3D_SIZE information' );
+			throw new Error('LUTCubeLoader: Missing LUT_3D_SIZE information');
 
 		}
 
-		const size = Number( result[ 1 ] );
+		const size = Number(result[ 1 ]);
 		const length = size ** 3 * 4;
-		const data = this.type === UnsignedByteType ? new Uint8Array( length ) : new Float32Array( length );
+		const data = this.type === UnsignedByteType ? new Uint8Array(length) : new Float32Array(length);
 
-		const domainMin = new Vector3( 0, 0, 0 );
-		const domainMax = new Vector3( 1, 1, 1 );
+		const domainMin = new Vector3(0, 0, 0);
+		const domainMax = new Vector3(1, 1, 1);
 
-		result = regExpDomainMin.exec( input );
+		result = regExpDomainMin.exec(input);
 
-		if ( result !== null ) {
+		if (result !== null) {
 
-			domainMin.set( Number( result[ 1 ] ), Number( result[ 2 ] ), Number( result[ 3 ] ) );
-
-		}
-
-		result = regExpDomainMax.exec( input );
-
-		if ( result !== null ) {
-
-			domainMax.set( Number( result[ 1 ] ), Number( result[ 2 ] ), Number( result[ 3 ] ) );
+			domainMin.set(Number(result[ 1 ]), Number(result[ 2 ]), Number(result[ 3 ]));
 
 		}
 
-		if ( domainMin.x > domainMax.x || domainMin.y > domainMax.y || domainMin.z > domainMax.z ) {
+		result = regExpDomainMax.exec(input);
 
-			throw new Error( 'LUTCubeLoader: Invalid input domain' );
+		if (result !== null) {
+
+			domainMax.set(Number(result[ 1 ]), Number(result[ 2 ]), Number(result[ 3 ]));
+
+		}
+
+		if (domainMin.x > domainMax.x || domainMin.y > domainMax.y || domainMin.z > domainMax.z) {
+
+			throw new Error('LUTCubeLoader: Invalid input domain');
 
 		}
 
 		const scale = this.type === UnsignedByteType ? 255 : 1;
 		let i = 0;
 
-		while ( ( result = regExpDataPoints.exec( input ) ) !== null ) {
+		while ((result = regExpDataPoints.exec(input)) !== null) {
 
-			data[ i ++ ] = Number( result[ 1 ] ) * scale;
-			data[ i ++ ] = Number( result[ 2 ] ) * scale;
-			data[ i ++ ] = Number( result[ 3 ] ) * scale;
+			data[ i ++ ] = Number(result[ 1 ]) * scale;
+			data[ i ++ ] = Number(result[ 2 ]) * scale;
+			data[ i ++ ] = Number(result[ 3 ]) * scale;
 			data[ i ++ ] = scale;
 
 		}

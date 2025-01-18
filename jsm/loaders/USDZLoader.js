@@ -20,11 +20,11 @@ import * as fflate from '../libs/fflate.module.js';
 
 class USDAParser {
 
-	parse( text ) {
+	parse(text) {
 
 		const data = {};
 
-		const lines = text.split( '\n' );
+		const lines = text.split('\n');
 
 		let string = null;
 		let target = data;
@@ -33,34 +33,34 @@ class USDAParser {
 
 		// debugger;
 
-		for ( const line of lines ) {
+		for (const line of lines) {
 
-			// console.log( line );
+			// console.log(line);
 
-			if ( line.includes( '=' ) ) {
+			if (line.includes('=')) {
 
-				const assignment = line.split( '=' );
+				const assignment = line.split('=');
 
 				const lhs = assignment[ 0 ].trim();
 				const rhs = assignment[ 1 ].trim();
 
-				if ( rhs.endsWith( '{' ) ) {
+				if (rhs.endsWith('{')) {
 
 					const group = {};
-					stack.push( group );
+					stack.push(group);
 
 					target[ lhs ] = group;
 					target = group;
 
-				} else if ( rhs.endsWith( '(' ) ) {
+				} else if (rhs.endsWith('(')) {
 
 					// see #28631
 
-					const values = rhs.slice( 0, - 1 );
+					const values = rhs.slice(0, - 1);
 					target[ lhs ] = values;
 
 					const meta = {};
-					stack.push( meta );
+					stack.push(meta);
 
 					target = meta;
 
@@ -70,33 +70,33 @@ class USDAParser {
 
 				}
 
-			} else if ( line.endsWith( '{' ) ) {
+			} else if (line.endsWith('{')) {
 
 				const group = target[ string ] || {};
-				stack.push( group );
+				stack.push(group);
 
 				target[ string ] = group;
 				target = group;
 
-			} else if ( line.endsWith( '}' ) ) {
+			} else if (line.endsWith('}')) {
 
 				stack.pop();
 
-				if ( stack.length === 0 ) continue;
+				if (stack.length === 0) continue;
 
 				target = stack[ stack.length - 1 ];
 
-			} else if ( line.endsWith( '(' ) ) {
+			} else if (line.endsWith('(')) {
 
 				const meta = {};
-				stack.push( meta );
+				stack.push(meta);
 
-				string = line.split( '(' )[ 0 ].trim() || string;
+				string = line.split('(')[ 0 ].trim() || string;
 
 				target[ string ] = meta;
 				target = meta;
 
-			} else if ( line.endsWith( ')' ) ) {
+			} else if (line.endsWith(')')) {
 
 				stack.pop();
 
@@ -118,76 +118,76 @@ class USDAParser {
 
 class USDZLoader extends Loader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 	}
 
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
 
 		const scope = this;
 
-		const loader = new FileLoader( scope.manager );
-		loader.setPath( scope.path );
-		loader.setResponseType( 'arraybuffer' );
-		loader.setRequestHeader( scope.requestHeader );
-		loader.setWithCredentials( scope.withCredentials );
-		loader.load( url, function ( text ) {
+		const loader = new FileLoader(scope.manager);
+		loader.setPath(scope.path);
+		loader.setResponseType('arraybuffer');
+		loader.setRequestHeader(scope.requestHeader);
+		loader.setWithCredentials(scope.withCredentials);
+		loader.load(url, function (text) {
 
 			try {
 
-				onLoad( scope.parse( text ) );
+				onLoad(scope.parse(text));
 
-			} catch ( e ) {
+			} catch (e) {
 
-				if ( onError ) {
+				if (onError) {
 
-					onError( e );
+					onError(e);
 
 				} else {
 
-					console.error( e );
+					console.error(e);
 
 				}
 
-				scope.manager.itemError( url );
+				scope.manager.itemError(url);
 
 			}
 
-		}, onProgress, onError );
+		}, onProgress, onError);
 
 	}
 
-	parse( buffer ) {
+	parse(buffer) {
 
 		const parser = new USDAParser();
 
-		function parseAssets( zip ) {
+		function parseAssets(zip) {
 
 			const data = {};
 			const loader = new FileLoader();
-			loader.setResponseType( 'arraybuffer' );
+			loader.setResponseType('arraybuffer');
 
-			for ( const filename in zip ) {
+			for (const filename in zip) {
 
-				if ( filename.endsWith( 'png' ) ) {
+				if (filename.endsWith('png')) {
 
-					const blob = new Blob( [ zip[ filename ] ], { type: { type: 'image/png' } } );
-					data[ filename ] = URL.createObjectURL( blob );
+					const blob = new Blob([ zip[ filename ] ], {type: {type: 'image/png'}});
+					data[ filename ] = URL.createObjectURL(blob);
 
 				}
 
-				if ( filename.endsWith( 'usd' ) || filename.endsWith( 'usda' ) ) {
+				if (filename.endsWith('usd') || filename.endsWith('usda')) {
 
-					if ( isCrateFile( zip[ filename ] ) ) {
+					if (isCrateFile(zip[ filename ])) {
 
-						throw Error( 'THREE.USDZLoader: Crate files (.usdc or binary .usd) are not supported.' );
+						throw Error('THREE.USDZLoader: Crate files (.usdc or binary .usd) are not supported.');
 
 					}
 
-					const text = fflate.strFromU8( zip[ filename ] );
-					data[ filename ] = parser.parse( text );
+					const text = fflate.strFromU8(zip[ filename ]);
+					data[ filename ] = parser.parse(text);
 
 				}
 
@@ -197,37 +197,37 @@ class USDZLoader extends Loader {
 
 		}
 
-		function isCrateFile( buffer ) {
+		function isCrateFile(buffer) {
 
 			// Check if this a crate file. First 7 bytes of a crate file are "PXR-USDC".
-			const fileHeader = buffer.slice( 0, 7 );
-			const crateHeader = new Uint8Array( [ 0x50, 0x58, 0x52, 0x2D, 0x55, 0x53, 0x44, 0x43 ] );
+			const fileHeader = buffer.slice(0, 7);
+			const crateHeader = new Uint8Array([ 0x50, 0x58, 0x52, 0x2D, 0x55, 0x53, 0x44, 0x43 ]);
 
 			// If this is not a crate file, we assume it is a plain USDA file.
-			return fileHeader.every( ( value, index ) => value === crateHeader[ index ] );
+			return fileHeader.every((value, index) => value === crateHeader[ index ]);
 
 		}
 
-		function findUSD( zip ) {
+		function findUSD(zip) {
 
-			if ( zip.length < 1 ) return undefined;
+			if (zip.length < 1) return undefined;
 
-			const firstFileName = Object.keys( zip )[ 0 ];
+			const firstFileName = Object.keys(zip)[ 0 ];
 			let isCrate = false;
 
 			// As per the USD specification, the first entry in the zip archive is used as the main file ("UsdStage").
 			// ASCII files can end in either .usda or .usd.
 			// See https://openusd.org/release/spec_usdz.html#layout
-			if ( firstFileName.endsWith( 'usda' ) ) return zip[ firstFileName ];
+			if (firstFileName.endsWith('usda')) return zip[ firstFileName ];
 
-			if ( firstFileName.endsWith( 'usdc' ) ) {
+			if (firstFileName.endsWith('usdc')) {
 
 				isCrate = true;
 
-			} else if ( firstFileName.endsWith( 'usd' ) ) {
+			} else if (firstFileName.endsWith('usd')) {
 
 				// If this is not a crate file, we assume it is a plain USDA file.
-				if ( ! isCrateFile( zip[ firstFileName ] ) ) {
+				if (! isCrateFile(zip[ firstFileName ])) {
 
 					return zip[ firstFileName ];
 
@@ -239,59 +239,59 @@ class USDZLoader extends Loader {
 
 			}
 
-			if ( isCrate ) {
+			if (isCrate) {
 
-				throw Error( 'THREE.USDZLoader: Crate files (.usdc or binary .usd) are not supported.' );
+				throw Error('THREE.USDZLoader: Crate files (.usdc or binary .usd) are not supported.');
 
 			}
 
 		}
 
-		const zip = fflate.unzipSync( new Uint8Array( buffer ) );
+		const zip = fflate.unzipSync(new Uint8Array(buffer));
 
-		// console.log( zip );
+		// console.log(zip);
 
-		const assets = parseAssets( zip );
+		const assets = parseAssets(zip);
 
-		// console.log( assets )
+		// console.log(assets)
 
-		const file = findUSD( zip );
+		const file = findUSD(zip);
 
 		// Parse file
 
-		const text = fflate.strFromU8( file );
-		const root = parser.parse( text );
+		const text = fflate.strFromU8(file);
+		const root = parser.parse(text);
 
 		// Build scene
 
-		function findMeshGeometry( data ) {
+		function findMeshGeometry(data) {
 
-			if ( ! data ) return undefined;
+			if (! data) return undefined;
 
-			if ( 'prepend references' in data ) {
+			if ('prepend references' in data) {
 
 				const reference = data[ 'prepend references' ];
-				const parts = reference.split( '@' );
-				const path = parts[ 1 ].replace( /^.\//, '' );
-				const id = parts[ 2 ].replace( /^<\//, '' ).replace( />$/, '' );
+				const parts = reference.split('@');
+				const path = parts[ 1 ].replace(/^.\//, '');
+				const id = parts[ 2 ].replace(/^<\//, '').replace(/>$/, '');
 
-				return findGeometry( assets[ path ], id );
+				return findGeometry(assets[ path ], id);
 
 			}
 
-			return findGeometry( data );
+			return findGeometry(data);
 
 		}
 
-		function findGeometry( data, id ) {
+		function findGeometry(data, id) {
 
-			if ( ! data ) return undefined;
+			if (! data) return undefined;
 
-			if ( id !== undefined ) {
+			if (id !== undefined) {
 
 				const def = `def Mesh "${id}"`;
 
-				if ( def in data ) {
+				if (def in data) {
 
 					return data[ def ];
 
@@ -299,22 +299,22 @@ class USDZLoader extends Loader {
 
 			}
 
-			for ( const name in data ) {
+			for (const name in data) {
 
 				const object = data[ name ];
 
-				if ( name.startsWith( 'def Mesh' ) ) {
+				if (name.startsWith('def Mesh')) {
 
 					return object;
 
 				}
 
 
-				if ( typeof object === 'object' ) {
+				if (typeof object === 'object') {
 
-					const geometry = findGeometry( object );
+					const geometry = findGeometry(object);
 
-					if ( geometry ) return geometry;
+					if (geometry) return geometry;
 
 				}
 
@@ -322,9 +322,9 @@ class USDZLoader extends Loader {
 
 		}
 
-		function buildGeometry( data ) {
+		function buildGeometry(data) {
 
-			if ( ! data ) return undefined;
+			if (! data) return undefined;
 
 			const geometry = new BufferGeometry();
 			let indices = null;
@@ -335,91 +335,91 @@ class USDZLoader extends Loader {
 
 			// index
 
-			if ( 'int[] faceVertexIndices' in data ) {
+			if ('int[] faceVertexIndices' in data) {
 
-				indices = JSON.parse( data[ 'int[] faceVertexIndices' ] );
+				indices = JSON.parse(data[ 'int[] faceVertexIndices' ]);
 
 			}
 
 			// face count
 
-			if ( 'int[] faceVertexCounts' in data ) {
+			if ('int[] faceVertexCounts' in data) {
 
-				counts = JSON.parse( data[ 'int[] faceVertexCounts' ] );
-				indices = toTriangleIndices( indices, counts );
+				counts = JSON.parse(data[ 'int[] faceVertexCounts' ]);
+				indices = toTriangleIndices(indices, counts);
 
 			}
 
 			// position
 
-			if ( 'point3f[] points' in data ) {
+			if ('point3f[] points' in data) {
 
-				const positions = JSON.parse( data[ 'point3f[] points' ].replace( /[()]*/g, '' ) );
+				const positions = JSON.parse(data[ 'point3f[] points' ].replace(/[()]*/g, ''));
 				positionsLength = positions.length;
-				let attribute = new BufferAttribute( new Float32Array( positions ), 3 );
+				let attribute = new BufferAttribute(new Float32Array(positions), 3);
 
-				if ( indices !== null ) attribute = toFlatBufferAttribute( attribute, indices );
+				if (indices !== null) attribute = toFlatBufferAttribute(attribute, indices);
 
-				geometry.setAttribute( 'position', attribute );
+				geometry.setAttribute('position', attribute);
 
 			}
 
 			// uv
 
-			if ( 'float2[] primvars:st' in data ) {
+			if ('float2[] primvars:st' in data) {
 
 				data[ 'texCoord2f[] primvars:st' ] = data[ 'float2[] primvars:st' ];
 
 			}
 
-			if ( 'texCoord2f[] primvars:st' in data ) {
+			if ('texCoord2f[] primvars:st' in data) {
 
-				uvs = JSON.parse( data[ 'texCoord2f[] primvars:st' ].replace( /[()]*/g, '' ) );
-				let attribute = new BufferAttribute( new Float32Array( uvs ), 2 );
+				uvs = JSON.parse(data[ 'texCoord2f[] primvars:st' ].replace(/[()]*/g, ''));
+				let attribute = new BufferAttribute(new Float32Array(uvs), 2);
 
-				if ( indices !== null ) attribute = toFlatBufferAttribute( attribute, indices );
+				if (indices !== null) attribute = toFlatBufferAttribute(attribute, indices);
 
-				geometry.setAttribute( 'uv', attribute );
+				geometry.setAttribute('uv', attribute);
 
 			}
 
-			if ( 'int[] primvars:st:indices' in data && uvs !== null ) {
+			if ('int[] primvars:st:indices' in data && uvs !== null) {
 
 				// custom uv index, overwrite uvs with new data
 
-				const attribute = new BufferAttribute( new Float32Array( uvs ), 2 );
-				let indices = JSON.parse( data[ 'int[] primvars:st:indices' ] );
-				indices = toTriangleIndices( indices, counts );
-				geometry.setAttribute( 'uv', toFlatBufferAttribute( attribute, indices ) );
+				const attribute = new BufferAttribute(new Float32Array(uvs), 2);
+				let indices = JSON.parse(data[ 'int[] primvars:st:indices' ]);
+				indices = toTriangleIndices(indices, counts);
+				geometry.setAttribute('uv', toFlatBufferAttribute(attribute, indices));
 
 			}
 
 			// normal
 
-			if ( 'normal3f[] normals' in data ) {
+			if ('normal3f[] normals' in data) {
 
-				const normals = JSON.parse( data[ 'normal3f[] normals' ].replace( /[()]*/g, '' ) );
-				let attribute = new BufferAttribute( new Float32Array( normals ), 3 );
+				const normals = JSON.parse(data[ 'normal3f[] normals' ].replace(/[()]*/g, ''));
+				let attribute = new BufferAttribute(new Float32Array(normals), 3);
 
 				// normals require a special treatment in USD
 
-				if ( normals.length === positionsLength ) {
+				if (normals.length === positionsLength) {
 
 					// raw normal and position data have equal length (like produced by USDZExporter)
 
-					if ( indices !== null ) attribute = toFlatBufferAttribute( attribute, indices );
+					if (indices !== null) attribute = toFlatBufferAttribute(attribute, indices);
 
 				} else {
 
 					// unequal length, normals are independent of faceVertexIndices
 
-					let indices = Array.from( Array( normals.length / 3 ).keys() ); // [ 0, 1, 2, 3 ... ]
-					indices = toTriangleIndices( indices, counts );
-					attribute = toFlatBufferAttribute( attribute, indices );
+					let indices = Array.from(Array(normals.length / 3).keys()); // [ 0, 1, 2, 3 ... ]
+					indices = toTriangleIndices(indices, counts);
+					attribute = toFlatBufferAttribute(attribute, indices);
 
 				}
 
-				geometry.setAttribute( 'normal', attribute );
+				geometry.setAttribute('normal', attribute);
 
 			} else {
 
@@ -433,37 +433,37 @@ class USDZLoader extends Loader {
 
 		}
 
-		function toTriangleIndices( rawIndices, counts ) {
+		function toTriangleIndices(rawIndices, counts) {
 
 			const indices = [];
 
-			for ( let i = 0; i < counts.length; i ++ ) {
+			for (let i = 0; i < counts.length; i ++) {
 
 				const count = counts[ i ];
 
 				const stride = i * count;
 
-				if ( count === 3 ) {
+				if (count === 3) {
 
 					const a = rawIndices[ stride + 0 ];
 					const b = rawIndices[ stride + 1 ];
 					const c = rawIndices[ stride + 2 ];
 
-					indices.push( a, b, c );
+					indices.push(a, b, c);
 
-				} else if ( count === 4 ) {
+				} else if (count === 4) {
 
 					const a = rawIndices[ stride + 0 ];
 					const b = rawIndices[ stride + 1 ];
 					const c = rawIndices[ stride + 2 ];
 					const d = rawIndices[ stride + 3 ];
 
-					indices.push( a, b, c );
-					indices.push( a, c, d );
+					indices.push(a, b, c);
+					indices.push(a, c, d);
 
 				} else {
 
-					console.warn( 'THREE.USDZLoader: Face vertex count of %s unsupported.', count );
+					console.warn('THREE.USDZLoader: Face vertex count of %s unsupported.', count);
 
 				}
 
@@ -473,20 +473,20 @@ class USDZLoader extends Loader {
 
 		}
 
-		function toFlatBufferAttribute( attribute, indices ) {
+		function toFlatBufferAttribute(attribute, indices) {
 
 			const array = attribute.array;
 			const itemSize = attribute.itemSize;
 
-			const array2 = new array.constructor( indices.length * itemSize );
+			const array2 = new array.constructor(indices.length * itemSize);
 
 			let index = 0, index2 = 0;
 
-			for ( let i = 0, l = indices.length; i < l; i ++ ) {
+			for (let i = 0, l = indices.length; i < l; i ++) {
 
 				index = indices[ i ] * itemSize;
 
-				for ( let j = 0; j < itemSize; j ++ ) {
+				for (let j = 0; j < itemSize; j ++) {
 
 					array2[ index2 ++ ] = array[ index ++ ];
 
@@ -494,45 +494,45 @@ class USDZLoader extends Loader {
 
 			}
 
-			return new BufferAttribute( array2, itemSize );
+			return new BufferAttribute(array2, itemSize);
 
 		}
 
-		function findMeshMaterial( data ) {
+		function findMeshMaterial(data) {
 
-			if ( ! data ) return undefined;
+			if (! data) return undefined;
 
-			if ( 'rel material:binding' in data ) {
+			if ('rel material:binding' in data) {
 
 				const reference = data[ 'rel material:binding' ];
-				const id = reference.replace( /^<\//, '' ).replace( />$/, '' );
-				const parts = id.split( '/' );
+				const id = reference.replace(/^<\//, '').replace(/>$/, '');
+				const parts = id.split('/');
 
-				return findMaterial( root, ` "${ parts[ 1 ] }"` );
+				return findMaterial(root, ` "${parts[ 1 ]}"`);
 
 			}
 
-			return findMaterial( data );
+			return findMaterial(data);
 
 		}
 
-		function findMaterial( data, id = '' ) {
+		function findMaterial(data, id = '') {
 
-			for ( const name in data ) {
+			for (const name in data) {
 
 				const object = data[ name ];
 
-				if ( name.startsWith( 'def Material' + id ) ) {
+				if (name.startsWith('def Material' + id)) {
 
 					return object;
 
 				}
 
-				if ( typeof object === 'object' ) {
+				if (typeof object === 'object') {
 
-					const material = findMaterial( object, id );
+					const material = findMaterial(object, id);
 
-					if ( material ) return material;
+					if (material) return material;
 
 				}
 
@@ -540,202 +540,202 @@ class USDZLoader extends Loader {
 
 		}
 
-		function setTextureParams( map, data_value ) {
+		function setTextureParams(map, data_value) {
 
 			// rotation, scale and translation
 
-			if ( data_value[ 'float inputs:rotation' ] ) {
+			if (data_value[ 'float inputs:rotation' ]) {
 
-				map.rotation = parseFloat( data_value[ 'float inputs:rotation' ] );
-
-			}
-
-			if ( data_value[ 'float2 inputs:scale' ] ) {
-
-				map.repeat = new Vector2().fromArray( JSON.parse( '[' + data_value[ 'float2 inputs:scale' ].replace( /[()]*/g, '' ) + ']' ) );
+				map.rotation = parseFloat(data_value[ 'float inputs:rotation' ]);
 
 			}
 
-			if ( data_value[ 'float2 inputs:translation' ] ) {
+			if (data_value[ 'float2 inputs:scale' ]) {
 
-				map.offset = new Vector2().fromArray( JSON.parse( '[' + data_value[ 'float2 inputs:translation' ].replace( /[()]*/g, '' ) + ']' ) );
+				map.repeat = new Vector2().fromArray(JSON.parse('[' + data_value[ 'float2 inputs:scale' ].replace(/[()]*/g, '') + ']'));
+
+			}
+
+			if (data_value[ 'float2 inputs:translation' ]) {
+
+				map.offset = new Vector2().fromArray(JSON.parse('[' + data_value[ 'float2 inputs:translation' ].replace(/[()]*/g, '') + ']'));
 
 			}
 
 		}
 
-		function buildMaterial( data ) {
+		function buildMaterial(data) {
 
 			const material = new MeshPhysicalMaterial();
 
-			if ( data !== undefined ) {
+			if (data !== undefined) {
 
 				const surfaceConnection = data[ 'token outputs:surface.connect' ];
-				const surfaceName = /(\w+).output/.exec( surfaceConnection )[ 1 ];
+				const surfaceName = /(\w+).output/.exec(surfaceConnection)[ 1 ];
 				const surface = data[ `def Shader "${surfaceName}"` ];
 
-				if ( surface !== undefined ) {
+				if (surface !== undefined) {
 
-					if ( 'color3f inputs:diffuseColor.connect' in surface ) {
+					if ('color3f inputs:diffuseColor.connect' in surface) {
 
 						const path = surface[ 'color3f inputs:diffuseColor.connect' ];
-						const sampler = findTexture( root, /(\w+).output/.exec( path )[ 1 ] );
+						const sampler = findTexture(root, /(\w+).output/.exec(path)[ 1 ]);
 
-						material.map = buildTexture( sampler );
+						material.map = buildTexture(sampler);
 						material.map.colorSpace = SRGBColorSpace;
 
-						if ( 'def Shader "Transform2d_diffuse"' in data ) {
+						if ('def Shader "Transform2d_diffuse"' in data) {
 
-							setTextureParams( material.map, data[ 'def Shader "Transform2d_diffuse"' ] );
+							setTextureParams(material.map, data[ 'def Shader "Transform2d_diffuse"' ]);
 
 						}
 
-					} else if ( 'color3f inputs:diffuseColor' in surface ) {
+					} else if ('color3f inputs:diffuseColor' in surface) {
 
-						const color = surface[ 'color3f inputs:diffuseColor' ].replace( /[()]*/g, '' );
-						material.color.fromArray( JSON.parse( '[' + color + ']' ) );
+						const color = surface[ 'color3f inputs:diffuseColor' ].replace(/[()]*/g, '');
+						material.color.fromArray(JSON.parse('[' + color + ']'));
 
 					}
 
-					if ( 'color3f inputs:emissiveColor.connect' in surface ) {
+					if ('color3f inputs:emissiveColor.connect' in surface) {
 
 						const path = surface[ 'color3f inputs:emissiveColor.connect' ];
-						const sampler = findTexture( root, /(\w+).output/.exec( path )[ 1 ] );
+						const sampler = findTexture(root, /(\w+).output/.exec(path)[ 1 ]);
 
-						material.emissiveMap = buildTexture( sampler );
+						material.emissiveMap = buildTexture(sampler);
 						material.emissiveMap.colorSpace = SRGBColorSpace;
-						material.emissive.set( 0xffffff );
+						material.emissive.set(0xffffff);
 
-						if ( 'def Shader "Transform2d_emissive"' in data ) {
+						if ('def Shader "Transform2d_emissive"' in data) {
 
-							setTextureParams( material.emissiveMap, data[ 'def Shader "Transform2d_emissive"' ] );
+							setTextureParams(material.emissiveMap, data[ 'def Shader "Transform2d_emissive"' ]);
 
 						}
 
-					} else if ( 'color3f inputs:emissiveColor' in surface ) {
+					} else if ('color3f inputs:emissiveColor' in surface) {
 
-						const color = surface[ 'color3f inputs:emissiveColor' ].replace( /[()]*/g, '' );
-						material.emissive.fromArray( JSON.parse( '[' + color + ']' ) );
+						const color = surface[ 'color3f inputs:emissiveColor' ].replace(/[()]*/g, '');
+						material.emissive.fromArray(JSON.parse('[' + color + ']'));
 
 					}
 
-					if ( 'normal3f inputs:normal.connect' in surface ) {
+					if ('normal3f inputs:normal.connect' in surface) {
 
 						const path = surface[ 'normal3f inputs:normal.connect' ];
-						const sampler = findTexture( root, /(\w+).output/.exec( path )[ 1 ] );
+						const sampler = findTexture(root, /(\w+).output/.exec(path)[ 1 ]);
 
-						material.normalMap = buildTexture( sampler );
+						material.normalMap = buildTexture(sampler);
 						material.normalMap.colorSpace = NoColorSpace;
 
-						if ( 'def Shader "Transform2d_normal"' in data ) {
+						if ('def Shader "Transform2d_normal"' in data) {
 
-							setTextureParams( material.normalMap, data[ 'def Shader "Transform2d_normal"' ] );
+							setTextureParams(material.normalMap, data[ 'def Shader "Transform2d_normal"' ]);
 
 						}
 
 					}
 
-					if ( 'float inputs:roughness.connect' in surface ) {
+					if ('float inputs:roughness.connect' in surface) {
 
 						const path = surface[ 'float inputs:roughness.connect' ];
-						const sampler = findTexture( root, /(\w+).output/.exec( path )[ 1 ] );
+						const sampler = findTexture(root, /(\w+).output/.exec(path)[ 1 ]);
 
 						material.roughness = 1.0;
-						material.roughnessMap = buildTexture( sampler );
+						material.roughnessMap = buildTexture(sampler);
 						material.roughnessMap.colorSpace = NoColorSpace;
 
-						if ( 'def Shader "Transform2d_roughness"' in data ) {
+						if ('def Shader "Transform2d_roughness"' in data) {
 
-							setTextureParams( material.roughnessMap, data[ 'def Shader "Transform2d_roughness"' ] );
+							setTextureParams(material.roughnessMap, data[ 'def Shader "Transform2d_roughness"' ]);
 
 						}
 
-					} else if ( 'float inputs:roughness' in surface ) {
+					} else if ('float inputs:roughness' in surface) {
 
-						material.roughness = parseFloat( surface[ 'float inputs:roughness' ] );
+						material.roughness = parseFloat(surface[ 'float inputs:roughness' ]);
 
 					}
 
-					if ( 'float inputs:metallic.connect' in surface ) {
+					if ('float inputs:metallic.connect' in surface) {
 
 						const path = surface[ 'float inputs:metallic.connect' ];
-						const sampler = findTexture( root, /(\w+).output/.exec( path )[ 1 ] );
+						const sampler = findTexture(root, /(\w+).output/.exec(path)[ 1 ]);
 
 						material.metalness = 1.0;
-						material.metalnessMap = buildTexture( sampler );
+						material.metalnessMap = buildTexture(sampler);
 						material.metalnessMap.colorSpace = NoColorSpace;
 
-						if ( 'def Shader "Transform2d_metallic"' in data ) {
+						if ('def Shader "Transform2d_metallic"' in data) {
 
-							setTextureParams( material.metalnessMap, data[ 'def Shader "Transform2d_metallic"' ] );
+							setTextureParams(material.metalnessMap, data[ 'def Shader "Transform2d_metallic"' ]);
 
 						}
 
-					} else if ( 'float inputs:metallic' in surface ) {
+					} else if ('float inputs:metallic' in surface) {
 
-						material.metalness = parseFloat( surface[ 'float inputs:metallic' ] );
+						material.metalness = parseFloat(surface[ 'float inputs:metallic' ]);
 
 					}
 
-					if ( 'float inputs:clearcoat.connect' in surface ) {
+					if ('float inputs:clearcoat.connect' in surface) {
 
 						const path = surface[ 'float inputs:clearcoat.connect' ];
-						const sampler = findTexture( root, /(\w+).output/.exec( path )[ 1 ] );
+						const sampler = findTexture(root, /(\w+).output/.exec(path)[ 1 ]);
 
 						material.clearcoat = 1.0;
-						material.clearcoatMap = buildTexture( sampler );
+						material.clearcoatMap = buildTexture(sampler);
 						material.clearcoatMap.colorSpace = NoColorSpace;
 
-						if ( 'def Shader "Transform2d_clearcoat"' in data ) {
+						if ('def Shader "Transform2d_clearcoat"' in data) {
 
-							setTextureParams( material.clearcoatMap, data[ 'def Shader "Transform2d_clearcoat"' ] );
+							setTextureParams(material.clearcoatMap, data[ 'def Shader "Transform2d_clearcoat"' ]);
 
 						}
 
-					} else if ( 'float inputs:clearcoat' in surface ) {
+					} else if ('float inputs:clearcoat' in surface) {
 
-						material.clearcoat = parseFloat( surface[ 'float inputs:clearcoat' ] );
+						material.clearcoat = parseFloat(surface[ 'float inputs:clearcoat' ]);
 
 					}
 
-					if ( 'float inputs:clearcoatRoughness.connect' in surface ) {
+					if ('float inputs:clearcoatRoughness.connect' in surface) {
 
 						const path = surface[ 'float inputs:clearcoatRoughness.connect' ];
-						const sampler = findTexture( root, /(\w+).output/.exec( path )[ 1 ] );
+						const sampler = findTexture(root, /(\w+).output/.exec(path)[ 1 ]);
 
 						material.clearcoatRoughness = 1.0;
-						material.clearcoatRoughnessMap = buildTexture( sampler );
+						material.clearcoatRoughnessMap = buildTexture(sampler);
 						material.clearcoatRoughnessMap.colorSpace = NoColorSpace;
 
-						if ( 'def Shader "Transform2d_clearcoatRoughness"' in data ) {
+						if ('def Shader "Transform2d_clearcoatRoughness"' in data) {
 
-							setTextureParams( material.clearcoatRoughnessMap, data[ 'def Shader "Transform2d_clearcoatRoughness"' ] );
+							setTextureParams(material.clearcoatRoughnessMap, data[ 'def Shader "Transform2d_clearcoatRoughness"' ]);
 
 						}
 
-					} else if ( 'float inputs:clearcoatRoughness' in surface ) {
+					} else if ('float inputs:clearcoatRoughness' in surface) {
 
-						material.clearcoatRoughness = parseFloat( surface[ 'float inputs:clearcoatRoughness' ] );
-
-					}
-
-					if ( 'float inputs:ior' in surface ) {
-
-						material.ior = parseFloat( surface[ 'float inputs:ior' ] );
+						material.clearcoatRoughness = parseFloat(surface[ 'float inputs:clearcoatRoughness' ]);
 
 					}
 
-					if ( 'float inputs:occlusion.connect' in surface ) {
+					if ('float inputs:ior' in surface) {
+
+						material.ior = parseFloat(surface[ 'float inputs:ior' ]);
+
+					}
+
+					if ('float inputs:occlusion.connect' in surface) {
 
 						const path = surface[ 'float inputs:occlusion.connect' ];
-						const sampler = findTexture( root, /(\w+).output/.exec( path )[ 1 ] );
+						const sampler = findTexture(root, /(\w+).output/.exec(path)[ 1 ]);
 
-						material.aoMap = buildTexture( sampler );
+						material.aoMap = buildTexture(sampler);
 						material.aoMap.colorSpace = NoColorSpace;
 
-						if ( 'def Shader "Transform2d_occlusion"' in data ) {
+						if ('def Shader "Transform2d_occlusion"' in data) {
 
-							setTextureParams( material.aoMap, data[ 'def Shader "Transform2d_occlusion"' ] );
+							setTextureParams(material.aoMap, data[ 'def Shader "Transform2d_occlusion"' ]);
 
 						}
 
@@ -749,23 +749,23 @@ class USDZLoader extends Loader {
 
 		}
 
-		function findTexture( data, id ) {
+		function findTexture(data, id) {
 
-			for ( const name in data ) {
+			for (const name in data) {
 
 				const object = data[ name ];
 
-				if ( name.startsWith( `def Shader "${ id }"` ) ) {
+				if (name.startsWith(`def Shader "${id}"`)) {
 
 					return object;
 
 				}
 
-				if ( typeof object === 'object' ) {
+				if (typeof object === 'object') {
 
-					const texture = findTexture( object, id );
+					const texture = findTexture(object, id);
 
-					if ( texture ) return texture;
+					if (texture) return texture;
 
 				}
 
@@ -773,15 +773,15 @@ class USDZLoader extends Loader {
 
 		}
 
-		function buildTexture( data ) {
+		function buildTexture(data) {
 
-			if ( 'asset inputs:file' in data ) {
+			if ('asset inputs:file' in data) {
 
-				const path = data[ 'asset inputs:file' ].replace( /@*/g, '' ).trim();
+				const path = data[ 'asset inputs:file' ].replace(/@*/g, '').trim();
 
 				const loader = new TextureLoader();
 
-				const texture = loader.load( assets[ path ] );
+				const texture = loader.load(assets[ path ]);
 
 				const map = {
 					'"clamp"': ClampToEdgeWrapping,
@@ -789,13 +789,13 @@ class USDZLoader extends Loader {
 					'"repeat"': RepeatWrapping
 				};
 
-				if ( 'token inputs:wrapS' in data ) {
+				if ('token inputs:wrapS' in data) {
 
 					texture.wrapS = map[ data[ 'token inputs:wrapS' ] ];
 
 				}
 
-				if ( 'token inputs:wrapT' in data ) {
+				if ('token inputs:wrapT' in data) {
 
 					texture.wrapT = map[ data[ 'token inputs:wrapT' ] ];
 
@@ -809,19 +809,19 @@ class USDZLoader extends Loader {
 
 		}
 
-		function buildObject( data ) {
+		function buildObject(data) {
 
-			const geometry = buildGeometry( findMeshGeometry( data ) );
-			const material = buildMaterial( findMeshMaterial( data ) );
+			const geometry = buildGeometry(findMeshGeometry(data));
+			const material = buildMaterial(findMeshMaterial(data));
 
-			const mesh = geometry ? new Mesh( geometry, material ) : new Object3D();
+			const mesh = geometry ? new Mesh(geometry, material) : new Object3D();
 
-			if ( 'matrix4d xformOp:transform' in data ) {
+			if ('matrix4d xformOp:transform' in data) {
 
-				const array = JSON.parse( '[' + data[ 'matrix4d xformOp:transform' ].replace( /[()]*/g, '' ) + ']' );
+				const array = JSON.parse('[' + data[ 'matrix4d xformOp:transform' ].replace(/[()]*/g, '') + ']');
 
-				mesh.matrix.fromArray( array );
-				mesh.matrix.decompose( mesh.position, mesh.quaternion, mesh.scale );
+				mesh.matrix.fromArray(array);
+				mesh.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
 
 			}
 
@@ -829,27 +829,27 @@ class USDZLoader extends Loader {
 
 		}
 
-		function buildHierarchy( data, group ) {
+		function buildHierarchy(data, group) {
 
-			for ( const name in data ) {
+			for (const name in data) {
 
-				if ( name.startsWith( 'def Scope' ) ) {
+				if (name.startsWith('def Scope')) {
 
-					buildHierarchy( data[ name ], group );
+					buildHierarchy(data[ name ], group);
 
-				} else if ( name.startsWith( 'def Xform' ) ) {
+				} else if (name.startsWith('def Xform')) {
 
-					const mesh = buildObject( data[ name ] );
+					const mesh = buildObject(data[ name ]);
 
-					if ( /def Xform "(\w+)"/.test( name ) ) {
+					if (/def Xform "(\w+)"/.test(name)) {
 
-						mesh.name = /def Xform "(\w+)"/.exec( name )[ 1 ];
+						mesh.name = /def Xform "(\w+)"/.exec(name)[ 1 ];
 
 					}
 
-					group.add( mesh );
+					group.add(mesh);
 
-					buildHierarchy( data[ name ], mesh );
+					buildHierarchy(data[ name ], mesh);
 
 				}
 
@@ -859,7 +859,7 @@ class USDZLoader extends Loader {
 
 		const group = new Group();
 
-		buildHierarchy( root, group );
+		buildHierarchy(root, group);
 
 		return group;
 
@@ -867,4 +867,4 @@ class USDZLoader extends Loader {
 
 }
 
-export { USDZLoader };
+export {USDZLoader};

@@ -16,7 +16,7 @@ function openInfo()
 
         open = !open;
         return;
-    }
+   }
 
     let button = document.querySelector(".info-button");
     button.style.scale = "100% 0%";

@@ -16,15 +16,15 @@ function queryKey(Components) {
 
     if (!componentRegistered(T)) {
       throw new Error(`Tried to create a query with an unregistered component`);
-    }
+   }
 
     if (typeof T === "object") {
       var operator = T.operator === "not" ? "!" : T.operator;
       ids.push(operator + T.Component._typeId);
-    } else {
+   } else {
       ids.push(T._typeId);
-    }
-  }
+   }
+ }
 
   return ids.sort().join("-");
 }
@@ -42,7 +42,7 @@ function componentRegistered(T) {
   return (
     (typeof T === "object" && T.Component._typeId !== undefined) ||
     (T.isComponent && T._typeId !== undefined)
-  );
+ );
 }
 
 class SystemManager {
@@ -51,19 +51,19 @@ class SystemManager {
     this._executeSystems = []; // Systems that have `execute` method
     this.world = world;
     this.lastExecutedSystem = null;
-  }
+ }
 
   registerSystem(SystemClass, attributes) {
     if (!SystemClass.isSystem) {
       throw new Error(
         `System '${SystemClass.name}' does not extend 'System' class`
-      );
-    }
+     );
+   }
 
     if (this.getSystem(SystemClass) !== undefined) {
       console.warn(`System '${SystemClass.getName()}' already registered.`);
       return this;
-    }
+   }
 
     var system = new SystemClass(this.world, attributes);
     if (system.init) system.init(attributes);
@@ -72,49 +72,49 @@ class SystemManager {
     if (system.execute) {
       this._executeSystems.push(system);
       this.sortSystems();
-    }
+   }
     return this;
-  }
+ }
 
   unregisterSystem(SystemClass) {
     let system = this.getSystem(SystemClass);
     if (system === undefined) {
       console.warn(
         `Can unregister system '${SystemClass.getName()}'. It doesn't exist.`
-      );
+     );
       return this;
-    }
+   }
 
     this._systems.splice(this._systems.indexOf(system), 1);
 
     if (system.execute) {
       this._executeSystems.splice(this._executeSystems.indexOf(system), 1);
-    }
+   }
 
     // @todo Add system.unregister() call to free resources
     return this;
-  }
+ }
 
   sortSystems() {
     this._executeSystems.sort((a, b) => {
       return a.priority - b.priority || a.order - b.order;
-    });
-  }
+   });
+ }
 
   getSystem(SystemClass) {
     return this._systems.find((s) => s instanceof SystemClass);
-  }
+ }
 
   getSystems() {
     return this._systems;
-  }
+ }
 
   removeSystem(SystemClass) {
     var index = this._systems.indexOf(SystemClass);
     if (!~index) return;
 
     this._systems.splice(index, 1);
-  }
+ }
 
   executeSystem(system, delta, time) {
     if (system.initialized) {
@@ -124,40 +124,40 @@ class SystemManager {
         system.executeTime = now() - startTime;
         this.lastExecutedSystem = system;
         system.clearEvents();
-      }
-    }
-  }
+     }
+   }
+ }
 
   stop() {
     this._executeSystems.forEach((system) => system.stop());
-  }
+ }
 
   execute(delta, time, forcePlay) {
     this._executeSystems.forEach(
       (system) =>
         (forcePlay || system.enabled) && this.executeSystem(system, delta, time)
-    );
-  }
+   );
+ }
 
   stats() {
     var stats = {
       numSystems: this._systems.length,
       systems: {},
-    };
+   };
 
     for (var i = 0; i < this._systems.length; i++) {
       var system = this._systems[i];
       var systemStats = (stats.systems[system.getName()] = {
         queries: {},
         executeTime: system.executeTime,
-      });
+     });
       for (var name in system.ctx) {
         systemStats.queries[name] = system.ctx[name].stats();
-      }
-    }
+     }
+   }
 
     return stats;
-  }
+ }
 }
 
 class ObjectPool {
@@ -170,45 +170,45 @@ class ObjectPool {
 
     if (typeof initialSize !== "undefined") {
       this.expand(initialSize);
-    }
-  }
+   }
+ }
 
   acquire() {
     // Grow the list by 20%ish if we're out
     if (this.freeList.length <= 0) {
       this.expand(Math.round(this.count * 0.2) + 1);
-    }
+   }
 
     var item = this.freeList.pop();
 
     return item;
-  }
+ }
 
   release(item) {
     item.reset();
     this.freeList.push(item);
-  }
+ }
 
   expand(count) {
     for (var n = 0; n < count; n++) {
       var clone = new this.T();
       clone._pool = this;
       this.freeList.push(clone);
-    }
+   }
     this.count += count;
-  }
+ }
 
   totalSize() {
     return this.count;
-  }
+ }
 
   totalFree() {
     return this.freeList.length;
-  }
+ }
 
   totalUsed() {
     return this.count - this.freeList.length;
-  }
+ }
 }
 
 /**
@@ -221,8 +221,8 @@ class EventDispatcher {
     this.stats = {
       fired: 0,
       handled: 0,
-    };
-  }
+   };
+ }
 
   /**
    * Add an event listener
@@ -233,12 +233,12 @@ class EventDispatcher {
     let listeners = this._listeners;
     if (listeners[eventName] === undefined) {
       listeners[eventName] = [];
-    }
+   }
 
     if (listeners[eventName].indexOf(listener) === -1) {
       listeners[eventName].push(listener);
-    }
-  }
+   }
+ }
 
   /**
    * Check if an event listener is already added to the list of listeners
@@ -249,8 +249,8 @@ class EventDispatcher {
     return (
       this._listeners[eventName] !== undefined &&
       this._listeners[eventName].indexOf(listener) !== -1
-    );
-  }
+   );
+ }
 
   /**
    * Remove an event listener
@@ -263,9 +263,9 @@ class EventDispatcher {
       var index = listenerArray.indexOf(listener);
       if (index !== -1) {
         listenerArray.splice(index, 1);
-      }
-    }
-  }
+     }
+   }
+ }
 
   /**
    * Dispatch an event
@@ -282,16 +282,16 @@ class EventDispatcher {
 
       for (var i = 0; i < array.length; i++) {
         array[i].call(this, entity, component);
-      }
-    }
-  }
+     }
+   }
+ }
 
   /**
    * Reset stats counters
    */
   resetCounters() {
     this.stats.fired = this.stats.handled = 0;
-  }
+ }
 }
 
 class Query {
@@ -305,14 +305,14 @@ class Query {
     Components.forEach((component) => {
       if (typeof component === "object") {
         this.NotComponents.push(component.Component);
-      } else {
+     } else {
         this.Components.push(component);
-      }
-    });
+     }
+   });
 
     if (this.Components.length === 0) {
       throw new Error("Can't create a query without components");
-    }
+   }
 
     this.entities = [];
 
@@ -330,9 +330,9 @@ class Query {
         // @todo ??? this.addEntity(entity); => preventing the event to be generated
         entity.queries.push(this);
         this.entities.push(entity);
-      }
-    }
-  }
+     }
+   }
+ }
 
   /**
    * Add entity to this query
@@ -343,7 +343,7 @@ class Query {
     this.entities.push(entity);
 
     this.eventDispatcher.dispatchEvent(Query.prototype.ENTITY_ADDED, entity);
-  }
+ }
 
   /**
    * Remove entity from this query
@@ -360,16 +360,16 @@ class Query {
       this.eventDispatcher.dispatchEvent(
         Query.prototype.ENTITY_REMOVED,
         entity
-      );
-    }
-  }
+     );
+   }
+ }
 
   match(entity) {
     return (
       entity.hasAllComponents(this.Components) &&
       !entity.hasAnyComponents(this.NotComponents)
-    );
-  }
+   );
+ }
 
   toJSON() {
     return {
@@ -378,10 +378,10 @@ class Query {
       components: {
         included: this.Components.map((C) => C.name),
         not: this.NotComponents.map((C) => C.name),
-      },
+     },
       numEntities: this.entities.length,
-    };
-  }
+   };
+ }
 
   /**
    * Return stats for this query
@@ -390,8 +390,8 @@ class Query {
     return {
       numComponents: this.Components.length,
       numEntities: this.entities.length,
-    };
-  }
+   };
+ }
 }
 
 Query.prototype.ENTITY_ADDED = "Query#ENTITY_ADDED";
@@ -408,16 +408,16 @@ class QueryManager {
 
     // Queries indexed by a unique identifier for the components it has
     this._queries = {};
-  }
+ }
 
   onEntityRemoved(entity) {
     for (var queryName in this._queries) {
       var query = this._queries[queryName];
       if (entity.queries.indexOf(query) !== -1) {
         query.removeEntity(entity);
-      }
-    }
-  }
+     }
+   }
+ }
 
   /**
    * Callback when a component is added to an entity
@@ -434,10 +434,10 @@ class QueryManager {
       if (
         !!~query.NotComponents.indexOf(Component) &&
         ~query.entities.indexOf(entity)
-      ) {
+     ) {
         query.removeEntity(entity);
         continue;
-      }
+     }
 
       // Add the entity only if:
       // Component is in the query
@@ -447,12 +447,12 @@ class QueryManager {
         !~query.Components.indexOf(Component) ||
         !query.match(entity) ||
         ~query.entities.indexOf(entity)
-      )
+     )
         continue;
 
       query.addEntity(entity);
-    }
-  }
+   }
+ }
 
   /**
    * Callback when a component is removed from an entity
@@ -467,21 +467,21 @@ class QueryManager {
         !!~query.NotComponents.indexOf(Component) &&
         !~query.entities.indexOf(entity) &&
         query.match(entity)
-      ) {
+     ) {
         query.addEntity(entity);
         continue;
-      }
+     }
 
       if (
         !!~query.Components.indexOf(Component) &&
         !!~query.entities.indexOf(entity) &&
         !query.match(entity)
-      ) {
+     ) {
         query.removeEntity(entity);
         continue;
-      }
-    }
-  }
+     }
+   }
+ }
 
   /**
    * Get a query for the specified components
@@ -492,9 +492,9 @@ class QueryManager {
     var query = this._queries[key];
     if (!query) {
       this._queries[key] = query = new Query(Components, this._world);
-    }
+   }
     return query;
-  }
+ }
 
   /**
    * Return some stats from this class
@@ -503,9 +503,9 @@ class QueryManager {
     var stats = {};
     for (var queryName in this._queries) {
       stats[queryName] = this._queries[queryName].stats();
-    }
+   }
     return stats;
-  }
+ }
 }
 
 class Component {
@@ -516,24 +516,24 @@ class Component {
       for (const key in schema) {
         if (props && props.hasOwnProperty(key)) {
           this[key] = props[key];
-        } else {
+       } else {
           const schemaProp = schema[key];
           if (schemaProp.hasOwnProperty("default")) {
             this[key] = schemaProp.type.clone(schemaProp.default);
-          } else {
+         } else {
             const type = schemaProp.type;
             this[key] = type.clone(type.default);
-          }
-        }
-      }
+         }
+       }
+     }
 
-      if ( props !== undefined) {
+      if (props !== undefined) {
         this.checkUndefinedAttributes(props);
-      }
-    }
+     }
+   }
 
     this._pool = null;
-  }
+ }
 
   copy(source) {
     const schema = this.constructor.schema;
@@ -543,20 +543,20 @@ class Component {
 
       if (source.hasOwnProperty(key)) {
         this[key] = prop.type.copy(source[key], this[key]);
-      }
-    }
+     }
+   }
 
     // @DEBUG
     {
       this.checkUndefinedAttributes(source);
-    }
+   }
 
     return this;
-  }
+ }
 
   clone() {
     return new this.constructor().copy(this);
-  }
+ }
 
   reset() {
     const schema = this.constructor.schema;
@@ -566,22 +566,22 @@ class Component {
 
       if (schemaProp.hasOwnProperty("default")) {
         this[key] = schemaProp.type.copy(schemaProp.default, this[key]);
-      } else {
+     } else {
         const type = schemaProp.type;
         this[key] = type.copy(type.default, this[key]);
-      }
-    }
-  }
+     }
+   }
+ }
 
   dispose() {
     if (this._pool) {
       this._pool.release(this);
-    }
-  }
+   }
+ }
 
   getName() {
     return this.constructor.getName();
-  }
+ }
 
   checkUndefinedAttributes(src) {
     const schema = this.constructor.schema;
@@ -591,10 +591,10 @@ class Component {
       if (!schema.hasOwnProperty(srcKey)) {
         console.warn(
           `Trying to set attribute '${srcKey}' not defined in the '${this.constructor.name}' schema. Please fix the schema, the attribute value won't be set`
-        );
-      }
-    });
-  }
+       );
+     }
+   });
+ }
 }
 
 Component.schema = {};
@@ -614,17 +614,17 @@ class EntityPool extends ObjectPool {
 
     if (typeof initialSize !== "undefined") {
       this.expand(initialSize);
-    }
-  }
+   }
+ }
 
   expand(count) {
     for (var n = 0; n < count; n++) {
       var clone = new this.T(this.entityManager);
       clone._pool = this;
       this.freeList.push(clone);
-    }
+   }
     this.count += count;
-  }
+ }
 }
 
 /**
@@ -648,17 +648,17 @@ class EntityManager {
       this,
       this.world.options.entityClass,
       this.world.options.entityPoolSize
-    );
+   );
 
     // Deferred deletion
     this.entitiesWithComponentsToRemove = [];
     this.entitiesToRemove = [];
     this.deferredRemovalEnabled = true;
-  }
+ }
 
   getEntityByName(name) {
     return this._entitiesByNames[name];
-  }
+ }
 
   /**
    * Create a new entity
@@ -670,15 +670,15 @@ class EntityManager {
     if (name) {
       if (this._entitiesByNames[name]) {
         console.warn(`Entity name '${name}' already exist`);
-      } else {
+     } else {
         this._entitiesByNames[name] = entity;
-      }
-    }
+     }
+   }
 
     this._entities.push(entity);
     this.eventDispatcher.dispatchEvent(ENTITY_CREATED, entity);
     return entity;
-  }
+ }
 
   // COMPONENTS
 
@@ -693,11 +693,11 @@ class EntityManager {
     if (
       typeof Component._typeId === "undefined" &&
       !this.world.componentsManager._ComponentsMap[Component._typeId]
-    ) {
+   ) {
       throw new Error(
         `Attempted to add unregistered component "${Component.getName()}"`
-      );
-    }
+     );
+   }
 
     if (~entity._ComponentTypes.indexOf(Component)) {
       {
@@ -705,20 +705,20 @@ class EntityManager {
           "Component type already exists on entity.",
           entity,
           Component.getName()
-        );
-      }
+       );
+     }
       return;
-    }
+   }
 
     entity._ComponentTypes.push(Component);
 
     if (Component.__proto__ === SystemStateComponent) {
       entity.numStateComponents++;
-    }
+   }
 
     var componentPool = this.world.componentsManager.getComponentsPool(
       Component
-    );
+   );
 
     var component = componentPool
       ? componentPool.acquire()
@@ -726,7 +726,7 @@ class EntityManager {
 
     if (componentPool && values) {
       component.copy(values);
-    }
+   }
 
     entity._components[Component._typeId] = component;
 
@@ -734,7 +734,7 @@ class EntityManager {
     this.world.componentsManager.componentAddedToEntity(Component);
 
     this.eventDispatcher.dispatchEvent(COMPONENT_ADDED, entity, Component);
-  }
+ }
 
   /**
    * Remove a component from an entity
@@ -750,7 +750,7 @@ class EntityManager {
 
     if (immediately) {
       this._entityRemoveComponentSync(entity, Component, index);
-    } else {
+   } else {
       if (entity._ComponentTypesToRemove.length === 0)
         this.entitiesWithComponentsToRemove.push(entity);
 
@@ -760,7 +760,7 @@ class EntityManager {
       entity._componentsToRemove[Component._typeId] =
         entity._components[Component._typeId];
       delete entity._components[Component._typeId];
-    }
+   }
 
     // Check each indexed query to see if we need to remove it
     this._queryManager.onEntityComponentRemoved(entity, Component);
@@ -771,9 +771,9 @@ class EntityManager {
       // Check if the entity was a ghost waiting for the last system state component to be removed
       if (entity.numStateComponents === 0 && !entity.alive) {
         entity.remove();
-      }
-    }
-  }
+     }
+   }
+ }
 
   _entityRemoveComponentSync(entity, Component, index) {
     // Remove T listing on entity and property ref, then free the component.
@@ -782,7 +782,7 @@ class EntityManager {
     delete entity._components[Component._typeId];
     component.dispose();
     this.world.componentsManager.componentRemovedFromEntity(Component);
-  }
+ }
 
   /**
    * Remove all the components from an entity
@@ -794,8 +794,8 @@ class EntityManager {
     for (let j = Components.length - 1; j >= 0; j--) {
       if (Components[j].__proto__ !== SystemStateComponent)
         this.entityRemoveComponent(entity, Components[j], immediately);
-    }
-  }
+   }
+ }
 
   /**
    * Remove the entity from this manager. It will clear also its components
@@ -816,20 +816,20 @@ class EntityManager {
       this._queryManager.onEntityRemoved(entity);
       if (immediately === true) {
         this._releaseEntity(entity, index);
-      } else {
+     } else {
         this.entitiesToRemove.push(entity);
-      }
-    }
-  }
+     }
+   }
+ }
 
   _releaseEntity(entity, index) {
     this._entities.splice(index, 1);
 
     if (this._entitiesByNames[entity.name]) {
       delete this._entitiesByNames[entity.name];
-    }
+   }
     entity._pool.release(entity);
-  }
+ }
 
   /**
    * Remove all entities from this manager
@@ -837,19 +837,19 @@ class EntityManager {
   removeAllEntities() {
     for (var i = this._entities.length - 1; i >= 0; i--) {
       this.removeEntity(this._entities[i]);
-    }
-  }
+   }
+ }
 
   processDeferredRemoval() {
     if (!this.deferredRemovalEnabled) {
       return;
-    }
+   }
 
     for (let i = 0; i < this.entitiesToRemove.length; i++) {
       let entity = this.entitiesToRemove[i];
       let index = this._entities.indexOf(entity);
       this._releaseEntity(entity, index);
-    }
+   }
     this.entitiesToRemove.length = 0;
 
     for (let i = 0; i < this.entitiesWithComponentsToRemove.length; i++) {
@@ -863,11 +863,11 @@ class EntityManager {
         this.world.componentsManager.componentRemovedFromEntity(Component);
 
         //this._entityRemoveComponentSync(entity, Component, index);
-      }
-    }
+     }
+   }
 
     this.entitiesWithComponentsToRemove.length = 0;
-  }
+ }
 
   /**
    * Get a query based on a list of components
@@ -875,7 +875,7 @@ class EntityManager {
    */
   queryComponents(Components) {
     return this._queryManager.getQuery(Components);
-  }
+ }
 
   // EXTRAS
 
@@ -884,7 +884,7 @@ class EntityManager {
    */
   count() {
     return this._entities.length;
-  }
+ }
 
   /**
    * Return some stats
@@ -898,18 +898,18 @@ class EntityManager {
         .length,
       componentPool: {},
       eventDispatcher: this.eventDispatcher.stats,
-    };
+   };
 
     for (var ecsyComponentId in this.componentsManager._componentPool) {
       var pool = this.componentsManager._componentPool[ecsyComponentId];
       stats.componentPool[pool.T.getName()] = {
         used: pool.totalUsed(),
         size: pool.count,
-      };
-    }
+     };
+   }
 
     return stats;
-  }
+ }
 }
 
 const ENTITY_CREATED = "EntityManager#ENTITY_CREATE";
@@ -925,27 +925,27 @@ class ComponentManager {
     this._componentPool = {};
     this.numComponents = {};
     this.nextComponentId = 0;
-  }
+ }
 
   hasComponent(Component) {
     return this.Components.indexOf(Component) !== -1;
-  }
+ }
 
   registerComponent(Component, objectPool) {
     if (this.Components.indexOf(Component) !== -1) {
       console.warn(
         `Component type: '${Component.getName()}' already registered.`
-      );
+     );
       return;
-    }
+   }
 
     const schema = Component.schema;
 
     if (!schema) {
       throw new Error(
         `Component "${Component.getName()}" has no schema property.`
-      );
-    }
+     );
+   }
 
     for (const propName in schema) {
       const prop = schema[propName];
@@ -953,9 +953,9 @@ class ComponentManager {
       if (!prop.type) {
         throw new Error(
           `Invalid schema for component "${Component.getName()}". Missing type for "${propName}" property.`
-        );
-      }
-    }
+       );
+     }
+   }
 
     Component._typeId = this.nextComponentId++;
     this.Components.push(Component);
@@ -964,24 +964,24 @@ class ComponentManager {
 
     if (objectPool === undefined) {
       objectPool = new ObjectPool(Component);
-    } else if (objectPool === false) {
+   } else if (objectPool === false) {
       objectPool = undefined;
-    }
+   }
 
     this._componentPool[Component._typeId] = objectPool;
-  }
+ }
 
   componentAddedToEntity(Component) {
     this.numComponents[Component._typeId]++;
-  }
+ }
 
   componentRemovedFromEntity(Component) {
     this.numComponents[Component._typeId]--;
-  }
+ }
 
   getComponentsPool(Component) {
     return this._componentPool[Component._typeId];
-  }
+ }
 }
 
 const Version = "0.3.1";
@@ -993,22 +993,22 @@ const proxyHandler = {
     throw new Error(
       `Tried to write to "${target.constructor.getName()}#${String(
         prop
-      )}" on immutable component. Use .getMutableComponent() to modify a component.`
-    );
-  },
+     )}" on immutable component. Use .getMutableComponent() to modify a component.`
+   );
+ },
 };
 
 function wrapImmutableComponent(T, component) {
   if (component === undefined) {
     return undefined;
-  }
+ }
 
   let wrappedComponent = proxyMap.get(component);
 
   if (!wrappedComponent) {
     wrappedComponent = new Proxy(component, proxyHandler);
     proxyMap.set(component, wrappedComponent);
-  }
+ }
 
   return wrappedComponent;
 }
@@ -1038,7 +1038,7 @@ class Entity {
 
     //if there are state components on a entity, it can't be removed completely
     this.numStateComponents = 0;
-  }
+ }
 
   // COMPONENTS
 
@@ -1047,37 +1047,37 @@ class Entity {
 
     if (!component && includeRemoved === true) {
       component = this._componentsToRemove[Component._typeId];
-    }
+   }
 
     return  wrapImmutableComponent(Component, component)
       ;
-  }
+ }
 
   getRemovedComponent(Component) {
     const component = this._componentsToRemove[Component._typeId];
 
     return  wrapImmutableComponent(Component, component)
       ;
-  }
+ }
 
   getComponents() {
     return this._components;
-  }
+ }
 
   getComponentsToRemove() {
     return this._componentsToRemove;
-  }
+ }
 
   getComponentTypes() {
     return this._ComponentTypes;
-  }
+ }
 
   getMutableComponent(Component) {
     var component = this._components[Component._typeId];
 
     if (!component) {
       return;
-    }
+   }
 
     for (var i = 0; i < this.queries.length; i++) {
       var query = this.queries[i];
@@ -1088,50 +1088,50 @@ class Entity {
           Query.prototype.COMPONENT_CHANGED,
           this,
           component
-        );
-      }
-    }
+       );
+     }
+   }
     return component;
-  }
+ }
 
   addComponent(Component, values) {
     this._entityManager.entityAddComponent(this, Component, values);
     return this;
-  }
+ }
 
   removeComponent(Component, forceImmediate) {
     this._entityManager.entityRemoveComponent(this, Component, forceImmediate);
     return this;
-  }
+ }
 
   hasComponent(Component, includeRemoved) {
     return (
       !!~this._ComponentTypes.indexOf(Component) ||
       (includeRemoved === true && this.hasRemovedComponent(Component))
-    );
-  }
+   );
+ }
 
   hasRemovedComponent(Component) {
     return !!~this._ComponentTypesToRemove.indexOf(Component);
-  }
+ }
 
   hasAllComponents(Components) {
     for (var i = 0; i < Components.length; i++) {
       if (!this.hasComponent(Components[i])) return false;
-    }
+   }
     return true;
-  }
+ }
 
   hasAnyComponents(Components) {
     for (var i = 0; i < Components.length; i++) {
       if (this.hasComponent(Components[i])) return true;
-    }
+   }
     return false;
-  }
+ }
 
   removeAllComponents(forceImmediate) {
     return this._entityManager.entityRemoveAllComponents(this, forceImmediate);
-  }
+ }
 
   copy(src) {
     // TODO: This can definitely be optimized
@@ -1140,14 +1140,14 @@ class Entity {
       this.addComponent(srcComponent.constructor);
       var component = this.getComponent(srcComponent.constructor);
       component.copy(srcComponent);
-    }
+   }
 
     return this;
-  }
+ }
 
   clone() {
     return new Entity(this._entityManager).copy(this);
-  }
+ }
 
   reset() {
     this.id = this._entityManager._nextEntityId++;
@@ -1156,12 +1156,12 @@ class Entity {
 
     for (var ecsyComponentId in this._components) {
       delete this._components[ecsyComponentId];
-    }
-  }
+   }
+ }
 
   remove(forceImmediate) {
     return this._entityManager.removeEntity(this, forceImmediate);
-  }
+ }
 }
 
 const DEFAULT_OPTIONS = {
@@ -1183,74 +1183,74 @@ class World {
 
     if (hasWindow && typeof CustomEvent !== "undefined") {
       var event = new CustomEvent("ecsy-world-created", {
-        detail: { world: this, version: Version },
-      });
+        detail: {world: this, version: Version},
+     });
       window.dispatchEvent(event);
-    }
+   }
 
     this.lastTime = now() / 1000;
-  }
+ }
 
   registerComponent(Component, objectPool) {
     this.componentsManager.registerComponent(Component, objectPool);
     return this;
-  }
+ }
 
   registerSystem(System, attributes) {
     this.systemManager.registerSystem(System, attributes);
     return this;
-  }
+ }
 
   hasRegisteredComponent(Component) {
     return this.componentsManager.hasComponent(Component);
-  }
+ }
 
   unregisterSystem(System) {
     this.systemManager.unregisterSystem(System);
     return this;
-  }
+ }
 
   getSystem(SystemClass) {
     return this.systemManager.getSystem(SystemClass);
-  }
+ }
 
   getSystems() {
     return this.systemManager.getSystems();
-  }
+ }
 
   execute(delta, time) {
     if (!delta) {
       time = now() / 1000;
       delta = time - this.lastTime;
       this.lastTime = time;
-    }
+   }
 
     if (this.enabled) {
       this.systemManager.execute(delta, time);
       this.entityManager.processDeferredRemoval();
-    }
-  }
+   }
+ }
 
   stop() {
     this.enabled = false;
-  }
+ }
 
   play() {
     this.enabled = true;
-  }
+ }
 
   createEntity(name) {
     return this.entityManager.createEntity(name);
-  }
+ }
 
   stats() {
     var stats = {
       entities: this.entityManager.stats(),
       system: this.systemManager.stats(),
-    };
+   };
 
     return stats;
-  }
+ }
 }
 
 class System {
@@ -1261,15 +1261,15 @@ class System {
       var query = this._mandatoryQueries[i];
       if (query.entities.length === 0) {
         return false;
-      }
-    }
+     }
+   }
 
     return true;
-  }
+ }
 
   getName() {
     return this.constructor.getName();
-  }
+ }
 
   constructor(world, attributes) {
     this.world = world;
@@ -1286,7 +1286,7 @@ class System {
 
     if (attributes && attributes.priority) {
       this.priority = attributes.priority;
-    }
+   }
 
     this._mandatoryQueries = [];
 
@@ -1298,32 +1298,32 @@ class System {
         var Components = queryConfig.components;
         if (!Components || Components.length === 0) {
           throw new Error("'components' attribute can't be empty in a query");
-        }
+       }
 
         // Detect if the components have already been registered
         let unregisteredComponents = Components.filter(
           (Component) => !componentRegistered(Component)
-        );
+       );
 
         if (unregisteredComponents.length > 0) {
           throw new Error(
             `Tried to create a query '${
               this.constructor.name
-            }.${queryName}' with unregistered components: [${unregisteredComponents
+           }.${queryName}' with unregistered components: [${unregisteredComponents
               .map((c) => c.getName())
               .join(", ")}]`
-          );
-        }
+         );
+       }
 
         var query = this.world.entityManager.queryComponents(Components);
 
         this._queries[queryName] = query;
         if (queryConfig.mandatory === true) {
           this._mandatoryQueries.push(query);
-        }
+       }
         this.queries[queryName] = {
           results: query.entities,
-        };
+       };
 
         // Reactive configuration added/removed/changed
         var validEvents = ["added", "removed", "changed"];
@@ -1332,7 +1332,7 @@ class System {
           added: Query.prototype.ENTITY_ADDED,
           removed: Query.prototype.ENTITY_REMOVED,
           changed: Query.prototype.COMPONENT_CHANGED, // Query.prototype.ENTITY_CHANGED
-        };
+       };
 
         if (queryConfig.listen) {
           validEvents.forEach((eventName) => {
@@ -1340,9 +1340,9 @@ class System {
               console.warn(
                 `System '${this.getName()}' has defined listen events (${validEvents.join(
                   ", "
-                )}) for query '${queryName}' but it does not implement the 'execute' method.`
-              );
-            }
+               )}) for query '${queryName}' but it does not implement the 'execute' method.`
+             );
+           }
 
             // Is the event enabled on this system's query?
             if (queryConfig.listen[eventName]) {
@@ -1359,10 +1359,10 @@ class System {
                       // Avoid duplicates
                       if (eventList.indexOf(entity) === -1) {
                         eventList.push(entity);
-                      }
-                    }
-                  );
-                } else if (Array.isArray(event)) {
+                     }
+                   }
+                 );
+               } else if (Array.isArray(event)) {
                   let eventList = (this.queries[queryName][eventName] = []);
                   query.eventDispatcher.addEventListener(
                     Query.prototype.COMPONENT_CHANGED,
@@ -1371,13 +1371,13 @@ class System {
                       if (
                         event.indexOf(changedComponent.constructor) !== -1 &&
                         eventList.indexOf(entity) === -1
-                      ) {
+                     ) {
                         eventList.push(entity);
-                      }
-                    }
-                  );
-                }
-              } else {
+                     }
+                   }
+                 );
+               }
+             } else {
                 let eventList = (this.queries[queryName][eventName] = []);
 
                 query.eventDispatcher.addEventListener(
@@ -1386,24 +1386,24 @@ class System {
                     // @fixme overhead?
                     if (eventList.indexOf(entity) === -1)
                       eventList.push(entity);
-                  }
-                );
-              }
-            }
-          });
-        }
-      }
-    }
-  }
+                 }
+               );
+             }
+           }
+         });
+       }
+     }
+   }
+ }
 
   stop() {
     this.executeTime = 0;
     this.enabled = false;
-  }
+ }
 
   play() {
     this.enabled = true;
-  }
+ }
 
   // @question rename to clear queues?
   clearEvents() {
@@ -1411,21 +1411,21 @@ class System {
       var query = this.queries[queryName];
       if (query.added) {
         query.added.length = 0;
-      }
+     }
       if (query.removed) {
         query.removed.length = 0;
-      }
+     }
       if (query.changed) {
         if (Array.isArray(query.changed)) {
           query.changed.length = 0;
-        } else {
+       } else {
           for (let name in query.changed) {
             query.changed[name].length = 0;
-          }
-        }
-      }
-    }
-  }
+         }
+       }
+     }
+   }
+ }
 
   toJSON() {
     var json = {
@@ -1434,7 +1434,7 @@ class System {
       executeTime: this.executeTime,
       priority: this.priority,
       queries: {},
-    };
+   };
 
     if (this.constructor.queries) {
       var queries = this.constructor.queries;
@@ -1443,7 +1443,7 @@ class System {
         let queryDefinition = queries[queryName];
         let jsonQuery = (json.queries[queryName] = {
           key: this._queries[queryName].key,
-        });
+       });
 
         jsonQuery.mandatory = queryDefinition.mandatory === true;
         jsonQuery.reactive =
@@ -1461,15 +1461,15 @@ class System {
             if (query[method]) {
               jsonQuery.listen[method] = {
                 entities: query[method].length,
-              };
-            }
-          });
-        }
-      }
-    }
+             };
+           }
+         });
+       }
+     }
+   }
 
     return json;
-  }
+ }
 }
 
 System.isSystem = true;
@@ -1481,13 +1481,13 @@ function Not(Component) {
   return {
     operator: "not",
     Component: Component,
-  };
+ };
 }
 
 class TagComponent extends Component {
   constructor() {
     super(false);
-  }
+ }
 }
 
 TagComponent.isTagComponent = true;
@@ -1499,17 +1499,17 @@ const cloneValue = (src) => src;
 const copyArray = (src, dest) => {
   if (!src) {
     return src;
-  }
+ }
 
   if (!dest) {
     return src.slice();
-  }
+ }
 
   dest.length = 0;
 
   for (let i = 0; i < src.length; i++) {
     dest.push(src[i]);
-  }
+ }
 
   return dest;
 };
@@ -1523,11 +1523,11 @@ const cloneJSON = (src) => JSON.parse(JSON.stringify(src));
 const copyCopyable = (src, dest) => {
   if (!src) {
     return src;
-  }
+ }
 
   if (!dest) {
     return src.clone();
-  }
+ }
 
   return dest.copy(src);
 };
@@ -1539,15 +1539,15 @@ function createType(typeDefinition) {
 
   var undefinedProperties = mandatoryProperties.filter((p) => {
     return !typeDefinition.hasOwnProperty(p);
-  });
+ });
 
   if (undefinedProperties.length > 0) {
     throw new Error(
       `createType expects a type definition with the following properties: ${undefinedProperties.join(
         ", "
-      )}`
-    );
-  }
+     )}`
+   );
+ }
 
   typeDefinition.isType = true;
 
@@ -1563,42 +1563,42 @@ const Types = {
     default: 0,
     copy: copyValue,
     clone: cloneValue,
-  }),
+ }),
 
   Boolean: createType({
     name: "Boolean",
     default: false,
     copy: copyValue,
     clone: cloneValue,
-  }),
+ }),
 
   String: createType({
     name: "String",
     default: "",
     copy: copyValue,
     clone: cloneValue,
-  }),
+ }),
 
   Array: createType({
     name: "Array",
     default: [],
     copy: copyArray,
     clone: cloneArray,
-  }),
+ }),
 
   Ref: createType({
     name: "Ref",
     default: undefined,
     copy: copyValue,
     clone: cloneValue,
-  }),
+ }),
 
   JSON: createType({
     name: "JSON",
     default: null,
     copy: copyJSON,
     clone: cloneJSON,
-  }),
+ }),
 };
 
 function generateId(length) {
@@ -1607,7 +1607,7 @@ function generateId(length) {
   var charactersLength = characters.length;
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
+ }
   return result;
 }
 
@@ -1631,11 +1631,11 @@ function hookConsoleAndErrors(connection) {
           method: "console",
           type: key,
           args: JSON.stringify(args),
-        });
+       });
         return fn.apply(null, args);
-      };
-    }
-  });
+     };
+   }
+ });
 
   window.addEventListener("error", (error) => {
     connection.send({
@@ -1643,9 +1643,9 @@ function hookConsoleAndErrors(connection) {
       error: JSON.stringify({
         message: error.error.message,
         stack: error.error.stack,
-      }),
-    });
-  });
+     }),
+   });
+ });
 }
 
 function includeRemoteIdHTML(remoteId) {
@@ -1677,20 +1677,20 @@ function enableRemoteDevtools(remoteId) {
   if (!hasWindow) {
     console.warn("Remote devtools not available outside the browser");
     return;
-  }
+ }
 
   window.generateNewCode = () => {
     window.localStorage.clear();
     remoteId = generateId(6);
     window.localStorage.setItem("ecsyRemoteId", remoteId);
     window.location.reload(false);
-  };
+ };
 
   remoteId = remoteId || window.localStorage.getItem("ecsyRemoteId");
   if (!remoteId) {
     remoteId = generateId(6);
     window.localStorage.setItem("ecsyRemoteId", remoteId);
-  }
+ }
 
   let infoDiv = includeRemoteIdHTML(remoteId);
 
@@ -1705,7 +1705,7 @@ function enableRemoteDevtools(remoteId) {
     var world = e.detail.world;
     Version = e.detail.version;
     worldsBeforeLoading.push(world);
-  };
+ };
   window.addEventListener("ecsy-world-created", onWorldCreated);
 
   let onLoaded = () => {
@@ -1716,15 +1716,15 @@ function enableRemoteDevtools(remoteId) {
       port: 443,
       config: {
         iceServers: [
-          { url: "stun:stun.l.google.com:19302" },
-          { url: "stun:stun1.l.google.com:19302" },
-          { url: "stun:stun2.l.google.com:19302" },
-          { url: "stun:stun3.l.google.com:19302" },
-          { url: "stun:stun4.l.google.com:19302" },
+          {url: "stun:stun.l.google.com:19302"},
+          {url: "stun:stun1.l.google.com:19302"},
+          {url: "stun:stun2.l.google.com:19302"},
+          {url: "stun:stun3.l.google.com:19302"},
+          {url: "stun:stun4.l.google.com:19302"},
         ],
-      },
+     },
       debug: 3,
-    });
+   });
 
     peer.on("open", (/* id */) => {
       peer.on("connection", (connection) => {
@@ -1745,39 +1745,39 @@ function enableRemoteDevtools(remoteId) {
                 window.removeEventListener(
                   "ecsy-world-created",
                   onWorldCreated
-                );
+               );
                 worldsBeforeLoading.forEach((world) => {
                   var event = new CustomEvent("ecsy-world-created", {
-                    detail: { world: world, version: Version },
-                  });
+                    detail: {world: world, version: Version},
+                 });
                   window.dispatchEvent(event);
-                });
-              };
+               });
+             };
               script.innerHTML = data.script;
               (document.head || document.documentElement).appendChild(script);
               script.onload();
 
               hookConsoleAndErrors(connection);
-            } else if (data.type === "executeScript") {
+           } else if (data.type === "executeScript") {
               let value = eval(data.script);
               if (data.returnEval) {
                 connection.send({
                   method: "evalReturn",
                   value: value,
-                });
-              }
-            }
-          });
-        });
-      });
-    });
-  };
+               });
+             }
+           }
+         });
+       });
+     });
+   });
+ };
 
   // Inject PeerJS script
   injectScript(
     "https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js",
     onLoaded
-  );
+ );
 }
 
 if (hasWindow) {
@@ -1786,7 +1786,7 @@ if (hasWindow) {
   // @todo Provide a way to disable it if needed
   if (urlParams.has("enable-remote-devtools")) {
     enableRemoteDevtools();
-  }
+ }
 }
 
-export { Component, Not, ObjectPool, System, SystemStateComponent, TagComponent, Types, Version, World, Entity as _Entity, cloneArray, cloneClonable, cloneJSON, cloneValue, copyArray, copyCopyable, copyJSON, copyValue, createType, enableRemoteDevtools };
+export {Component, Not, ObjectPool, System, SystemStateComponent, TagComponent, Types, Version, World, Entity as _Entity, cloneArray, cloneClonable, cloneJSON, cloneValue, copyArray, copyCopyable, copyJSON, copyValue, createType, enableRemoteDevtools};

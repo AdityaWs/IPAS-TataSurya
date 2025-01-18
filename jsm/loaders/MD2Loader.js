@@ -93,50 +93,50 @@ const _normalData = [
 
 class MD2Loader extends Loader {
 
-	constructor( manager ) {
+	constructor(manager) {
 
-		super( manager );
+		super(manager);
 
 	}
 
-	load( url, onLoad, onProgress, onError ) {
+	load(url, onLoad, onProgress, onError) {
 
 		const scope = this;
 
-		const loader = new FileLoader( scope.manager );
-		loader.setPath( scope.path );
-		loader.setResponseType( 'arraybuffer' );
-		loader.setRequestHeader( scope.requestHeader );
-		loader.setWithCredentials( scope.withCredentials );
-		loader.load( url, function ( buffer ) {
+		const loader = new FileLoader(scope.manager);
+		loader.setPath(scope.path);
+		loader.setResponseType('arraybuffer');
+		loader.setRequestHeader(scope.requestHeader);
+		loader.setWithCredentials(scope.withCredentials);
+		loader.load(url, function (buffer) {
 
 			try {
 
-				onLoad( scope.parse( buffer ) );
+				onLoad(scope.parse(buffer));
 
-			} catch ( e ) {
+			} catch (e) {
 
-				if ( onError ) {
+				if (onError) {
 
-					onError( e );
+					onError(e);
 
 				} else {
 
-					console.error( e );
+					console.error(e);
 
 				}
 
-				scope.manager.itemError( url );
+				scope.manager.itemError(url);
 
 			}
 
-		}, onProgress, onError );
+		}, onProgress, onError);
 
 	}
 
-	parse( buffer ) {
+	parse(buffer) {
 
-		const data = new DataView( buffer );
+		const data = new DataView(buffer);
 
 		// http://tfc.duke.free.fr/coding/md2-specs-en.html
 
@@ -149,22 +149,22 @@ class MD2Loader extends Loader {
 			'offset_skins', 'offset_st', 'offset_tris', 'offset_frames', 'offset_glcmds', 'offset_end'
 		];
 
-		for ( let i = 0; i < headerNames.length; i ++ ) {
+		for (let i = 0; i < headerNames.length; i ++) {
 
-			header[ headerNames[ i ] ] = data.getInt32( i * 4, true );
+			header[ headerNames[ i ] ] = data.getInt32(i * 4, true);
 
 		}
 
-		if ( header.ident !== 844121161 || header.version !== 8 ) {
+		if (header.ident !== 844121161 || header.version !== 8) {
 
-			console.error( 'Not a valid MD2 file' );
+			console.error('Not a valid MD2 file');
 			return;
 
 		}
 
-		if ( header.offset_end !== data.byteLength ) {
+		if (header.offset_end !== data.byteLength) {
 
-			console.error( 'Corrupted MD2 file' );
+			console.error('Corrupted MD2 file');
 			return;
 
 		}
@@ -178,12 +178,12 @@ class MD2Loader extends Loader {
 		const uvsTemp = [];
 		let offset = header.offset_st;
 
-		for ( let i = 0, l = header.num_st; i < l; i ++ ) {
+		for (let i = 0, l = header.num_st; i < l; i ++) {
 
-			const u = data.getInt16( offset + 0, true );
-			const v = data.getInt16( offset + 2, true );
+			const u = data.getInt16(offset + 0, true);
+			const v = data.getInt16(offset + 2, true);
 
-			uvsTemp.push( u / header.skinwidth, 1 - ( v / header.skinheight ) );
+			uvsTemp.push(u / header.skinwidth, 1 - (v / header.skinheight));
 
 			offset += 4;
 
@@ -196,18 +196,18 @@ class MD2Loader extends Loader {
 		const vertexIndices = [];
 		const uvIndices = [];
 
-		for ( let i = 0, l = header.num_tris; i < l; i ++ ) {
+		for (let i = 0, l = header.num_tris; i < l; i ++) {
 
 			vertexIndices.push(
-				data.getUint16( offset + 0, true ),
-				data.getUint16( offset + 2, true ),
-				data.getUint16( offset + 4, true )
+				data.getUint16(offset + 0, true),
+				data.getUint16(offset + 2, true),
+				data.getUint16(offset + 4, true)
 			);
 
 			uvIndices.push(
-				data.getUint16( offset + 6, true ),
-				data.getUint16( offset + 8, true ),
-				data.getUint16( offset + 10, true )
+				data.getUint16(offset + 6, true),
+				data.getUint16(offset + 8, true),
+				data.getUint16(offset + 10, true)
 			);
 
 			offset += 12;
@@ -223,58 +223,58 @@ class MD2Loader extends Loader {
 
 		offset = header.offset_frames;
 
-		for ( let i = 0, l = header.num_frames; i < l; i ++ ) {
+		for (let i = 0, l = header.num_frames; i < l; i ++) {
 
 			scale.set(
-				data.getFloat32( offset + 0, true ),
-				data.getFloat32( offset + 4, true ),
-				data.getFloat32( offset + 8, true )
+				data.getFloat32(offset + 0, true),
+				data.getFloat32(offset + 4, true),
+				data.getFloat32(offset + 8, true)
 			);
 
 			translation.set(
-				data.getFloat32( offset + 12, true ),
-				data.getFloat32( offset + 16, true ),
-				data.getFloat32( offset + 20, true )
+				data.getFloat32(offset + 12, true),
+				data.getFloat32(offset + 16, true),
+				data.getFloat32(offset + 20, true)
 			);
 
 			offset += 24;
 
 			const string = [];
 
-			for ( let j = 0; j < 16; j ++ ) {
+			for (let j = 0; j < 16; j ++) {
 
-				const character = data.getUint8( offset + j );
-				if ( character === 0 ) break;
+				const character = data.getUint8(offset + j);
+				if (character === 0) break;
 
 				string[ j ] = character;
 
 			}
 
 			const frame = {
-				name: String.fromCharCode.apply( null, string ),
+				name: String.fromCharCode.apply(null, string),
 				vertices: [],
 				normals: []
 			};
 
 			offset += 16;
 
-			for ( let j = 0; j < header.num_vertices; j ++ ) {
+			for (let j = 0; j < header.num_vertices; j ++) {
 
-				let x = data.getUint8( offset ++ );
-				let y = data.getUint8( offset ++ );
-				let z = data.getUint8( offset ++ );
-				const n = _normalData[ data.getUint8( offset ++ ) ];
+				let x = data.getUint8(offset ++);
+				let y = data.getUint8(offset ++);
+				let z = data.getUint8(offset ++);
+				const n = _normalData[ data.getUint8(offset ++) ];
 
 				x = x * scale.x + translation.x;
 				y = y * scale.y + translation.y;
 				z = z * scale.z + translation.z;
 
-				frame.vertices.push( x, z, y ); // convert to Y-up
-				frame.normals.push( n[ 0 ], n[ 2 ], n[ 1 ] ); // convert to Y-up
+				frame.vertices.push(x, z, y); // convert to Y-up
+				frame.normals.push(n[ 0 ], n[ 2 ], n[ 1 ]); // convert to Y-up
 
 			}
 
-			frames.push( frame );
+			frames.push(frame);
 
 		}
 
@@ -287,7 +287,7 @@ class MD2Loader extends Loader {
 		const verticesTemp = frames[ 0 ].vertices;
 		const normalsTemp = frames[ 0 ].normals;
 
-		for ( let i = 0, l = vertexIndices.length; i < l; i ++ ) {
+		for (let i = 0, l = vertexIndices.length; i < l; i ++) {
 
 			const vertexIndex = vertexIndices[ i ];
 			let stride = vertexIndex * 3;
@@ -298,7 +298,7 @@ class MD2Loader extends Loader {
 			const y = verticesTemp[ stride + 1 ];
 			const z = verticesTemp[ stride + 2 ];
 
-			positions.push( x, y, z );
+			positions.push(x, y, z);
 
 			//
 
@@ -306,7 +306,7 @@ class MD2Loader extends Loader {
 			const ny = normalsTemp[ stride + 1 ];
 			const nz = normalsTemp[ stride + 2 ];
 
-			normals.push( nx, ny, nz );
+			normals.push(nx, ny, nz);
 
 			//
 
@@ -316,29 +316,29 @@ class MD2Loader extends Loader {
 			const u = uvsTemp[ stride ];
 			const v = uvsTemp[ stride + 1 ];
 
-			uvs.push( u, v );
+			uvs.push(u, v);
 
 		}
 
-		geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
-		geometry.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-		geometry.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+		geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+		geometry.setAttribute('normal', new Float32BufferAttribute(normals, 3));
+		geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
 
 		// animation
 
 		const morphPositions = [];
 		const morphNormals = [];
 
-		for ( let i = 0, l = frames.length; i < l; i ++ ) {
+		for (let i = 0, l = frames.length; i < l; i ++) {
 
 			const frame = frames[ i ];
 			const attributeName = frame.name;
 
-			if ( frame.vertices.length > 0 ) {
+			if (frame.vertices.length > 0) {
 
 				const positions = [];
 
-				for ( let j = 0, jl = vertexIndices.length; j < jl; j ++ ) {
+				for (let j = 0, jl = vertexIndices.length; j < jl; j ++) {
 
 					const vertexIndex = vertexIndices[ j ];
 					const stride = vertexIndex * 3;
@@ -347,22 +347,22 @@ class MD2Loader extends Loader {
 					const y = frame.vertices[ stride + 1 ];
 					const z = frame.vertices[ stride + 2 ];
 
-					positions.push( x, y, z );
+					positions.push(x, y, z);
 
 				}
 
-				const positionAttribute = new Float32BufferAttribute( positions, 3 );
+				const positionAttribute = new Float32BufferAttribute(positions, 3);
 				positionAttribute.name = attributeName;
 
-				morphPositions.push( positionAttribute );
+				morphPositions.push(positionAttribute);
 
 			}
 
-			if ( frame.normals.length > 0 ) {
+			if (frame.normals.length > 0) {
 
 				const normals = [];
 
-				for ( let j = 0, jl = vertexIndices.length; j < jl; j ++ ) {
+				for (let j = 0, jl = vertexIndices.length; j < jl; j ++) {
 
 					const vertexIndex = vertexIndices[ j ];
 					const stride = vertexIndex * 3;
@@ -371,14 +371,14 @@ class MD2Loader extends Loader {
 					const ny = frame.normals[ stride + 1 ];
 					const nz = frame.normals[ stride + 2 ];
 
-					normals.push( nx, ny, nz );
+					normals.push(nx, ny, nz);
 
 				}
 
-				const normalAttribute = new Float32BufferAttribute( normals, 3 );
+				const normalAttribute = new Float32BufferAttribute(normals, 3);
 				normalAttribute.name = attributeName;
 
-				morphNormals.push( normalAttribute );
+				morphNormals.push(normalAttribute);
 
 			}
 
@@ -388,7 +388,7 @@ class MD2Loader extends Loader {
 		geometry.morphAttributes.normal = morphNormals;
 		geometry.morphTargetsRelative = false;
 
-		geometry.animations = AnimationClip.CreateClipsFromMorphTargetSequences( frames, 10 );
+		geometry.animations = AnimationClip.CreateClipsFromMorphTargetSequences(frames, 10);
 
 		return geometry;
 
@@ -396,4 +396,4 @@ class MD2Loader extends Loader {
 
 }
 
-export { MD2Loader };
+export {MD2Loader};

@@ -97,7 +97,7 @@ var MeshoptDecoder = (function() {
 	function initWorkers(count) {
 		var source =
 			"var instance; var ready = WebAssembly.instantiate(new Uint8Array([" + new Uint8Array(unpack(wasm)) + "]), {})" +
-			".then(function(result) { instance = result.instance; instance.exports.__wasm_call_ctors(); });" +
+			".then(function(result) {instance = result.instance; instance.exports.__wasm_call_ctors();});" +
 			"self.onmessage = workerProcess;" +
 			decode.toString() + workerProcess.toString();
 
@@ -125,8 +125,8 @@ var MeshoptDecoder = (function() {
 			var id = requestId++;
 
 			worker.pending += count;
-			worker.requests[id] = { resolve: resolve, reject: reject };
-			worker.object.postMessage({ id: id, count: count, size: size, source: data, mode: mode, filter: filter }, [ data.buffer ]);
+			worker.requests[id] = {resolve: resolve, reject: reject};
+			worker.object.postMessage({id: id, count: count, size: size, source: data, mode: mode, filter: filter}, [ data.buffer ]);
 		});
 	}
 
@@ -136,9 +136,9 @@ var MeshoptDecoder = (function() {
 			try {
 				var target = new Uint8Array(data.count * data.size);
 				decode(instance.exports[data.mode], target, data.count, data.size, data.source, instance.exports[data.filter]);
-				self.postMessage({ id: data.id, count: data.count, action: "resolve", value: target }, [ target.buffer ]);
+				self.postMessage({id: data.id, count: data.count, action: "resolve", value: target}, [ target.buffer ]);
 			} catch (error) {
-				self.postMessage({ id: data.id, count: data.count, action: "reject", value: error });
+				self.postMessage({id: data.id, count: data.count, action: "reject", value: error});
 			}
 		});
 	}
@@ -175,4 +175,4 @@ var MeshoptDecoder = (function() {
 	};
 })();
 
-export { MeshoptDecoder };
+export {MeshoptDecoder};
