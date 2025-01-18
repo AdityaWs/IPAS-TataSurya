@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Merkurius</title>
+		<title>Saturnus</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link rel="stylesheet" href="./../css/style.css">
 	</head>
 	<body>
 
-		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Merkurius</button>
+		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Saturnus</button>
 
 		<div class="info-blur"></div>
 		<div class="info">
 			<button class="info-close">X</button>
 			<div class="info-list">
-				<h1>Merkurius</h1>
-				<p>Merkurius adalah planet terkecil dan terdekat dengan Matahari dalam tata surya kita. Karena jaraknya yang hanya sekitar 58 juta kilometer dari Matahari, Merkurius menyelesaikan orbitnya dalam waktu yang sangat singkat, yaitu sekitar 88 hari Bumi. Namun, planet ini memiliki rotasi yang lambat, sehingga satu hari di Merkurius (satu rotasi penuh) membutuhkan waktu 59 hari Bumi. Planet ini tidak memiliki atmosfer yang signifikan, sehingga suhunya bisa sangat ekstrem, mencapai lebih dari 400°C di siang hari dan turun hingga -180°C di malam hari.</p>
-				<p>Merkurius memiliki ciri-ciri unik yang membedakannya dari planet lain. Permukaan planet ini dipenuhi kawah-kawah yang mirip dengan permukaan Bulan, akibat hantaman meteor sejak miliaran tahun lalu. Warna permukaannya cenderung abu-abu gelap karena komposisi mineral yang kaya akan besi. Merkurius juga tidak memiliki bulan atau cincin, dan medan magnetnya, meskipun lemah, menunjukkan bahwa inti planet ini sebagian besar terdiri dari logam cair.</p>
-				<p>Dari segi data, Merkurius memiliki diameter sekitar 4.880 kilometer, hanya sedikit lebih besar dari Bulan. Jarak rata-rata orbitnya dari Matahari adalah 0,39 AU (Astronomical Unit), atau sekitar 58 juta kilometer. Planet ini sebagian besar terdiri dari inti besi besar yang menyumbang sekitar 85% dari massa totalnya, dengan mantel tipis berbatu di bagian luar. Karena ukurannya yang kecil dan gravitasinya yang lemah, Merkurius tidak mampu mempertahankan atmosfer yang stabil.</p>
-				<p>Dalam sejarah, Merkurius telah dikenal sejak zaman kuno karena dapat dilihat dengan mata telanjang. Namanya berasal dari dewa utusan Romawi, Merkurius, yang terkenal dengan kecepatannya, sesuai dengan orbit planet ini yang sangat cepat. Fakta unik lainnya adalah Merkurius memiliki es di kawah-kawah kutubnya yang selalu terlindung dari sinar Matahari. Selain itu, eksplorasi Merkurius masih sangat terbatas, dengan dua misi utama yaitu Mariner 10 pada tahun 1970-an dan MESSENGER yang memberikan informasi lebih detail pada tahun 2011-2015.</p>
+				<h1>Saturnus</h1>
+                <p>Saturnus adalah planet keenam dari Matahari dan terkenal sebagai planet bercincin paling indah di tata surya. Planet ini termasuk dalam kelompok planet gas raksasa, seperti Jupiter, dan merupakan planet terbesar kedua setelahnya. Jarak rata-rata Saturnus dari Matahari adalah sekitar 1,4 miliar kilometer, membuatnya membutuhkan sekitar 29,5 tahun Bumi untuk menyelesaikan satu orbit. Rotasinya sangat cepat, sehingga satu hari di Saturnus berlangsung sekitar 10,7 jam. Saturnus merupakan planet yang sebagian besar massanya terdiri dari gas, sehingga kepadatannya sangat rendah dan bahkan lebih ringan dari air.</p>
+                <p>Saturnus memiliki ciri utama berupa sistem cincin besar dan kompleks yang terdiri dari jutaan partikel es dan debu. Cincin-cincin ini terbagi menjadi beberapa bagian, seperti Cincin A, B, dan C, yang sangat terang dan terlihat jelas dari Bumi menggunakan teleskop. Permukaan planet ini tidak padat, dan atmosfernya yang tebal didominasi oleh hidrogen dan helium. Saturnus juga memiliki lebih dari 140 bulan dan satelit kecil, termasuk Titan, bulan terbesar yang memiliki atmosfer tebal dan kaya akan metana.</p>
+                <p>Secara data, Saturnus memiliki diameter sekitar 120.536 kilometer, hampir 9,5 kali lebih besar dari Bumi. Massanya 95 kali lebih besar dari Bumi, namun densitasnya hanya sekitar 0,7 gram/cm³, lebih rendah daripada air. Jarak orbitnya dari Matahari adalah sekitar 9,5 AU (Astronomical Unit). Komposisi planet ini didominasi oleh hidrogen dan helium, dengan inti kecil berbatu di pusatnya. Medan magnet Saturnus cukup kuat, meskipun tidak sebesar Jupiter, dan menciptakan aurora yang menakjubkan di kutub-kutubnya.</p>
+                <p>Dalam sejarah, Saturnus telah dikenal sejak zaman kuno karena dapat dilihat dengan mata telanjang. Namanya diambil dari dewa pertanian Romawi, Saturnus. Cincin Saturnus pertama kali diamati oleh Galileo Galilei pada tahun 1610, meskipun ia tidak menyadari bahwa itu adalah cincin. Fakta unik lainnya adalah angin di atmosfer Saturnus dapat mencapai kecepatan lebih dari 1.800 km/jam, jauh lebih cepat dari angin di Bumi. Selain itu, Titan, bulan terbesar Saturnus, dianggap salah satu tempat paling menarik untuk eksplorasi astrobiologi karena kemungkinan adanya lautan air di bawah permukaan esnya.</p>
 			</div>
 		</div>
 
@@ -40,9 +40,10 @@
 			import * as THREE from 'three';
 			import { step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max } from 'three/tsl';
 			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
-			let camera, scene, renderer, controls, globe, sphereSkybox, clock;
+			let camera, scene, renderer, controls, globe, ring, sphereSkybox, clock;
 
 			init();
 
@@ -59,12 +60,17 @@
 
 				const sun = new THREE.DirectionalLight( '#ffffff', 2 );
 				sun.position.set( 0, 0, 3 );
+                sun.castShadow = true;
+                sun.shadow.mapSize.width = 512;
+                sun.shadow.mapSize.height = 512;
+                sun.shadow.camera.near = 0.5;
+                sun.shadow.camera.far = 500;
 				scene.add( sun );
 
 				// uniforms
 
-				const atmosphereDayColor = uniform( color( '#eeeeee' ) );
-				const atmosphereTwilightColor = uniform( color( '#eeeeee' ) );
+				const atmosphereDayColor = uniform( color( '#7dbdad' ) );
+				const atmosphereTwilightColor = uniform( color( '#440078' ) );
 				const roughnessLow = uniform( 0.25 );
 				const roughnessHigh = uniform( 0.35 );
 
@@ -72,11 +78,11 @@
 
 				const textureLoader = new THREE.TextureLoader();
 
-				const dayTexture = textureLoader.load( './textures/mercury_day_2048.jpg' );
+				const dayTexture = textureLoader.load( './textures/saturn_day_2048.jpg' );
 				dayTexture.colorSpace = THREE.SRGBColorSpace;
 				dayTexture.anisotropy = 8;
 
-				const nightTexture = textureLoader.load( './textures/mercury_night_2048.jpg' );
+				const nightTexture = textureLoader.load( './textures/saturn_night_2048.jpg' );
 				nightTexture.colorSpace = THREE.SRGBColorSpace;
 				nightTexture.anisotropy = 8;
 
@@ -116,6 +122,20 @@
 				scene.add( globe );
 
 
+                // ring
+
+                const loader = new GLTFLoader().setPath("./model/");
+
+                loader.load( './saturn_ring.glb', function ( gltf ) {
+                    scene.add( gltf.scene );
+                }, undefined, function ( error ) {
+                    console.error( error );
+                } );
+
+                let light = new THREE.AmbientLight(0xffffff);
+                scene.add(light);
+
+
 				// atmosphere
 
 				const atmosphereMaterial = new THREE.MeshBasicNodeMaterial( { side: THREE.BackSide, transparent: true } );
@@ -124,7 +144,7 @@
 				atmosphereMaterial.outputNode = vec4( atmosphereColor, alpha );
 
 				const atmosphere = new THREE.Mesh( sphereGeometry, atmosphereMaterial );
-				atmosphere.scale.setScalar( 1.01 );
+				atmosphere.scale.setScalar( 1.02 );
 				scene.add( atmosphere );
 
 
@@ -147,6 +167,8 @@
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.setAnimationLoop( animate );
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 				document.body.appendChild( renderer.domElement );
 
 

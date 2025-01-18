@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Merkurius</title>
+		<title>Uranus</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link rel="stylesheet" href="./../css/style.css">
 	</head>
 	<body>
 
-		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Merkurius</button>
+		<button class="info-button">Klik Disini Untuk Membaca Informasi Tentang Uranus</button>
 
 		<div class="info-blur"></div>
 		<div class="info">
 			<button class="info-close">X</button>
 			<div class="info-list">
-				<h1>Merkurius</h1>
-				<p>Merkurius adalah planet terkecil dan terdekat dengan Matahari dalam tata surya kita. Karena jaraknya yang hanya sekitar 58 juta kilometer dari Matahari, Merkurius menyelesaikan orbitnya dalam waktu yang sangat singkat, yaitu sekitar 88 hari Bumi. Namun, planet ini memiliki rotasi yang lambat, sehingga satu hari di Merkurius (satu rotasi penuh) membutuhkan waktu 59 hari Bumi. Planet ini tidak memiliki atmosfer yang signifikan, sehingga suhunya bisa sangat ekstrem, mencapai lebih dari 400°C di siang hari dan turun hingga -180°C di malam hari.</p>
-				<p>Merkurius memiliki ciri-ciri unik yang membedakannya dari planet lain. Permukaan planet ini dipenuhi kawah-kawah yang mirip dengan permukaan Bulan, akibat hantaman meteor sejak miliaran tahun lalu. Warna permukaannya cenderung abu-abu gelap karena komposisi mineral yang kaya akan besi. Merkurius juga tidak memiliki bulan atau cincin, dan medan magnetnya, meskipun lemah, menunjukkan bahwa inti planet ini sebagian besar terdiri dari logam cair.</p>
-				<p>Dari segi data, Merkurius memiliki diameter sekitar 4.880 kilometer, hanya sedikit lebih besar dari Bulan. Jarak rata-rata orbitnya dari Matahari adalah 0,39 AU (Astronomical Unit), atau sekitar 58 juta kilometer. Planet ini sebagian besar terdiri dari inti besi besar yang menyumbang sekitar 85% dari massa totalnya, dengan mantel tipis berbatu di bagian luar. Karena ukurannya yang kecil dan gravitasinya yang lemah, Merkurius tidak mampu mempertahankan atmosfer yang stabil.</p>
-				<p>Dalam sejarah, Merkurius telah dikenal sejak zaman kuno karena dapat dilihat dengan mata telanjang. Namanya berasal dari dewa utusan Romawi, Merkurius, yang terkenal dengan kecepatannya, sesuai dengan orbit planet ini yang sangat cepat. Fakta unik lainnya adalah Merkurius memiliki es di kawah-kawah kutubnya yang selalu terlindung dari sinar Matahari. Selain itu, eksplorasi Merkurius masih sangat terbatas, dengan dua misi utama yaitu Mariner 10 pada tahun 1970-an dan MESSENGER yang memberikan informasi lebih detail pada tahun 2011-2015.</p>
+				<h1>Uranus</h1>
+                <p>Uranus adalah planet ketujuh dari Matahari dan salah satu dari dua planet es raksasa dalam tata surya, bersama dengan Neptunus. Planet ini dikenal karena warna biru-hijaunya yang khas, yang disebabkan oleh metana dalam atmosfernya. Uranus berada pada jarak rata-rata sekitar 2,9 miliar kilometer dari Matahari dan membutuhkan waktu 84 tahun Bumi untuk menyelesaikan satu orbit. Rotasinya unik karena kemiringan sumbu rotasinya mencapai 98 derajat, sehingga planet ini "mengguling" di sepanjang orbitnya.</p>
+                <p>Ciri-ciri Uranus sangat menarik dan berbeda dari planet lain. Kemiringan ekstrem membuat kutubnya bergantian menghadap langsung ke Matahari selama setengah orbit, menyebabkan musim yang berlangsung hingga 21 tahun. Atmosfer Uranus terdiri dari hidrogen, helium, dan metana, yang menyerap cahaya merah dan memantulkan warna biru-hijau. Uranus memiliki sistem cincin yang tipis dan gelap, tidak seindah cincin Saturnus, serta memiliki 27 bulan yang dinamai dari tokoh-tokoh dalam karya sastra William Shakespeare dan Alexander Pope, seperti Titania, Oberon, dan Miranda.</p>
+                <p>Secara data, Uranus memiliki diameter sekitar 50.724 kilometer, sekitar 4 kali diameter Bumi, dan massanya 14,5 kali lebih besar dari Bumi. Jarak orbitnya dari Matahari adalah sekitar 19,2 AU (Astronomical Unit). Komposisi Uranus sebagian besar terdiri dari es seperti air, amonia, dan metana, dengan inti berbatu kecil di pusatnya. Suhu di atmosfer Uranus sangat dingin, mencapai -224°C, menjadikannya planet terdingin di tata surya.</p>
+                <p>Dalam sejarah, Uranus adalah planet pertama yang ditemukan menggunakan teleskop, oleh William Herschel pada tahun 1781. Namanya diambil dari dewa langit dalam mitologi Yunani, Uranus, yang merupakan kakek dari Zeus (Jupiter). Fakta unik tentang Uranus adalah badai-badai besar sering terjadi di atmosfernya, meskipun terlihat tenang dari kejauhan. Selain itu, medan magnetnya sangat tidak biasa, dengan sumbu magnet yang tidak sejajar dengan sumbu rotasi, menciptakan medan magnet yang asimetris dan berantakan dibandingkan planet lain.</p>
 			</div>
 		</div>
 
@@ -40,6 +40,7 @@
 			import * as THREE from 'three';
 			import { step, normalWorld, output, texture, vec3, vec4, normalize, positionWorld, bumpMap, cameraPosition, color, uniform, mix, uv, max } from 'three/tsl';
 			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 			let camera, scene, renderer, controls, globe, sphereSkybox, clock;
@@ -63,8 +64,8 @@
 
 				// uniforms
 
-				const atmosphereDayColor = uniform( color( '#eeeeee' ) );
-				const atmosphereTwilightColor = uniform( color( '#eeeeee' ) );
+				const atmosphereDayColor = uniform( color( '#eeeeff' ) );
+				const atmosphereTwilightColor = uniform( color( '#ccccff' ) );
 				const roughnessLow = uniform( 0.25 );
 				const roughnessHigh = uniform( 0.35 );
 
@@ -72,11 +73,11 @@
 
 				const textureLoader = new THREE.TextureLoader();
 
-				const dayTexture = textureLoader.load( './textures/mercury_day_2048.jpg' );
+				const dayTexture = textureLoader.load( './textures/uranus_day_2048.jpg' );
 				dayTexture.colorSpace = THREE.SRGBColorSpace;
 				dayTexture.anisotropy = 8;
 
-				const nightTexture = textureLoader.load( './textures/mercury_night_2048.jpg' );
+				const nightTexture = textureLoader.load( './textures/uranus_night_2048.jpg' );
 				nightTexture.colorSpace = THREE.SRGBColorSpace;
 				nightTexture.anisotropy = 8;
 
@@ -116,6 +117,20 @@
 				scene.add( globe );
 
 
+                // ring
+
+                const loader = new GLTFLoader().setPath("./model/");
+
+                loader.load( './uranus_ring.glb', function ( gltf ) {
+                    scene.add( gltf.scene );
+                }, undefined, function ( error ) {
+                    console.error( error );
+                } );
+
+                let light = new THREE.AmbientLight(0xffffff);
+                scene.add(light);
+
+
 				// atmosphere
 
 				const atmosphereMaterial = new THREE.MeshBasicNodeMaterial( { side: THREE.BackSide, transparent: true } );
@@ -124,7 +139,7 @@
 				atmosphereMaterial.outputNode = vec4( atmosphereColor, alpha );
 
 				const atmosphere = new THREE.Mesh( sphereGeometry, atmosphereMaterial );
-				atmosphere.scale.setScalar( 1.01 );
+				atmosphere.scale.setScalar( 1.02 );
 				scene.add( atmosphere );
 
 
@@ -173,8 +188,8 @@
 			async function animate() {
 
 				const delta = clock.getDelta();
-				globe.rotation.y += delta * 0.025;
-				sphereSkybox.rotation.y += delta * 0.025;
+				globe.rotation.z += delta * 0.025;
+				sphereSkybox.rotation.z += delta * 0.025;
 			
 				controls.update();
 
